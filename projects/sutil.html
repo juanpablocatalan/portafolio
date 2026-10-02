@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+  </script>
+  <title>Sutil Wines</title>
+  <meta name="description" content="Case study for Sutil Wines by Juan Pablo — Visual Identity & Packaging.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="../assets/happy-face.svg">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="../css/style.css?v=106">
+
+  <!-- Page-specific overrides -->
+  <style>
+    :root {
+      --color-bg: #ffffff;
+    }
+
+    /* ── Logo Title ── */
+    .sutil-brand-logo {
+      width: clamp(120px, 17.5vw, 260px);
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ── 3D Viewer ── */
+    .sutil-3d-section {
+      width: 100%;
+      height: clamp(600px, 82vh, 900px);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    /* ── Contenedor y capas de fondo para botellas ── */
+    .sutil-bg-container {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      pointer-events: none;
+      background: #ffffff;
+    }
+
+    .sutil-bg-layer {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      filter: grayscale(100%) brightness(1.15) contrast(1.05);
+      opacity: 0;
+      transform: scale(1.035);
+      transition: opacity 0.8s cubic-bezier(0.35, 0, 0.25, 1), transform 0.8s cubic-bezier(0.35, 0, 0.25, 1);
+      will-change: opacity, transform;
+    }
+
+    .sutil-bg-layer.active {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+
+    .sutil-bg-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.55) 100%);
+    }
+
+    #sutil-canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+      cursor: grab;
+      position: relative;
+      z-index: 3;
+    }
+
+    #sutil-canvas:active {
+      cursor: grabbing;
+    }
+
+    .sutil-loader {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 1rem;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+
+    .sutil-loader.hidden {
+      opacity: 0;
+    }
+
+    .sutil-loader-bar {
+      width: 120px;
+      height: 1px;
+      background: #e0e0e0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sutil-loader-bar::after {
+      content: '';
+      position: absolute;
+      left: -100%;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      animation: loaderSlide 1.2s ease-in-out infinite;
+    }
+
+    @keyframes loaderSlide {
+      0% {
+        left: -100%;
+      }
+
+      50% {
+        left: 0%;
+      }
+
+      100% {
+        left: 100%;
+      }
+    }
+
+    .sutil-loader-text {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #aaa;
+      font-family: var(--font-mono, monospace);
+    }
+
+
+    /* ── Barra de Control de Diseños (Dock Estilo Proyecto 1 en Burdeo sobre Blanco) ── */
+    .magazine-dock,
+    .sutil-design-dock {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1.5px solid #82192C;
+      padding: 0.35rem 0.75rem;
+      border-radius: 100px;
+      z-index: 50;
+      pointer-events: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(130, 25, 44, 0.06);
+      transition: all 0.25s ease;
+    }
+
+    .magazine-dock:hover,
+    .sutil-design-dock:hover {
+      border-color: #9c2237;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.12), 0 0 18px rgba(130, 25, 44, 0.18);
+    }
+
+    .mag-nav-group {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
+    }
+
+    .mag-btn {
+      background: transparent;
+      border: 1.5px solid #82192C;
+      color: #82192C;
+      font-family: var(--font-mono, monospace);
+      font-size: 0.65rem;
+      padding: 0.22rem 0.5rem;
+      border-radius: 100px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      transition: all 0.2s ease;
+      line-height: 1;
+      text-decoration: none;
+    }
+
+    .mag-btn:hover {
+      background: #82192C;
+      color: #ffffff;
+      border-color: #82192C;
+      transform: translateY(-1px);
+    }
+
+    .mag-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .mag-btn-icon {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .mag-page-indicator {
+      font-family: var(--font-mono, monospace);
+      font-size: 0.65rem;
+      color: #777777;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      text-align: right;
+      flex: 1;
+      gap: 0.35rem;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      padding: 0 0.5rem 0 0;
+    }
+
+    .mag-current-page-num {
+      color: #82192C;
+      font-weight: 700;
+    }
+
+    .sutil-dots {
+      position: absolute;
+      bottom: 2.2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 15;
+      display: flex;
+      gap: 6px;
+      pointer-events: auto;
+    }
+
+    .sutil-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .sutil-dot:hover {
+      background: rgba(130, 25, 44, 0.5);
+    }
+
+    .sutil-dot.active {
+      background: #82192C;
+      width: 20px;
+      border-radius: 999px;
+      border-color: #82192C;
+    }
+
+    /* ── Panel Lateral Derecho (Cuadro + Selector Siguiente Diseño) ── */
+    .sutil-side-panel {
+      position: absolute;
+      right: clamp(1.5rem, 3.5vw, 3.5rem);
+      top: 50%;
+      transform: translateY(-50%);
+      width: clamp(260px, 22vw, 320px);
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      pointer-events: none;
+    }
+
+    .sutil-info-card {
+      width: 100%;
+      box-sizing: border-box;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1.5px solid #82192C;
+      border-radius: 16px;
+      padding: 1.4rem 1.5rem;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(130, 25, 44, 0.06);
+      pointer-events: auto;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .sutil-info-card:hover {
+      border-color: #9c2237;
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.1), 0 0 16px rgba(130, 25, 44, 0.15);
+    }
+
+    .info-card-inner {
+      transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .info-card-inner.switching {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    .info-card-title {
+      font-size: 1.2rem;
+      font-weight: 500;
+      line-height: 1.25;
+      color: #111111;
+      margin: 0 0 0.55rem 0;
+      letter-spacing: -0.01em;
+    }
+
+    .info-card-desc {
+      font-size: 0.8rem;
+      line-height: 1.55;
+      color: #555555;
+      margin: 0 0 1rem 0;
+      font-weight: 400;
+      white-space: pre-line;
+    }
+
+    .sutil-view-label-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: none;
+      border: none;
+      padding: 0;
+      margin-top: 0.2rem;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #777777;
+      cursor: pointer;
+      transition: color 0.2s ease;
+      letter-spacing: -0.01em;
+      outline: none;
+    }
+
+    .sutil-view-label-link:hover {
+      color: #82192C;
+    }
+
+    .sutil-view-label-link svg {
+      opacity: 0.75;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .sutil-view-label-link:hover svg {
+      opacity: 1;
+      transform: translate(1px, -1px);
+    }
+
+    /* ── Modal para ver la etiqueta en grande sola ── */
+    .sutil-label-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1rem, 2.5vw, 2.5rem);
+      box-sizing: border-box;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .sutil-label-modal.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .label-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(12, 12, 16, 0.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      z-index: 1;
+    }
+
+    .label-modal-container {
+      position: relative;
+      z-index: 2;
+      max-width: 90vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform: scale(0.96);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .sutil-label-modal.is-open .label-modal-container {
+      transform: scale(1);
+    }
+
+    .label-modal-header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin-bottom: 0.85rem;
+      padding: 0 0.25rem;
+      color: #ffffff;
+      box-sizing: border-box;
+    }
+
+    .label-modal-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .label-modal-tag {
+      font-size: 0.58rem;
+      font-family: var(--font-mono, monospace);
+      letter-spacing: 0.15em;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+    }
+
+    .label-modal-title {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .label-modal-close {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1.5px solid #82192C;
+      color: #82192C;
+      width: 26px;
+      height: 26px;
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono, monospace);
+      font-size: 0.95rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .label-modal-close:hover {
+      background: #82192C;
+      border-color: #82192C;
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(130, 25, 44, 0.35);
+    }
+
+
+
+    .label-modal-body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-height: calc(88vh - 55px);
+      max-width: 100%;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .label-modal-img-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      max-height: calc(85vh - 55px);
+      max-width: 100%;
+    }
+
+    .label-modal-img {
+      max-width: 100%;
+      max-height: calc(85vh - 55px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      background: #ffffff;
+      display: block;
+    }
+
+    /* ── Detalle Técnico de Producción (Solo texto, sin recuadro) ── */
+    .label-modal-sidebar {
+      position: absolute;
+      left: calc(100% + clamp(1.25rem, 2.5vw, 2.8rem));
+      top: 50%;
+      transform: translateY(-50%);
+      width: clamp(200px, 18vw, 270px);
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      color: #ffffff;
+      animation: sidebarFadeIn 0.3s ease;
+      pointer-events: auto;
+      z-index: 5;
+    }
+
+    @keyframes sidebarFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(calc(-50% + 6px));
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(-50%);
+      }
+    }
+
+    .label-modal-sidebar.hidden {
+      display: none !important;
+    }
+
+    .label-sidebar-callout {
+      background: transparent;
+      border: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .label-sidebar-tag {
+      font-size: 0.62rem;
+      font-family: var(--font-mono, monospace);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.55);
+      font-weight: 600;
+      margin-bottom: 0.55rem;
+    }
+
+    .label-sidebar-callout p {
+      margin: 0;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 300;
+      letter-spacing: 0.01em;
+    }
+
+    @media (max-width: 900px) {
+      .label-modal-container {
+        max-height: 92vh;
+        overflow-y: auto;
+      }
+
+      .label-modal-img-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .label-modal-sidebar {
+        position: static;
+        transform: none;
+        width: 100%;
+        max-width: 340px;
+        margin-top: 1.25rem;
+        text-align: center;
+      }
+
+    }
+
+    @media (max-width: 900px) {
+      .sutil-side-panel {
+        position: relative;
+        right: auto;
+        top: auto;
+        transform: none;
+        width: auto;
+        margin: 1.5rem var(--page-margin) 1.5rem;
+        gap: 0.75rem;
+        pointer-events: auto;
+      }
+
+      .sutil-info-card {
+        padding: 1.25rem 1.35rem;
+      }
+
+      .magazine-dock,
+      .sutil-design-dock {
+        padding: 0.35rem 0.6rem;
+        gap: 0.35rem;
+      }
+
+      .sutil-dots {
+        bottom: 1.2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="back-link">INICIO</a>
+      <nav class="site-nav" aria-label="Navegación principal">
+        <ul>
+          <li><a href="../sobremi.html" class="nav-link">SOBRE MÍ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content">
+
+    <!-- Project Logo / Title Header -->
+    <section class="project-logo-section reveal" aria-label="Título del proyecto"
+      style="margin-top: clamp(10px, 2.2vw, 2.5rem);">
+      <h1 class="project-title-heading" style="margin: 0; padding: 0; line-height: 1;">
+        <img src="../assets/Sutil/SVG/Recurso%201.svg" alt="Viña Sutil" class="project-brand-logo sutil-brand-logo">
+      </h1>
+    </section>
+
+    <!-- Introductory Editorial Statement (Left-Aligned, estilo Cycia) -->
+    <section class="grid-4 section-block reveal" aria-label="Introduction Statement"
+      style="margin-top: clamp(10px, 2.2vw, 2.5rem); margin-left: var(--page-margin); margin-right: var(--page-margin);">
+      <div class="col-1 project-intro-block" style="width: max-content;">
+        <span class="meta-label"
+          style="display: block; margin-bottom: 3px; color: rgba(0, 0, 0, 0.55); white-space: nowrap; width: max-content;">BRANDING
+          + PACKAGING</span>
+        <h2 class="project-intro-statement"
+          style="white-space: nowrap; width: max-content; font-size: min(1.5rem, calc((100vw - 2 * var(--page-margin)) / 18.5)); color: #000000;">
+          Diseño etiquetas Asia
+        </h2>
+      </div>
+    </section>
+
+    <!-- 3D Model Viewer -->
+    <section class="sutil-3d-section" id="sutil-3d-section" aria-label="Modelo 3D Sutil Wines"
+      style="margin-top: clamp(10px, 2.2vw, 2.5rem);">
+
+      <!-- Fondos dinámicos por botella con transición suave -->
+      <div class="sutil-bg-container" id="sutil-bg-container" aria-hidden="true">
+        <div class="sutil-bg-layer" id="sutil-bg-layer-a"></div>
+        <div class="sutil-bg-layer" id="sutil-bg-layer-b"></div>
+        <div class="sutil-bg-overlay"></div>
+      </div>
+
+      <canvas id="sutil-canvas"></canvas>
+
+      <div class="sutil-loader" id="sutil-loader">
+        <div class="sutil-loader-bar"></div>
+        <span class="sutil-loader-text">Cargando modelo</span>
+      </div>
+
+      <!-- Puntos indicadores de diseño -->
+      <div class="sutil-dots" id="sutil-dots" aria-label="Indicadores de diseño"></div>
+
+      <!-- Panel Lateral Derecho: Cuadro de Información + Selector Siguiente Diseño -->
+      <aside class="sutil-side-panel" id="sutil-side-panel" aria-label="Información y control de diseño">
+
+        <!-- Cuadro de Información de Diseño -->
+        <div class="sutil-info-card" id="sutil-info-card">
+          <div class="info-card-inner" id="info-card-inner">
+            <h3 class="info-card-title" id="info-card-title">Caspana</h3>
+            <p class="info-card-desc" id="info-card-desc">
+              Inspirada en la arquitectura patrimonial de Caspana, localidad del altiplano en la Región de Antofagasta,
+              esta propuesta rescata la emblemática silueta de su iglesia como elemento central de la etiqueta. Su
+              composición sobria y el uso del rojo aportan un carácter tradicional y distinguido, alineado con los
+              códigos clásicos del packaging vitivinícola.
+            </p>
+            <button type="button" class="sutil-view-label-link" id="view-label-modal-btn"
+              aria-label="Ver etiqueta en grande">
+              <span>Ver etiqueta en grande</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M7 17L17 7M17 7H7M17 7V17" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Barra de Control de Diseños (Estilo Magazine Dock de Proyecto 1) -->
+        <div class="magazine-dock sutil-design-dock" id="sutil-design-nav"
+          aria-label="Navegación de diseños de botella">
+          <div class="mag-nav-group">
+            <button type="button" class="mag-btn mag-btn-icon" id="prev-design-btn" aria-label="Diseño anterior"
+              title="Diseño anterior (←)">
+              &larr;
+            </button>
+            <button type="button" class="mag-btn mag-btn-icon" id="next-design-btn" aria-label="Siguiente diseño"
+              title="Siguiente diseño (→)">
+              &rarr;
+            </button>
+          </div>
+
+          <!-- Indicador de diseño -->
+          <div class="mag-page-indicator">
+            <span id="mag-page-indicator-text"><span class="mag-current-page-num" id="design-nav-counter">DISEÑO •
+                01</span> / 08</span>
+          </div>
+        </div>
+
+      </aside>
+    </section>
+
+    <!-- Next Project Navigation Banner -->
+    <section class="section-block next-project-section">
+      <a href="contenido.html" class="next-project-link">
+        <span class="next-label">SIGUIENTE PROYECTO</span>
+        <div class="next-title-row">
+          <h2 class="next-title">RRSS</h2>
+          <span class="next-arrow" aria-hidden="true">&rarr;</span>
+        </div>
+      </a>
+    </section>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">JUAN PABLO</span>
+      <ul class="footer-nav" aria-label="Enlaces de contacto y redes">
+        <li><a href="mailto:juan-pablo.catalan@uc.cl" class="footer-link">EMAIL</a></li>
+        <li><a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer"
+            class="footer-link">LINKED IN</a></li>
+        <li><a href="https://www.instagram.com/jp.catalan/" target="_blank" rel="noopener noreferrer"
+            class="footer-link">INSTAGRAM</a></li>
+      </ul>
+      <span class="footer-copy">&copy; 2026</span>
+    </div>
+  </footer>
+
+  <!-- Modal para ver la etiqueta en grande sola -->
+  <div class="sutil-label-modal" id="sutil-label-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="label-modal-backdrop" id="label-modal-backdrop"></div>
+    <div class="label-modal-container">
+      <div class="label-modal-header">
+        <div class="label-modal-meta">
+          <span class="label-modal-tag">DISEÑO DE ETIQUETA</span>
+          <h4 class="label-modal-title" id="label-modal-title">Caspana</h4>
+        </div>
+        <button type="button" class="label-modal-close" id="label-modal-close"
+          aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="label-modal-body" id="label-modal-body">
+        <div class="label-modal-img-wrap">
+          <img src="../assets/Sutil/Etiquetas/ETIQUETAS-01.jpg" alt="Etiqueta en grande" class="label-modal-img"
+            id="label-modal-img">
+          <aside class="label-modal-sidebar" id="label-modal-sidebar">
+            <!-- Inyectado dinámicamente con detalle técnico -->
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/three.min.js"></script>
+  <script src="../js/GLTFLoader.js"></script>
+  <script src="../js/script.js?v=103"></script>
+
+  <script>
+    (function () {
+      const canvas = document.getElementById('sutil-canvas');
+      const section = document.getElementById('sutil-3d-section');
+      const loader = document.getElementById('sutil-loader');
+
+      // ── Renderer con protección de contexto y fallback ──
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({
+          canvas: canvas,
+          antialias: true,
+          alpha: true,
+          powerPreference: 'high-performance'
+        });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 0.5;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      } catch (err) {
+        console.error('Error al inicializar WebGLRenderer:', err);
+        if (loader) {
+          loader.classList.remove('hidden');
+          var textEl = loader.querySelector('.sutil-loader-text');
+          if (textEl) textEl.textContent = 'Memoria GPU agotada. Cierra otras pestañas y recarga';
+        }
+      }
+
+      // Prevenir cuelgues si Chrome descarga el contexto WebGL por exceso de pestañas
+      canvas.addEventListener('webglcontextlost', function (e) {
+        e.preventDefault();
+        console.warn('WebGL context lost');
+        if (loader) {
+          loader.classList.remove('hidden');
+          var textEl = loader.querySelector('.sutil-loader-text');
+          if (textEl) {
+            textEl.textContent = 'Contexto 3D en pausa. Haz clic para recargar';
+            loader.style.pointerEvents = 'auto';
+            loader.style.cursor = 'pointer';
+            loader.onclick = function () { window.location.reload(); };
+          }
+        }
+      }, false);
+
+      canvas.addEventListener('webglcontextrestored', function () {
+        console.info('WebGL context restored');
+        window.location.reload();
+      }, false);
+
+      // ── Scene & Camera ──
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(40, 1, 0.01, 100);
+      camera.position.set(0, 0, 4);
+
+      // ── Environment Map de Estudio (Softboxes calibrados) ──
+      const pmremGenerator = new THREE.PMREMGenerator(renderer);
+      pmremGenerator.compileEquirectangularShader();
+
+      const envCanvas = document.createElement('canvas');
+      envCanvas.width = 1024;
+      envCanvas.height = 512;
+      const envCtx = envCanvas.getContext('2d');
+
+      // Fondo oscuro de estudio
+      envCtx.fillStyle = '#050507';
+      envCtx.fillRect(0, 0, 1024, 512);
+
+      // Softbox izquierdo (intensity: 2, width: 125)
+      const wLeft = 125;
+      const leftStrip = envCtx.createLinearGradient(325 - wLeft / 2, 0, 325 + wLeft / 2, 0);
+      leftStrip.addColorStop(0, 'rgba(255,255,255,0)');
+      leftStrip.addColorStop(0.3, 'rgba(255,255,255,1.0)');
+      leftStrip.addColorStop(0.65, 'rgba(255,255,255,1.0)');
+      leftStrip.addColorStop(1, 'rgba(255,255,255,0)');
+      envCtx.fillStyle = leftStrip;
+      envCtx.fillRect(325 - wLeft / 2, 30, wLeft, 450);
+
+      // Softbox derecho (intensity: 1.8, width: 90)
+      const wRight = 90;
+      const rightStrip = envCtx.createLinearGradient(700 - wRight / 2, 0, 700 + wRight / 2, 0);
+      rightStrip.addColorStop(0, 'rgba(255,255,255,0)');
+      rightStrip.addColorStop(0.4, 'rgba(255,255,255,1.0)');
+      rightStrip.addColorStop(0.7, 'rgba(255,255,255,1.0)');
+      rightStrip.addColorStop(1, 'rgba(255,255,255,0)');
+      envCtx.fillStyle = rightStrip;
+      envCtx.fillRect(700 - wRight / 2, 45, wRight, 420);
+
+      // Luz cenital suave de estudio
+      const topSoft = envCtx.createRadialGradient(512, 60, 10, 512, 60, 140);
+      topSoft.addColorStop(0, 'rgba(255,255,255,0.4)');
+      topSoft.addColorStop(1, 'rgba(255,255,255,0)');
+      envCtx.fillStyle = topSoft;
+      envCtx.fillRect(380, 0, 264, 180);
+
+      const envTexture = new THREE.CanvasTexture(envCanvas);
+      const envMap = pmremGenerator.fromEquirectangular(envTexture).texture;
+      scene.environment = envMap;
+      envTexture.dispose();
+      pmremGenerator.dispose();
+
+      // ── Iluminación Directa Calibrada ──
+      // leftKey: 1.3, frontSoft: 0.55, rightRim: 0, topRim: 0, ambient: 0
+      const leftKey = new THREE.DirectionalLight(0xffffff, 1.3);
+      leftKey.position.set(-3.0, 2.5, 3.0);
+      scene.add(leftKey);
+
+      const frontSoft = new THREE.DirectionalLight(0xffffff, 0.55);
+      frontSoft.position.set(0, 0.5, 4.2);
+      scene.add(frontSoft);
+
+      // ── Sombra de contacto suave en la base (shadowOpacity: 1.0) ──
+      const shadowCanvas = document.createElement('canvas');
+      shadowCanvas.width = 256;
+      shadowCanvas.height = 256;
+      const sCtx = shadowCanvas.getContext('2d');
+      const sGrad = sCtx.createRadialGradient(128, 128, 10, 128, 128, 120);
+      sGrad.addColorStop(0, 'rgba(12, 12, 16, 0.7)');
+      sGrad.addColorStop(0.3, 'rgba(20, 20, 25, 0.4)');
+      sGrad.addColorStop(0.65, 'rgba(30, 30, 35, 0.12)');
+      sGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      sCtx.fillStyle = sGrad;
+      sCtx.fillRect(0, 0, 256, 256);
+
+      const shadowTex = new THREE.CanvasTexture(shadowCanvas);
+      const shadowMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.85, 0.85),
+        new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, opacity: 1.0 })
+      );
+      shadowMesh.rotation.x = -Math.PI / 2;
+      shadowMesh.position.set(0, -1.095, 0);
+      scene.add(shadowMesh);
+
+      // ── Resize ──
+      function resize() {
+        const w = section.clientWidth;
+        const h = section.clientHeight;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      var burgCapStyle = { color: 0x82192C, roughness: 0.18, metalness: 0.12 };
+      var goldFoilCapStyle = { color: 0xc49836, roughness: 0.32, metalness: 0.85 };
+      var blueFoilCapStyle = { color: 0x213b78, roughness: 0.28, metalness: 0.55 };
+
+      // ── Catálogo de Diseños de Etiquetas y Fondos ──
+      const labelDesigns = [
+        { id: 1, file: '../assets/Sutil/Etiquetas/ETIQUETAS-01.jpg', bg: '../assets/Sutil/Etiquetas/fondo caspana.jpeg', capStyle: burgCapStyle },
+        { id: 2, file: '../assets/Sutil/Etiquetas/ETIQUETAS-02.jpg', bg: '../assets/Sutil/Etiquetas/el-leon-es-un-animal-que-se-distingue-de-otros-de-su-especie-por-vivir-en-manadas.jpeg', capStyle: burgCapStyle },
+        { id: 3, file: '../assets/Sutil/Etiquetas/ETIQUETAS-03.jpg', bg: '../assets/Sutil/Etiquetas/images.jpeg', capStyle: blueFoilCapStyle },
+        { id: 4, file: '../assets/Sutil/Etiquetas/ETIQUETAS-04.jpg', bg: '../assets/Sutil/Etiquetas/1EZQDJoLi_2000x1500__2.jpg', capStyle: blueFoilCapStyle },
+        { id: 5, file: '../assets/Sutil/Etiquetas/ETIQUETAS-05.jpg', bg: '../assets/Sutil/Etiquetas/oxalis_1583355360.webp', capStyle: burgCapStyle },
+        { id: 6, file: '../assets/Sutil/Etiquetas/ETIQUETAS-06.jpg', bg: '../assets/Sutil/Etiquetas/2024-03-26-03-54-46-1344x756.jpg', capStyle: goldFoilCapStyle },
+        { id: 7, file: '../assets/Sutil/Etiquetas/ETIQUETAS-07.jpg', bg: '../assets/Sutil/Etiquetas/lorenzo303.jpg', capStyle: goldFoilCapStyle },
+        { id: 8, file: '../assets/Sutil/Etiquetas/ETIQUETAS-08.jpg', bg: '../assets/Sutil/Etiquetas/SaveClip.App_474390399_18484089937001593_7393522884883209746_n.jpg', capStyle: goldFoilCapStyle }
+      ];
+
+      var currentDesignIdx = 0;
+      var textureCache = {};
+      var model = null;
+      var baseMesh = null;
+      var capMesh = null;
+      var gltfLoader = new THREE.GLTFLoader();
+      var pendingMesh = null;
+      var CV_SIZE = 1536;
+
+      // ── Sistema de Fondos Dinámicos por Botella ──
+      var bgLayers = [
+        document.getElementById('sutil-bg-layer-a'),
+        document.getElementById('sutil-bg-layer-b')
+      ];
+      var activeBgLayer = 0;
+
+      function updateBackground(idx, immediate) {
+        var design = labelDesigns[idx];
+        var bgUrl = design && design.bg ? encodeURI(design.bg) : '';
+        var nextLayerIdx = 1 - activeBgLayer;
+        var currentEl = bgLayers[activeBgLayer];
+        var nextEl = bgLayers[nextLayerIdx];
+
+        if (immediate) {
+          if (bgUrl) {
+            currentEl.style.backgroundImage = 'url("' + bgUrl + '")';
+            currentEl.classList.add('active');
+            nextEl.classList.remove('active');
+            nextEl.style.backgroundImage = 'none';
+          } else {
+            currentEl.classList.remove('active');
+            currentEl.style.backgroundImage = 'none';
+            nextEl.classList.remove('active');
+            nextEl.style.backgroundImage = 'none';
+          }
+          return;
+        }
+
+        if (bgUrl) {
+          nextEl.style.backgroundImage = 'url("' + bgUrl + '")';
+          void nextEl.offsetWidth;
+          nextEl.classList.add('active');
+          currentEl.classList.remove('active');
+          activeBgLayer = nextLayerIdx;
+        } else {
+          currentEl.classList.remove('active');
+          nextEl.classList.remove('active');
+          nextEl.style.backgroundImage = 'none';
+          activeBgLayer = nextLayerIdx;
+        }
+      }
+
+      // Precargar fondos en memoria para eliminar latencia en la transición
+      labelDesigns.forEach(function (d) {
+        if (d.bg) {
+          var bgPreload = new Image();
+          bgPreload.src = encodeURI(d.bg);
+        }
+      });
+
+      // Inicializar fondo de la primera botella
+      updateBackground(0, true);
+
+      // Generar CanvasTexture no deformable a partir de cualquier imagen
+      function generateCanvasTexture(img) {
+        var cv = document.createElement('canvas');
+        cv.width = CV_SIZE;
+        cv.height = CV_SIZE;
+        var ctx = cv.getContext('2d');
+
+        // Vidrio oscuro de la botella
+        ctx.fillStyle = '#020202';
+        ctx.fillRect(0, 0, CV_SIZE, CV_SIZE);
+
+        var metricV = 2.1666;
+        var metricU = 1.5716;
+        var imgAspect = (img.naturalWidth || 1004) / (img.naturalHeight || 1300);
+
+        var labelWidthV = 0.225 * 0.85;
+        var labelHeightU = labelWidthV * (metricV / metricU) / imgAspect;
+
+        var uCenter = 0.3715;
+        var vCenter = 0.373;
+
+        var cx = CV_SIZE * uCenter;
+        var cy = CV_SIZE * vCenter;
+        var lw = CV_SIZE * labelWidthV;
+        var lh = CV_SIZE * labelHeightU;
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(-Math.PI / 2);
+        ctx.drawImage(img, -lw / 2, -lh / 2, lw, lh);
+        ctx.restore();
+
+        var tex = new THREE.CanvasTexture(cv);
+        tex.encoding = THREE.sRGBEncoding;
+        tex.flipY = false;
+        tex.needsUpdate = true;
+        return tex;
+      }
+
+      // Cargar textura de diseño con caché en memoria
+      function loadDesignTexture(idx, callback) {
+        if (textureCache[idx]) {
+          if (callback) callback(textureCache[idx]);
+          return;
+        }
+
+        var design = labelDesigns[idx];
+        var img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function () {
+          var tex = generateCanvasTexture(img);
+          textureCache[idx] = tex;
+          if (callback) callback(tex);
+        };
+        img.src = design.file;
+      }
+
+      // Precargar diseños y fondos adyacentes para transición instantánea sin lag
+      function preloadAdjacent(idx) {
+        var next = (idx + 1) % labelDesigns.length;
+        var prev = (idx - 1 + labelDesigns.length) % labelDesigns.length;
+        if (!textureCache[next]) loadDesignTexture(next);
+        if (!textureCache[prev]) loadDesignTexture(prev);
+
+        if (labelDesigns[next] && labelDesigns[next].bg) {
+          var bgN = new Image();
+          bgN.src = encodeURI(labelDesigns[next].bg);
+        }
+        if (labelDesigns[prev] && labelDesigns[prev].bg) {
+          var bgP = new Image();
+          bgP.src = encodeURI(labelDesigns[prev].bg);
+        }
+      }
+
+      // Cargar primer diseño inmediatamente
+      loadDesignTexture(0, function (tex) {
+        if (pendingMesh) {
+          pendingMesh.material.map = tex;
+          pendingMesh.material.needsUpdate = true;
+          pendingMesh = null;
+        }
+        preloadAdjacent(0);
+      });
+
+      // ── Información Genérica por Diseño de Botella ──
+      const designInfo = [
+        {
+          title: 'Caspana',
+          desc: 'Inspirada en la arquitectura patrimonial de Caspana, localidad del altiplano en la Región de Antofagasta, esta propuesta rescata la emblemática silueta de su iglesia como elemento central de la etiqueta. Su composición sobria y el uso del rojo aportan un carácter tradicional y distinguido, alineado con los códigos clásicos del packaging vitivinícola.'
+        },
+        {
+          title: 'Garra de León',
+          desc: 'Top Wine Group elabora sus productos bajo estrictos principios de sustentabilidad y certificación vegana. A partir de este compromiso, se desarrolló una propuesta de packaging que proyecta fuerza, carácter y un profundo respeto por la vida animal.',
+          techDetail: 'En la etiqueta física, la garra incorpora una terminación con stamping dorado metalizado.'
+        },
+        {
+          title: 'Chagual',
+          desc: 'Con una propuesta contemporánea y despojada, este diseño se distancia de la diagramación vitivinícola tradicional para apostar por un lenguaje minimalista y versátil. La composición sitúa como protagonista al chagual, especie botánica endémica, destacando su morfología a través de un tratamiento gráfico sutil y moderno.'
+        },
+        {
+          title: 'Media Luna',
+          desc: 'Con una marcada impronta retro, la etiqueta concentra su narrativa en la síntesis gráfica de una media luna. El uso de tonalidades oscuras y contrastantes refuerza el concepto nocturno, dotando a la botella de un carácter íntimo y magnético.'
+        },
+        {
+          title: 'Oxalis',
+          desc: 'Guiada por un concepto de sostenibilidad y conexión con el origen, la propuesta toma como referente botánico la flor de oxalis. Su silueta fue sintetizada para crear un patrón modular continuo que envuelve el envase, aportando una dimensión táctil y orgánica al diseño.',
+          techDetail: 'La trama gris corresponde a un relieve / serigrafía texturada sobre la superficie de la botella.'
+        },
+        {
+          title: 'Huapi',
+          desc: 'Inspirado en la geografía del lago Nahuel Huapi, el proyecto busca romper con las convenciones del diseño vitivinícola tradicional. La propuesta adopta una diagramación dinámica, libre y a la vez rigurosa, integrando la silueta cartográfica del lago como elemento vertebrador de la etiqueta.',
+          techDetail: 'El trazado lineal discontinuo corresponde a un acabado en sobre relieve sobre la superficie final.'
+        },
+        {
+          title: 'Battus Polydamas',
+          desc: 'Inspirada en la mariposa Battus polydamas, esta propuesta responde a la búsqueda de una identidad fresca, juvenil y disruptiva dentro del packaging vitivinícola. El diseño quiebra la sobriedad cromática habitual de la categoría para apostar por el dinamismo visual y una paleta expresiva de alto impacto.'
+        },
+        {
+          title: 'Pidén Austral',
+          desc: 'Proyecto desarrollado a partir de una obra artística comisionada para la marca. Mi rol se centró en la dirección de arte, el desarrollo cromático y la diagramación editorial de la etiqueta, articulando la ilustración del pidén con una tipografía y soporte que realzan su valor pictórico.'
+        }
+      ];
+
+      function renderInfoCard(idx) {
+        var info = designInfo[idx];
+        if (!info) return;
+
+        var inner = document.getElementById('info-card-inner');
+        var titleEl = document.getElementById('info-card-title');
+        var descEl = document.getElementById('info-card-desc');
+
+        if (!inner) return;
+
+        inner.classList.add('switching');
+
+        setTimeout(function () {
+          titleEl.textContent = info.title;
+          descEl.textContent = info.desc;
+          inner.classList.remove('switching');
+        }, 160);
+      }
+
+      // ── Modal para Ver Etiqueta en Grande Sola ──
+      function openLabelModal() {
+        var m = document.getElementById('sutil-label-modal');
+        var mImg = document.getElementById('label-modal-img');
+        var mTitle = document.getElementById('label-modal-title');
+        var sidebar = document.getElementById('label-modal-sidebar');
+        var design = labelDesigns[currentDesignIdx];
+        var info = designInfo[currentDesignIdx];
+        if (!design || !m) return;
+        if (mImg) {
+          mImg.src = design.file;
+          mImg.alt = 'Etiqueta ' + (info ? info.title : '');
+        }
+        if (mTitle) {
+          mTitle.textContent = (info ? info.title : 'Diseño ' + (currentDesignIdx + 1));
+        }
+
+        // Renderizar detalle técnico de producción al costado derecho de la imagen si existe
+        if (sidebar) {
+          if (info && info.techDetail) {
+            sidebar.classList.remove('hidden');
+            sidebar.innerHTML = '<div class="label-sidebar-callout">' +
+              '<div class="label-sidebar-tag">DETALLE TÉCNICO DE PRODUCCIÓN</div>' +
+              '<p>' + info.techDetail + '</p>' +
+              '</div>';
+          } else {
+            sidebar.classList.add('hidden');
+            sidebar.innerHTML = '';
+          }
+        }
+
+        m.classList.add('is-open');
+        m.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        // Desactivar botones de navegación mientras el visor de la etiqueta está abierto
+        var pBtn = document.getElementById('prev-design-btn');
+        var nBtn = document.getElementById('next-design-btn');
+        if (pBtn) pBtn.disabled = true;
+        if (nBtn) nBtn.disabled = true;
+      }
+
+      function closeLabelModal() {
+        var m = document.getElementById('sutil-label-modal');
+        if (!m) return;
+        m.classList.remove('is-open');
+        m.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+
+        // Restaurar botones de navegación al cerrar el visor
+        var pBtn = document.getElementById('prev-design-btn');
+        var nBtn = document.getElementById('next-design-btn');
+        if (pBtn) pBtn.disabled = false;
+        if (nBtn) nBtn.disabled = false;
+      }
+
+      // Delegación de eventos para abrir y cerrar la ventana de la etiqueta
+      document.addEventListener('click', function (e) {
+        var openBtn = e.target.closest('#view-label-modal-btn, .sutil-view-label-link');
+        if (openBtn) {
+          e.preventDefault();
+          e.stopPropagation();
+          openLabelModal();
+          return;
+        }
+
+        var closeBtn = e.target.closest('#label-modal-close, .label-modal-close');
+        if (closeBtn || (e.target && e.target.id === 'label-modal-backdrop')) {
+          e.preventDefault();
+          closeLabelModal();
+        }
+      });
+
+      window.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          var m = document.getElementById('sutil-label-modal');
+          if (m && m.classList.contains('is-open')) {
+            closeLabelModal();
+          }
+        }
+      });
+
+      // Inicializar tarjeta de información con el primer diseño
+      renderInfoCard(0);
+
+      // ── UI de Navegación de Diseños ──
+      var counterEl = document.getElementById('design-nav-counter');
+      var dotsContainer = document.getElementById('sutil-dots');
+      var prevBtn = document.getElementById('prev-design-btn');
+      var nextBtn = document.getElementById('next-design-btn');
+
+      // Crear dots indicadores
+      labelDesigns.forEach(function (_, idx) {
+        var dot = document.createElement('button');
+        dot.className = 'sutil-dot' + (idx === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', 'Ver diseño ' + (idx + 1));
+        dot.addEventListener('click', function () { setDesign(idx); });
+        dotsContainer.appendChild(dot);
+      });
+
+      function setDesign(newIdx) {
+        // Al abrir la página visor de la etiqueta, no permitir cambiar de etiqueta
+        var mOpen = document.getElementById('sutil-label-modal');
+        if (mOpen && mOpen.classList.contains('is-open')) {
+          return;
+        }
+
+        var oldIdx = currentDesignIdx;
+        currentDesignIdx = (newIdx + labelDesigns.length) % labelDesigns.length;
+
+        // Actualizar contador y dots
+        var numStr = String(currentDesignIdx + 1).padStart(2, '0');
+        var indicatorTextEl = document.getElementById('mag-page-indicator-text');
+        if (indicatorTextEl) {
+          indicatorTextEl.innerHTML = '<span class="mag-current-page-num" id="design-nav-counter">DISEÑO • ' + numStr + '</span> / 08';
+        } else if (counterEl) {
+          counterEl.textContent = 'DISEÑO • ' + numStr;
+        }
+        var dots = dotsContainer.querySelectorAll('.sutil-dot');
+        dots.forEach(function (d, i) {
+          d.classList.toggle('active', i === currentDesignIdx);
+        });
+
+        // Actualizar fondo dinámico
+        updateBackground(currentDesignIdx);
+
+        // Actualizar cuadro de información de texto
+        renderInfoCard(currentDesignIdx);
+
+        targetCapStyle = labelDesigns[currentDesignIdx].capStyle || burgCapStyle;
+
+        // Iniciar giro suave en eje Y al cambiar de diseño
+        if (model && oldIdx !== currentDesignIdx) {
+          var diff = newIdx - oldIdx;
+          var dir = (diff > 0 || (oldIdx === labelDesigns.length - 1 && newIdx === 0)) ? 1 : -1;
+          spinStartRot = rotY;
+          spinTargetRot = rotY + dir * Math.PI * 2;
+          spinStartTime = performance.now();
+          textureSwapped = false;
+          isSpinning = true;
+        } else {
+          rotY = 0;
+          velX = 0;
+          if (model) model.rotation.y = 0;
+        }
+
+        // Cargar textura del nuevo diseño (se revelará durante el giro al alcanzar los 180º)
+        loadDesignTexture(currentDesignIdx, function (tex) {
+          targetTex = tex;
+          if (isSpinning) {
+            var elapsed = performance.now() - spinStartTime;
+            if (elapsed / spinDuration >= 0.5 && !textureSwapped) {
+              if (baseMesh) {
+                baseMesh.material.map = tex;
+                baseMesh.material.needsUpdate = true;
+              }
+              if (capMesh && targetCapStyle) {
+                capMesh.material.color.setHex(targetCapStyle.color);
+                capMesh.material.roughness = targetCapStyle.roughness;
+                capMesh.material.metalness = targetCapStyle.metalness;
+                capMesh.material.needsUpdate = true;
+              }
+              textureSwapped = true;
+            }
+          } else {
+            if (baseMesh) {
+              baseMesh.material.map = tex;
+              baseMesh.material.needsUpdate = true;
+            }
+            if (capMesh && targetCapStyle) {
+              capMesh.material.color.setHex(targetCapStyle.color);
+              capMesh.material.roughness = targetCapStyle.roughness;
+              capMesh.material.metalness = targetCapStyle.metalness;
+              capMesh.material.needsUpdate = true;
+            }
+          }
+          preloadAdjacent(currentDesignIdx);
+        });
+      }
+
+      if (nextBtn) nextBtn.addEventListener('click', function () { setDesign(currentDesignIdx + 1); });
+      if (prevBtn) prevBtn.addEventListener('click', function () { setDesign(currentDesignIdx - 1); });
+
+      // Atajos de teclado: flechas izquierda y derecha (bloqueados si el visor está abierto)
+      window.addEventListener('keydown', function (e) {
+        var mOpen = document.getElementById('sutil-label-modal');
+        if (mOpen && mOpen.classList.contains('is-open')) return;
+        if (e.key === 'ArrowRight') setDesign(currentDesignIdx + 1);
+        if (e.key === 'ArrowLeft') setDesign(currentDesignIdx - 1);
+      });
+
+      gltfLoader.load(
+        '../assets/Sutil/GLTF/sutil.glb',
+        function (gltf) {
+          model = gltf.scene;
+
+          // Recoger todos los meshes y ordenarlos por altura (Y)
+          var meshes = [];
+          model.traverse(function (child) {
+            if (child.isMesh) {
+              var bb = new THREE.Box3().setFromObject(child);
+              var cy = bb.getCenter(new THREE.Vector3()).y;
+              meshes.push({ mesh: child, cy: cy });
+            }
+          });
+          // Ordenar de menor a mayor Y → meshes[0] es la base / cuerpo
+          meshes.sort(function (a, b) { return a.cy - b.cy; });
+
+          // meshes[0] = cuerpo de la botella (vidrio negro brillante + etiqueta)
+          if (meshes.length > 0) {
+            baseMesh = meshes[0].mesh;
+            baseMesh.material = new THREE.MeshStandardMaterial({
+              color: 0xffffff,
+              roughness: 0.08,
+              metalness: 0.04
+            });
+            if (textureCache[currentDesignIdx]) {
+              baseMesh.material.map = textureCache[currentDesignIdx];
+              baseMesh.material.needsUpdate = true;
+            } else {
+              pendingMesh = baseMesh;
+            }
+          }
+
+          // meshes[1] = cápsula (acabado y color dinámico según diseño)
+          if (meshes.length > 1) {
+            capMesh = meshes[1].mesh;
+            var initStyle = labelDesigns[currentDesignIdx].capStyle || burgCapStyle;
+            capMesh.material = new THREE.MeshStandardMaterial({
+              color: initStyle.color,
+              roughness: initStyle.roughness,
+              metalness: initStyle.metalness
+            });
+          }
+
+          // Center & fit model
+          var box = new THREE.Box3().setFromObject(model);
+          var center = box.getCenter(new THREE.Vector3());
+          var size = box.getSize(new THREE.Vector3());
+          var maxDim = Math.max(size.x, size.y, size.z);
+          var scale = 2.2 / maxDim;
+
+          model.scale.setScalar(scale);
+          model.position.copy(center.multiplyScalar(-scale));
+
+          scene.add(model);
+          loader.classList.add('hidden');
+        },
+        undefined,
+        function (err) {
+          console.error('Error cargando modelo GLTF:', err);
+          loader.querySelector('.sutil-loader-text').textContent = 'Error al cargar modelo';
+        }
+      );
+
+      // ── Orbit & Transición de Giro en eje Y ──
+      var isDragging = false;
+      var prevX = 0;
+      var rotY = 0;
+      var velX = 0;
+      var isSpinning = false;
+      var spinStartTime = 0;
+      var spinDuration = 800; // ms sincronizados con la transición del fondo (0.8s)
+      var spinStartRot = 0;
+      var spinTargetRot = 0;
+      var targetTex = null;
+      var textureSwapped = false;
+      var targetCapStyle = null;
+
+      function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+
+      canvas.addEventListener('pointerdown', function (e) {
+        isDragging = true;
+        isSpinning = false;
+        prevX = e.clientX;
+        canvas.setPointerCapture(e.pointerId);
+      });
+
+      canvas.addEventListener('pointermove', function (e) {
+        if (!isDragging) return;
+        var dx = e.clientX - prevX;
+        velX = dx * 0.004;
+        rotY += velX;
+        prevX = e.clientX;
+      });
+
+      canvas.addEventListener('pointerup', function () { isDragging = false; });
+
+      // ── Animate (Pausa en segundo plano para ahorrar GPU) ──
+      var isPageVisible = !document.hidden;
+      document.addEventListener('visibilitychange', function () {
+        var prev = isPageVisible;
+        isPageVisible = !document.hidden;
+        if (!prev && isPageVisible) {
+          requestAnimationFrame(animate);
+        }
+      });
+
+      function animate() {
+        if (!isPageVisible) return;
+        requestAnimationFrame(animate);
+
+        if (model) {
+          if (isSpinning) {
+            var now = performance.now();
+            var elapsed = now - spinStartTime;
+            var p = Math.min(1, elapsed / spinDuration);
+            var eased = easeInOutCubic(p);
+            rotY = spinStartRot + (spinTargetRot - spinStartRot) * eased;
+
+            // En el ecuador del giro (180º exactos), intercambiar la etiqueta y la tapa
+            if (p >= 0.5 && !textureSwapped && targetTex) {
+              if (baseMesh) {
+                baseMesh.material.map = targetTex;
+                baseMesh.material.needsUpdate = true;
+              }
+              if (capMesh && targetCapStyle) {
+                capMesh.material.color.setHex(targetCapStyle.color);
+                capMesh.material.roughness = targetCapStyle.roughness;
+                capMesh.material.metalness = targetCapStyle.metalness;
+                capMesh.material.needsUpdate = true;
+              }
+              textureSwapped = true;
+            }
+
+            if (p >= 1) {
+              isSpinning = false;
+              rotY = 0;
+              velX = 0;
+              model.rotation.y = 0;
+            }
+          } else if (!isDragging) {
+            velX *= 0.88;
+            rotY += velX;
+          }
+          model.rotation.y = rotY;
+          model.rotation.x = 0;
+          model.rotation.z = 0;
+        }
+
+        if (renderer && scene && camera) {
+          renderer.render(scene, camera);
+        }
+      }
+      animate();
+    })();
+  </script>
+
+</body>
+
+</html>

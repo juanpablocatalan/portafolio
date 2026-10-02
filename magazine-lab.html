@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magazine Transition Effects Lab — Juan Pablo</title>
+  <meta name="description" content="Laboratorio de cinemática y efectos de transición para revistas y catálogos interactivos.">
+  
+  <!-- Core & Magazine Stylesheets -->
+  <link rel="stylesheet" href="css/style.css?v=40">
+  <link rel="stylesheet" href="css/magazine.css?v=5">
+
+  <style>
+    .lab-hero {
+      padding-top: calc(var(--space-2xl) + 1.5rem);
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: var(--space-lg);
+    }
+
+    .lab-top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-md);
+    }
+
+    .lab-back-link {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color var(--transition-fast);
+    }
+
+    .lab-back-link:hover {
+      color: #FFFFFF;
+    }
+
+    .lab-headline-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .lab-main-title {
+      font-family: var(--font-primary);
+      font-size: clamp(1.8rem, 3.5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
+
+    .lab-main-desc {
+      font-family: var(--font-primary);
+      font-size: var(--text-sm);
+      color: var(--color-muted);
+      max-width: 600px;
+      line-height: 1.6;
+      margin-top: 0.5rem;
+    }
+
+    .lab-badge-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .lab-tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      padding: 0.25rem 0.6rem;
+      border: 1px solid var(--color-border);
+      border-radius: 100px;
+      color: var(--color-text);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .lab-tag.highlight {
+      background: #FFFFFF;
+      color: #000000;
+      font-weight: 600;
+      border-color: #FFFFFF;
+    }
+
+    /* Transition Switcher Grid */
+    .fx-selector-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: var(--space-lg);
+    }
+
+    .fx-card-btn {
+      background: #111111;
+      border: 1px solid var(--color-border);
+      padding: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: left;
+      transition: all var(--transition-fast);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 95px;
+    }
+
+    .fx-card-btn:hover {
+      border-color: #555555;
+      background: #161616;
+      transform: translateY(-2px);
+    }
+
+    .fx-card-btn.active {
+      background: #FFFFFF;
+      color: #000000;
+      border-color: #FFFFFF;
+      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
+    }
+
+    .fx-card-num {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--color-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .fx-card-btn.active .fx-card-num {
+      color: #555555;
+    }
+
+    .fx-card-name {
+      font-family: var(--font-primary);
+      font-weight: 700;
+      font-size: 0.88rem;
+      letter-spacing: -0.01em;
+      margin: 0.25rem 0;
+    }
+
+    .fx-card-badge {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    /* Technical Spec Pill */
+    .fx-tech-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #141414;
+      border: 1px solid var(--color-border);
+      padding: 0.6rem 1rem;
+      border-radius: 4px;
+      margin-bottom: var(--space-md);
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+    }
+
+    .fx-tech-val {
+      color: var(--color-text);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="back-link">INICIO</a>
+      <nav class="site-nav" aria-label="Navegación principal">
+        <ul>
+          <li><a href="index.html" class="nav-link">PROYECTOS</a></li>
+          <li><a href="sobremi.html" class="nav-link">SOBRE MÍ</a></li>
+          <li><a href="library-3d.html" class="nav-link">3D LIBRARY</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content" class="container">
+
+    <!-- Lab Hero Section -->
+    <section class="lab-hero">
+      <div class="lab-top-nav">
+        <a href="projects/project-01.html" class="lab-back-link">&larr; Volver al Caso de Estudio (Fronteo)</a>
+        <div class="lab-badge-group">
+          <span class="lab-tag highlight">LAB EXPERIMENTAL</span>
+          <span class="lab-tag">6 EFFECT STYLES</span>
+          <span class="lab-tag">60–120 FPS</span>
+        </div>
+      </div>
+
+      <div class="lab-headline-group">
+        <div>
+          <h1 class="lab-main-title">Laboratorio de Transiciones Editoriales</h1>
+          <p class="lab-main-desc">
+            Galería interactiva para probar y comparar diferentes estilos de cinemática, rotaciones 3D, deslizamiento suizo y disolvencias visuales aplicables a revistas digitales.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transition Style Switcher Grid -->
+    <section aria-label="Selector de efectos de transición">
+      <div class="fx-selector-grid">
+        <button type="button" class="fx-card-btn active" data-fx="flip-3d">
+          <span class="fx-card-num">01 / PRESET</span>
+          <div class="fx-card-name">Volteo 3D desde la Esquina</div>
+          <span class="fx-card-badge">Corner Lift &amp; Unfold • 480ms</span>
+        </button>
+
+        <button type="button" class="fx-card-btn" data-fx="slide-editorial">
+          <span class="fx-card-num">02 / PRESET</span>
+          <div class="fx-card-name">Deslizamiento Suizo</div>
+          <span class="fx-card-badge">Kinetic Slide • 380ms</span>
+        </button>
+
+        <button type="button" class="fx-card-btn" data-fx="fold-accordion">
+          <span class="fx-card-num">03 / PRESET</span>
+          <div class="fx-card-name">Pliegue Acordeón 3D</div>
+          <span class="fx-card-badge">Origami Fold • 420ms</span>
+        </button>
+
+        <button type="button" class="fx-card-btn" data-fx="fade-zoom">
+          <span class="fx-card-num">04 / PRESET</span>
+          <div class="fx-card-name">Disolvencia &amp; Zoom</div>
+          <span class="fx-card-badge">Cinematic Blur • 350ms</span>
+        </button>
+
+        <button type="button" class="fx-card-btn" data-fx="peel-card">
+          <span class="fx-card-num">05 / PRESET</span>
+          <div class="fx-card-name">Elevación Táctil</div>
+          <span class="fx-card-badge">Peel &amp; Lift • 420ms</span>
+        </button>
+
+        <button type="button" class="fx-card-btn" data-fx="shutter-wipe">
+          <span class="fx-card-num">06 / PRESET</span>
+          <div class="fx-card-name">Cortina Geométrica</div>
+          <span class="fx-card-badge">Clip Mask • 380ms</span>
+        </button>
+      </div>
+
+      <!-- Technical Spec Indicator -->
+      <div class="fx-tech-banner">
+        <span>EFECTO ACTIVO: <span class="fx-tech-val" id="lab-active-fx-title">Volteo 3D Realista</span></span>
+        <span>CINEMÁTICA: <span class="fx-tech-val" id="lab-active-fx-spec">rotateY(-180deg) + dynamic drop-shadow</span></span>
+        <span>ACELERACIÓN: <span class="fx-tech-val">GPU Hardware Layer</span></span>
+      </div>
+    </section>
+
+    <!-- Sandbox Magazine Flipbook Stage -->
+    <section class="magazine-showcase-section" style="margin-top: 0;" aria-label="Simulador interactivo de catálogo">
+      <div class="magazine-stage-container" id="fronteo-magazine-container">
+        
+        <div class="magazine-viewport">
+          <div id="heyzine-book" class="heyzine-flipbook"></div>
+        </div>
+
+        <!-- Thumbnail Overview Drawer -->
+        <div class="mag-thumbnail-drawer" id="mag-thumbnail-drawer">
+          <div class="mag-drawer-header">
+            <span>VISTA DE MINIATURAS — SPREADS</span>
+            <button type="button" class="mag-btn" id="mag-drawer-close" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;">Cerrar &times;</button>
+          </div>
+          <div class="mag-thumb-grid" id="mag-thumb-grid"></div>
+        </div>
+
+        <!-- Interactive Dock Controls -->
+        <div class="magazine-dock">
+          <div class="mag-nav-group">
+            <button type="button" class="mag-btn mag-btn-icon" id="mag-btn-prev" aria-label="Página anterior" title="Página anterior (←)">
+              &larr;
+            </button>
+            <button type="button" class="mag-btn mag-btn-icon" id="mag-btn-next" aria-label="Página siguiente" title="Página siguiente (→)">
+              &rarr;
+            </button>
+          </div>
+
+          <!-- Page indicator -->
+          <div class="mag-page-indicator">
+            <span id="mag-page-indicator-text"><span class="mag-current-page-num">PORTADA • 01</span> / 106</span>
+          </div>
+
+          <!-- Tools (Thumbnails, Zoom, Sound, Fullscreen) -->
+          <div class="mag-nav-group">
+            <button type="button" class="mag-btn" id="mag-btn-thumbs" title="Ver miniaturas de páginas">
+              <span>📑</span> <span>Spreads</span>
+            </button>
+            <button type="button" class="mag-btn mag-btn-icon" id="mag-btn-zoom" title="Inspeccionar / Zoom" aria-label="Inspeccionar">
+              🔍
+            </button>
+            <button type="button" class="mag-btn mag-btn-icon" id="mag-btn-fullscreen" title="Pantalla completa (F)" aria-label="Pantalla completa">
+              ⛶
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Zoom Inspection Modal -->
+    <div class="mag-zoom-modal" id="mag-zoom-modal" role="dialog" aria-modal="true" aria-label="Inspección detallada de página">
+      <button type="button" class="mag-zoom-close" id="mag-zoom-close" aria-label="Cerrar inspección">&times;</button>
+      <div class="mag-zoom-content">
+        <img src="assets/projects/fronteo-lookbook-01.jpg" alt="Zoom Detail" id="mag-zoom-img">
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">JUAN-PABLO CATALÁN</span>
+      <span class="footer-copy">&copy; 2026</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/page-flip.browser.js?v=13"></script>
+  <script src="js/magazine.js?v=24"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const fxCards = document.querySelectorAll('.fx-card-btn');
+      const titleElem = document.getElementById('lab-active-fx-title');
+      const specElem = document.getElementById('lab-active-fx-spec');
+
+      const fxDetails = {
+        'flip-3d': {
+          title: 'Volteo 3D desde la Esquina',
+          spec: 'rotate3d() corner-lift + dynamic wave + paper sheen (480ms)'
+        },
+        'slide-editorial': {
+          title: 'Deslizamiento Suizo',
+          spec: 'translateX(±45px) + scale(0.97) + expo cubic-bezier (380ms)'
+        },
+        'fold-accordion': {
+          title: 'Pliegue Acordeón 3D',
+          spec: 'dual-hinge rotateY(±85deg) origami fold (420ms)'
+        },
+        'fade-zoom': {
+          title: 'Disolvencia & Zoom',
+          spec: 'opacity crossfade + scale(1.04) + blur(3px) (350ms)'
+        },
+        'peel-card': {
+          title: 'Elevación Táctil',
+          spec: 'translateY(-20px) + rotate(±3deg) + diffused elevation shadow (420ms)'
+        },
+        'shutter-wipe': {
+          title: 'Cortina Geométrica',
+          spec: 'symmetric clip-path: inset(0 50% 0 50%) mask wipe (380ms)'
+        }
+      };
+
+      fxCards.forEach(card => {
+        card.addEventListener('click', () => {
+          const fx = card.getAttribute('data-fx');
+          if (!fx || !window.fronteoMagazine) return;
+
+          // Update active card
+          fxCards.forEach(c => c.classList.remove('active'));
+          card.classList.add('active');
+
+          // Apply to magazine
+          window.fronteoMagazine.setEffect(fx);
+
+          // Update tech spec banner
+          if (fxDetails[fx]) {
+            titleElem.textContent = fxDetails[fx].title;
+            specElem.textContent = fxDetails[fx].spec;
+          }
+
+          // Trigger a preview flip forward or backward
+          if (window.fronteoMagazine.currentSpreadIndex < window.fronteoMagazine.totalSpreads - 1) {
+            window.fronteoMagazine.next();
+          } else {
+            window.fronteoMagazine.prev();
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

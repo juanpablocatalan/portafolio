@@ -1,0 +1,1351 @@
+/* ==========================================================================
+   FRONTEO EDITORIAL MAGAZINE & CATALOG SYSTEM
+   Contemporary Brutalist / Swiss Lookbook Flipbook Experience
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. MAGAZINE SHOWCASE SECTION & WRAPPER
+   -------------------------------------------------------------------------- */
+.magazine-showcase-section {
+  position: relative;
+  width: 100%;
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+  user-select: none;
+}
+
+.magazine-header {
+  margin-bottom: var(--space-md);
+}
+
+.magazine-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: var(--space-2xs);
+}
+
+.magazine-headline-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-xs);
+}
+
+.magazine-title {
+  font-family: var(--font-primary);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.magazine-subtitle {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --------------------------------------------------------------------------
+   2. FLIPBOOK STAGE & 3D ENVIRONMENT (Heyzine Experience)
+   -------------------------------------------------------------------------- */
+.magazine-stage-container {
+  position: relative;
+  width: 100%;
+  padding: clamp(1.5rem, 3vw, 3rem) 0;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border-radius: 0;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 600px;
+  transition: all 0.4s var(--ease-out-expo);
+}
+
+.magazine-stage-container:fullscreen,
+.magazine-stage-container:-webkit-full-screen {
+  padding: 2rem;
+  background: #080808;
+  border-radius: 0;
+  border: none;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.magazine-viewport {
+  position: relative;
+  width: 100%;
+  max-width: 1140px;
+  height: 680px;
+  perspective: 2500px;
+  perspective-origin: 50% 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: pan-y pinch-zoom;
+}
+
+@media (max-width: 1100px) {
+  .magazine-viewport {
+    height: 560px;
+    max-width: 900px;
+  }
+}
+
+@media (max-width: 900px) {
+  .magazine-viewport {
+    height: 480px;
+    max-width: 720px;
+  }
+}
+
+@media (max-width: 640px) {
+  .magazine-viewport {
+    height: 480px;
+    max-width: 360px;
+  }
+}
+
+/* Landscape Magazine Viewport (for 29.41 x 21 cm / Spread 58.82 x 21 cm) - Full Width */
+.magazine-viewport-landscape {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  height: clamp(340px, calc((100vw - 2 * var(--page-margin)) / 2.80095), 85vh);
+  perspective: 2500px;
+  perspective-origin: 50% 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: pan-y pinch-zoom;
+}
+
+@media (max-width: 900px) {
+  .magazine-viewport-landscape {
+    height: clamp(280px, calc((100vw - 2 * var(--page-margin)) / 2.80095), 520px);
+  }
+}
+
+@media (max-width: 640px) {
+  .magazine-viewport-landscape {
+    height: clamp(220px, calc((100vw - 2 * var(--page-margin)) / 1.4005), 450px);
+  }
+}
+
+/* Heyzine Flipbook Canvas Wrapper */
+.heyzine-flipbook {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.55s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.heyzine-flipbook.is-cover,
+.heyzine-flipbook.is-backcover {
+  transform: none !important;
+}
+
+.stf__parent {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  transform: translateZ(0);
+  touch-action: pan-y;
+  border-radius: 4px;
+  filter: drop-shadow(0 25px 45px rgba(0, 0, 0, 0.75)) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
+}
+
+.stf__wrapper {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+.stf__parent canvas {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  border-radius: 4px;
+  cursor: grab;
+}
+
+.stf__parent canvas:active {
+  cursor: grabbing;
+}
+
+/* Center binding line / spine shadow */
+.magazine-book::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 12px 3px rgba(0, 0, 0, 0.8), 0 0 4px 1px rgba(0, 0, 0, 0.9);
+  z-index: 40;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.magazine-book.is-single-page::before {
+  opacity: 0;
+}
+
+@media (max-width: 640px) {
+  .magazine-book::before {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. PAGES & SPREADS ARCHITECTURE
+   -------------------------------------------------------------------------- */
+.mag-spread {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  transform-style: preserve-3d;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Front Cover & Back Cover Spreads (Single Page Display) */
+.mag-spread.spread-cover,
+.mag-spread.spread-backcover {
+  justify-content: center;
+  align-items: center;
+}
+
+.mag-spread.spread-cover .mag-page,
+.mag-spread.spread-backcover .mag-page {
+  width: min(480px, 50%);
+  height: 100%;
+  margin: 0 auto;
+  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.75), 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+.mag-spread.spread-cover .mag-page {
+  border-radius: 0 6px 6px 0;
+  border-left: 3px solid rgba(255, 255, 255, 0.15);
+}
+
+.mag-spread.spread-backcover .mag-page {
+  border-radius: 6px 0 0 6px;
+  border-right: 3px solid rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 640px) {
+  .mag-spread.spread-cover .mag-page,
+  .mag-spread.spread-backcover .mag-page {
+    width: 100%;
+    border-radius: 4px;
+    border-left: none;
+    border-right: none;
+  }
+}
+
+.mag-spread.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  z-index: 10;
+}
+
+/* ==========================================================================
+   GALLERY OF PAGE TRANSITION EFFECTS
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. EFFECT: 3D REALISTIC CORNER FLIP (Default & Enhanced)
+   Lifting from bottom-corner and unfolding smoothly across the spine
+   -------------------------------------------------------------------------- */
+.effect-flip-3d .mag-spread.flipping-next .mag-page-right,
+.mag-stage-container:not([class*="effect-"]) .mag-spread.flipping-next .mag-page-right {
+  animation: cornerFlipRightToLeft 0.48s cubic-bezier(0.25, 0.9, 0.35, 1) forwards;
+  z-index: 35;
+  will-change: transform, box-shadow, clip-path;
+  transform-style: preserve-3d;
+}
+
+.effect-flip-3d .mag-spread.flipping-prev .mag-page-left,
+.mag-stage-container:not([class*="effect-"]) .mag-spread.flipping-prev .mag-page-left {
+  animation: cornerFlipLeftToRight 0.48s cubic-bezier(0.25, 0.9, 0.35, 1) forwards;
+  z-index: 35;
+  will-change: transform, box-shadow, clip-path;
+  transform-style: preserve-3d;
+}
+
+/* Realistic Paper Sheen Lighting Sweep */
+.effect-flip-3d .mag-spread.flipping-next .mag-page-right::after,
+.mag-stage-container:not([class*="effect-"]) .mag-spread.flipping-next .mag-page-right::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.45) 45%, rgba(0,0,0,0.55) 68%, transparent 90%);
+  pointer-events: none;
+  animation: paperSheenNext 0.48s cubic-bezier(0.25, 0.9, 0.35, 1) forwards;
+  z-index: 50;
+  border-radius: inherit;
+}
+
+.effect-flip-3d .mag-spread.flipping-prev .mag-page-left::after,
+.mag-stage-container:not([class*="effect-"]) .mag-spread.flipping-prev .mag-page-left::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(65deg, transparent 20%, rgba(255,255,255,0.45) 45%, rgba(0,0,0,0.55) 68%, transparent 90%);
+  pointer-events: none;
+  animation: paperSheenPrev 0.48s cubic-bezier(0.25, 0.9, 0.35, 1) forwards;
+  z-index: 50;
+  border-radius: inherit;
+}
+
+@keyframes paperSheenNext {
+  0% { opacity: 0; transform: translateX(80%) rotate(10deg); }
+  40% { opacity: 0.95; }
+  100% { opacity: 0; transform: translateX(-80%) rotate(-10deg); }
+}
+
+@keyframes paperSheenPrev {
+  0% { opacity: 0; transform: translateX(-80%) rotate(-10deg); }
+  40% { opacity: 0.95; }
+  100% { opacity: 0; transform: translateX(80%) rotate(10deg); }
+}
+
+@keyframes cornerFlipRightToLeft {
+  0% {
+    transform: rotateY(0deg) rotateZ(0deg) translateZ(0);
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+  }
+  18% {
+    /* Corner peels upward from bottom-right */
+    transform: rotate3d(0.5, -1, 0.2, 32deg) rotateZ(-4deg) translateZ(35px) skewX(2deg);
+    box-shadow: -22px 20px 35px rgba(0, 0, 0, 0.45);
+  }
+  50% {
+    /* Sheet arches across center spine with curvature */
+    transform: rotate3d(0.15, -1, 0.08, 90deg) rotateZ(-2deg) translateZ(55px) scale(1.02);
+    box-shadow: -45px 30px 55px rgba(0, 0, 0, 0.55);
+  }
+  80% {
+    /* Unfolding onto the left side */
+    transform: rotate3d(-0.2, -1, -0.1, 150deg) rotateZ(2deg) translateZ(25px) skewX(-1.5deg);
+    box-shadow: 18px 15px 30px rgba(0, 0, 0, 0.35);
+  }
+  100% {
+    /* Flattens smoothly onto left page */
+    transform: rotateY(-180deg) rotateZ(0deg) translateZ(0);
+    box-shadow: 6px 0 15px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@keyframes cornerFlipLeftToRight {
+  0% {
+    transform: rotateY(0deg) rotateZ(0deg) translateZ(0);
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+  }
+  18% {
+    /* Corner peels upward from bottom-left */
+    transform: rotate3d(0.5, 1, -0.2, 32deg) rotateZ(4deg) translateZ(35px) skewX(-2deg);
+    box-shadow: 22px 20px 35px rgba(0, 0, 0, 0.45);
+  }
+  50% {
+    /* Sheet arches across center spine */
+    transform: rotate3d(0.15, 1, -0.08, 90deg) rotateZ(2deg) translateZ(55px) scale(1.02);
+    box-shadow: 45px 30px 55px rgba(0, 0, 0, 0.55);
+  }
+  80% {
+    /* Unfolding onto the right side */
+    transform: rotate3d(-0.2, 1, 0.1, 150deg) rotateZ(-2deg) translateZ(25px) skewX(1.5deg);
+    box-shadow: -18px 15px 30px rgba(0, 0, 0, 0.35);
+  }
+  100% {
+    /* Flattens smoothly onto right page */
+    transform: rotateY(180deg) rotateZ(0deg) translateZ(0);
+    box-shadow: -6px 0 15px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. EFFECT: SWISS EDITORIAL SLIDE
+   -------------------------------------------------------------------------- */
+.effect-slide-editorial .mag-spread.flipping-next {
+  animation: slideEditorialNext 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  z-index: 25;
+  will-change: transform, opacity;
+}
+
+.effect-slide-editorial .mag-spread.flipping-prev {
+  animation: slideEditorialPrev 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  z-index: 25;
+  will-change: transform, opacity;
+}
+
+@keyframes slideEditorialNext {
+  0% {
+    transform: translateX(45px) scale(0.97);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideEditorialPrev {
+  0% {
+    transform: translateX(-45px) scale(0.97);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. EFFECT: ACCORDION / ORIGAMI FOLD 3D
+   -------------------------------------------------------------------------- */
+.effect-fold-accordion .mag-spread.flipping-next .mag-page-left {
+  animation: accordionLeftFold 0.42s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+.effect-fold-accordion .mag-spread.flipping-next .mag-page-right {
+  animation: accordionRightFold 0.42s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.effect-fold-accordion .mag-spread.flipping-prev .mag-page-left {
+  animation: accordionLeftFoldRev 0.42s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+.effect-fold-accordion .mag-spread.flipping-prev .mag-page-right {
+  animation: accordionRightFoldRev 0.42s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes accordionLeftFold {
+  0% { transform: rotateY(-85deg); opacity: 0; filter: brightness(0.6); }
+  100% { transform: rotateY(0deg); opacity: 1; filter: brightness(1); }
+}
+@keyframes accordionRightFold {
+  0% { transform: rotateY(85deg); opacity: 0; filter: brightness(0.6); }
+  100% { transform: rotateY(0deg); opacity: 1; filter: brightness(1); }
+}
+@keyframes accordionLeftFoldRev {
+  0% { transform: rotateY(85deg); opacity: 0; filter: brightness(0.6); }
+  100% { transform: rotateY(0deg); opacity: 1; filter: brightness(1); }
+}
+@keyframes accordionRightFoldRev {
+  0% { transform: rotateY(-85deg); opacity: 0; filter: brightness(0.6); }
+  100% { transform: rotateY(0deg); opacity: 1; filter: brightness(1); }
+}
+
+/* --------------------------------------------------------------------------
+   4. EFFECT: CINEMATIC FADE & ZOOM
+   -------------------------------------------------------------------------- */
+.effect-fade-zoom .mag-spread.flipping-next,
+.effect-fade-zoom .mag-spread.flipping-prev {
+  animation: cinematicFadeZoom 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity, filter;
+}
+
+@keyframes cinematicFadeZoom {
+  0% {
+    opacity: 0;
+    transform: scale(1.04);
+    filter: blur(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. EFFECT: TACTILE PEEL & LIFT
+   -------------------------------------------------------------------------- */
+.effect-peel-card .mag-spread.flipping-next .mag-page-right {
+  animation: peelLiftNext 0.42s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+  z-index: 30;
+  will-change: transform, box-shadow;
+}
+.effect-peel-card .mag-spread.flipping-prev .mag-page-left {
+  animation: peelLiftPrev 0.42s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+  z-index: 30;
+  will-change: transform, box-shadow;
+}
+
+@keyframes peelLiftNext {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+  }
+  40% {
+    transform: translateY(-20px) rotate(-3deg);
+    box-shadow: 0 25px 35px rgba(0,0,0,0.6);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+}
+
+@keyframes peelLiftPrev {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+  }
+  40% {
+    transform: translateY(-20px) rotate(3deg);
+    box-shadow: 0 25px 35px rgba(0,0,0,0.6);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   6. EFFECT: ARCHITECTURAL SHUTTER / WIPE
+   -------------------------------------------------------------------------- */
+.effect-shutter-wipe .mag-spread.flipping-next,
+.effect-shutter-wipe .mag-spread.flipping-prev {
+  animation: architecturalWipe 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: clip-path, opacity, transform;
+}
+
+@keyframes architecturalWipe {
+  0% {
+    clip-path: inset(0 50% 0 50%);
+    opacity: 0.6;
+    transform: scale(0.98);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Individual Pages */
+.mag-page {
+  position: relative;
+  width: 50%;
+  height: 100%;
+  background-color: #F7F7F6;
+  color: #111111;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: clamp(1.2rem, 2.5vw, 2.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  cursor: pointer;
+}
+
+.mag-page.mag-page-full {
+  padding: 0 !important;
+  background-color: #0e0e0e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mag-page-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* Spine lighting overlays */
+.mag-page-left {
+  border-radius: 4px 0 0 4px;
+  transform-origin: right center;
+  background: linear-gradient(to right, #F9F9F8 0%, #F5F5F4 85%, #DFDFDD 100%);
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.mag-page-right {
+  border-radius: 0 4px 4px 0;
+  transform-origin: left center;
+  background: linear-gradient(to left, #F9F9F8 0%, #F5F5F4 85%, #DFDFDD 100%);
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Dark mode / dark page variants for high impact spreads */
+.mag-page.page-dark {
+  background: linear-gradient(to right, #111111 0%, #161616 85%, #0d0d0d 100%);
+  color: #FFFFFF;
+}
+
+.mag-page.page-dark.mag-page-right {
+  background: linear-gradient(to left, #111111 0%, #161616 85%, #0d0d0d 100%);
+}
+
+/* Corner Page Curl Indicators & Hotspots (Dog-Ear on Hover) */
+.mag-page-right::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, transparent 48%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.5) 52%, rgba(0, 0, 0, 0.4) 56%, transparent 65%);
+  clip-path: polygon(100% 100%, 100% 100%, 100% 100%);
+  transition: clip-path 0.28s cubic-bezier(0.2, 0.9, 0.3, 1), filter 0.28s;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.mag-page-right:hover::before {
+  clip-path: polygon(100% 25%, 25% 100%, 100% 100%);
+  filter: drop-shadow(-5px -5px 10px rgba(0, 0, 0, 0.7));
+}
+
+.mag-page-left::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(225deg, transparent 48%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.5) 52%, rgba(0, 0, 0, 0.4) 56%, transparent 65%);
+  clip-path: polygon(0 100%, 0 100%, 0 100%);
+  transition: clip-path 0.28s cubic-bezier(0.2, 0.9, 0.3, 1), filter 0.28s;
+  pointer-events: none;
+  z-index: 25;
+}
+
+.mag-page-left:hover::before {
+  clip-path: polygon(0 25%, 75% 100%, 0 100%);
+  filter: drop-shadow(5px -5px 10px rgba(0, 0, 0, 0.7));
+}
+
+/* Page curl cues on hover */
+.mag-page-left:hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(0,0,0,0.05) 50%, transparent 50%);
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+
+.mag-page-right:hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(-135deg, rgba(255,255,255,0.8) 0%, rgba(0,0,0,0.05) 50%, transparent 50%);
+  box-shadow: -2px 2px 5px rgba(0,0,0,0.15);
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+
+/* Mobile single page mode */
+@media (max-width: 640px) {
+  .mag-spread {
+    display: block;
+  }
+  .mag-page {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+  }
+  .mag-page-left, .mag-page-right {
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .mag-page-right {
+    display: none;
+  }
+  .mag-spread.single-page-right .mag-page-left {
+    display: none;
+  }
+  .mag-spread.single-page-right .mag-page-right {
+    display: flex;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. EDITORIAL PAGE INTERIOR TYPOGRAPHY & LAYOUTS
+   -------------------------------------------------------------------------- */
+.mag-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #777777;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.8rem;
+}
+
+.page-dark .mag-page-header {
+  color: #999999;
+  border-bottom-color: rgba(255, 255, 255, 0.15);
+}
+
+.mag-page-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: #777777;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 0.4rem;
+  margin-top: 0.8rem;
+}
+
+.page-dark .mag-page-footer {
+  color: #888888;
+  border-top-color: rgba(255, 255, 255, 0.15);
+}
+
+.mag-page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+/* Page Type 1: Cover Spread */
+.mag-cover-full {
+  padding: 0 !important;
+  background-color: #0d0d0d;
+}
+
+.mag-cover-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.mag-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mag-cover-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 40%, rgba(0,0,0,0.7) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem;
+  color: #FFFFFF;
+}
+
+.mag-cover-badge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  background: #FFFFFF;
+  color: #000000;
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  font-weight: 700;
+  align-self: flex-start;
+}
+
+.mag-cover-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.mag-cover-barcode {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  opacity: 0.8;
+}
+
+/* Page Type 2: Editorial Text & Typography */
+.mag-big-title {
+  font-family: var(--font-primary);
+  font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.75rem;
+}
+
+.mag-body-p {
+  font-family: var(--font-primary);
+  font-size: clamp(0.72rem, 1vw, 0.82rem);
+  line-height: 1.5;
+  color: #333333;
+  margin-bottom: 0.75rem;
+}
+
+.page-dark .mag-body-p {
+  color: #CCCCCC;
+}
+
+.mag-columns-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.mag-specimen-box {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 0.6rem;
+  border-radius: 2px;
+  margin-top: 0.5rem;
+}
+
+.page-dark .mag-specimen-box {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.mag-type-scale {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: clamp(1rem, 2.2vw, 1.8rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  word-break: break-all;
+}
+
+.mag-mono-table {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  border-collapse: collapse;
+  margin-top: 0.4rem;
+}
+
+.mag-mono-table td {
+  padding: 0.2rem 0;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.page-dark .mag-mono-table td {
+  border-bottom-color: rgba(255,255,255,0.08);
+}
+
+/* Page Type 3: Imagery Spreads */
+.mag-media-spread {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.mag-media-spread img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mag-caption {
+  position: absolute;
+  bottom: 0.8rem;
+  left: 0.8rem;
+  right: 0.8rem;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  padding: 0.4rem 0.6rem;
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* --------------------------------------------------------------------------
+   5. INTERACTIVE CONTROLS DOCK
+   -------------------------------------------------------------------------- */
+.magazine-dock {
+  margin-top: var(--space-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 390px !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  gap: 0.6rem;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1.5px solid #49bed9 !important;
+  padding: 0.35rem 0.85rem;
+  border-radius: 100px;
+  z-index: 50;
+  box-shadow: none !important;
+}
+
+.mag-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.mag-btn {
+  background: transparent;
+  border: 1px solid rgba(73, 190, 217, 0.4);
+  color: #49bed9;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 100px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: all var(--transition-fast);
+}
+
+.mag-btn:hover {
+  background: #49bed9;
+  color: #000000;
+  border-color: #49bed9;
+  transform: translateY(-1px);
+}
+
+.mag-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.mag-btn-icon {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+}
+
+.mag-page-indicator {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: #49bed9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex: 1;
+  gap: 0.4rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  padding: 0 0.35rem;
+}
+
+.mag-current-page-num {
+  color: #49bed9;
+  font-weight: 700;
+}
+
+.mag-scrubber {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. THUMBNAIL OVERVIEW DRAWER
+   -------------------------------------------------------------------------- */
+.mag-thumbnail-drawer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--color-border);
+  padding: 1.25rem;
+  transform: translateY(100%);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.35s var(--ease-out-expo);
+  z-index: 60;
+}
+
+.mag-thumbnail-drawer.open {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+.mag-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.mag-thumb-grid {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: #444 transparent;
+}
+
+.mag-thumb-grid::-webkit-scrollbar {
+  height: 4px;
+}
+.mag-thumb-grid::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+.mag-thumb-item {
+  flex: 0 0 110px;
+  height: 75px;
+  background: #1c1c1c;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.mag-thumb-item:hover {
+  border-color: #FFFFFF;
+  transform: scale(1.04);
+}
+
+.mag-thumb-item.active {
+  border-color: #FFFFFF;
+  box-shadow: 0 0 0 2px #FFFFFF;
+}
+
+.mag-thumb-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+.mag-thumb-item:hover img,
+.mag-thumb-item.active img {
+  opacity: 1;
+}
+
+.mag-thumb-label {
+  position: absolute;
+  bottom: 2px;
+  left: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: #FFFFFF;
+  background: rgba(0,0,0,0.7);
+  padding: 1px 3px;
+}
+
+/* --------------------------------------------------------------------------
+   7. ZOOM LIGHTBOX MODAL
+   -------------------------------------------------------------------------- */
+.mag-zoom-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  padding: 2rem;
+}
+
+.mag-zoom-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mag-zoom-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+.mag-zoom-content img {
+  max-width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+}
+
+.mag-zoom-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: #222;
+  color: #fff;
+  border: 1px solid #444;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.mag-zoom-close:hover {
+  background: #fff;
+  color: #000;
+}
+
+/* --------------------------------------------------------------------------
+   8. TRANSITION EFFECTS GALLERY MENU & SELECTOR
+   -------------------------------------------------------------------------- */
+.mag-fx-container {
+  position: relative;
+  display: inline-flex;
+}
+
+.mag-fx-menu {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  background: rgba(14, 14, 14, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 230px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: all 0.25s var(--ease-out-expo);
+  z-index: 100;
+}
+
+.mag-fx-menu.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.mag-fx-title {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-muted);
+  padding: 0.3rem 0.6rem;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 0.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mag-fx-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.45rem 0.6rem;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--transition-fast);
+  gap: 0.5rem;
+}
+
+.mag-fx-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+}
+
+.mag-fx-option.active {
+  background: #FFFFFF;
+  color: #000000;
+  font-weight: 600;
+}
+
+.mag-fx-badge {
+  font-size: 0.58rem;
+  padding: 0.15rem 0.35rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  color: inherit;
+  letter-spacing: 0.04em;
+}
+
+.mag-fx-option.active .mag-fx-badge {
+  background: #000000;
+  color: #FFFFFF;
+}
+
+.mag-interaction-hint {
+  font-family: 'PPSupplySans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* ==========================================================================
+   8. SPECIAL PAGE 03 CALLOUT BLOCK
+   ========================================================================== */
+.mag-special-tag {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%) translateY(8px);
+  opacity: 0;
+  width: 100%;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mag-special-tag.active {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
+  pointer-events: auto;
+}
+
+.mag-special-title {
+  font-family: 'PPSupplySans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(1.25rem, 1.9vw, 1.75rem);
+  line-height: 1.2;
+  margin: 0 0 0.75rem 0;
+  color: #FFFFFF;
+}
+
+.mag-special-title .part-pagina {
+  font-family: 'PPSupplySans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 200;
+  color: #FFFFFF;
+  letter-spacing: 0.02em;
+}
+
+.mag-special-title .part-especial {
+  font-family: 'PPSupplySans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 400;
+  color: #FFFFFF;
+  letter-spacing: 0.02em;
+}
+
+.mag-special-desc {
+  font-family: var(--font-primary);
+  font-size: clamp(0.85rem, 1.05vw, 0.95rem);
+  font-weight: 400;
+  color: #A8A8A8;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+  margin: 0 0 1.15rem 0;
+  max-width: 280px;
+}
+
+.mag-special-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: 'PPSupplySans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: clamp(0.72rem, 0.9vw, 0.82rem);
+  font-weight: 400;
+  color: #E8E8E8;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: color 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
+}
+
+.mag-special-link:hover {
+  color: #49bed9;
+  opacity: 1;
+}
+

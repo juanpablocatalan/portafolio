@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+  </script>
+  <title>Juan-Pablo Catalán</title>
+  <meta name="description"
+    content="Portfolio of Juan Pablo — Editorial design, visual identities, and contemporary digital experiences.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/happy-face.svg">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="css/style.css?v=113">
+</head>
+
+<body class="home-locked">
+
+  <!-- Mobile Notice Banner -->
+  <div class="mobile-notice" id="mobile-notice" role="alert">
+    <div class="mobile-notice-inner">
+      <p class="mobile-notice-title">Próximamente<br>una mejor experiencia móvil.</p>
+      <p class="mobile-notice-body">Para una mejor experiencia visual e interactiva con los proyectos, es recomendable
+        abrir este enlace desde un ordenador.</p>
+      <button class="mobile-notice-btn" id="mobile-notice-close" type="button">
+        Continuar de todos modos <span class="mobile-notice-arrow" aria-hidden="true">&rarr;</span>
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Permanent Top-Left Statement Header -->
+  <header class="site-header-static" id="site-header-static">
+    <div class="container header-static-inner">
+      <div class="static-header-block">
+        <span class="static-header-label"><span class="header-name-light">portafolio</span> <span
+            class="header-name-bold">diseño integral</span></span>
+        <span class="static-header-sub">Portafolio en construcción</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Static Stage (100vh locked on Desktop) -->
+  <main class="home-main container" id="main-content">
+    <div class="home-stage">
+
+      <!-- Left Column: Visual Showcase & Active Project Preview -->
+      <section class="stage-left" aria-label="Escenario visual del proyecto">
+
+        <!-- Interactive 3D Smiley Hero Stage -->
+        <div class="smiley-3d-wrapper" id="smiley-3d-wrapper" aria-hidden="true">
+          <canvas id="smiley-3d-canvas"></canvas>
+        </div>
+
+        <!-- Dynamic Project Preview Cards (Swapped on right list hover) -->
+        <div class="preview-display-wrapper" id="preview-stage">
+
+          <!-- Preview 01 -->
+          <article class="preview-card" id="preview-1" data-project-target="1">
+            <a href="projects/dialektografia.html" class="preview-media-anchor media-frame"
+              aria-label="Ver Dialektografía">
+              <img src="assets/proyecto2/portada.jpg" alt="Dialektografía" class="preview-media-img">
+            </a>
+            <div class="preview-meta-caption">
+              <span class="preview-meta-title">01 Dialektografía</span>
+              <span class="preview-meta-category">Editorial y tipografía</span>
+            </div>
+          </article>
+
+          <!-- Preview 02 -->
+          <article class="preview-card" id="preview-2" data-project-target="2">
+            <a href="projects/cycia.html" class="preview-media-anchor media-frame" aria-label="Ver Catalán y Cía.">
+              <canvas class="preview-mesh-canvas" id="preview-3-mesh-canvas"></canvas>
+              <div class="preview-logo-overlay">
+                <img src="assets/catalanycia/logo.svg" alt="Catalán y Cía. Logo" class="preview-logo-img">
+              </div>
+              <img src="assets/projects/project-05.jpg" alt="Catalán y Cía." class="preview-media-img">
+            </a>
+            <div class="preview-meta-caption">
+              <span class="preview-meta-title">02 Catalán y Cía.</span>
+              <span class="preview-meta-category">Branding + Diseño Web</span>
+            </div>
+          </article>
+
+          <!-- Preview 03 -->
+          <article class="preview-card" id="preview-3" data-project-target="3">
+            <a href="projects/fronteo.html" class="preview-media-anchor media-frame" aria-label="Ver Fronteo">
+              <img src="assets/projects/project-01.jpg?v=3" alt="Fronteo" class="preview-media-img">
+            </a>
+            <div class="preview-meta-caption">
+              <span class="preview-meta-title">03 Fronteo</span>
+              <span class="preview-meta-category">Edición y Diseño</span>
+            </div>
+          </article>
+
+          <!-- Preview 04 -->
+          <article class="preview-card" id="preview-4" data-project-target="4">
+            <a href="projects/sutil.html" class="preview-media-anchor media-frame" aria-label="Ver Sutil Wines">
+              <img src="assets/Sutil/Imagen_AI.jpg" alt="Sutil Wines" class="preview-media-img">
+            </a>
+            <div class="preview-meta-caption">
+              <span class="preview-meta-title">04 Sutil Wines</span>
+              <span class="preview-meta-category">Branding + Packaging</span>
+            </div>
+          </article>
+
+          <!-- Preview 05 (Sin foto de fondo) -->
+          <article class="preview-card" id="preview-5" data-project-target="5">
+          </article>
+
+
+        </div>
+
+      </section>
+
+      <!-- Right Column: Project Index List -->
+      <aside class="stage-right" aria-label="Listado de proyectos">
+        <div class="project-list-header">
+          <span class="project-list-label">TRABAJOS</span>
+        </div>
+
+        <nav class="project-index-nav">
+          <ul class="project-index-list" id="project-list">
+
+            <li class="project-index-item" data-project="1">
+              <a href="projects/dialektografia.html" class="project-index-link">
+                <div class="index-item-left">
+                  <span class="index-item-num">01</span>
+                  <span class="index-item-title">Dialektografía</span>
+                </div>
+                <div class="index-item-right">
+                  <span class="index-item-cat">Editorial</span>
+                  <span class="index-item-year">2026</span>
+                  <span class="index-item-arrow" aria-hidden="true">&rarr;</span>
+                </div>
+              </a>
+            </li>
+
+            <li class="project-index-item" data-project="2">
+              <a href="projects/cycia.html" class="project-index-link">
+                <div class="index-item-left">
+                  <span class="index-item-num">02</span>
+                  <span class="index-item-title">Catalán y Cía.</span>
+                </div>
+                <div class="index-item-right">
+                  <span class="index-item-cat">Branding</span>
+                  <span class="index-item-year">2026</span>
+                  <span class="index-item-arrow" aria-hidden="true">&rarr;</span>
+                </div>
+              </a>
+            </li>
+
+            <li class="project-index-item" data-project="3">
+              <a href="projects/fronteo.html" class="project-index-link">
+                <div class="index-item-left">
+                  <span class="index-item-num">03</span>
+                  <span class="index-item-title">Fronteo</span>
+                </div>
+                <div class="index-item-right">
+                  <span class="index-item-cat">Editorial</span>
+                  <span class="index-item-year">2026</span>
+                  <span class="index-item-arrow" aria-hidden="true">&rarr;</span>
+                </div>
+              </a>
+            </li>
+
+            <li class="project-index-item" data-project="4">
+              <a href="projects/sutil.html" class="project-index-link">
+                <div class="index-item-left">
+                  <span class="index-item-num">04</span>
+                  <span class="index-item-title">Sutil Wines</span>
+                </div>
+                <div class="index-item-right">
+                  <span class="index-item-cat">Packaging</span>
+                  <span class="index-item-year">2025</span>
+                  <span class="index-item-arrow" aria-hidden="true">&rarr;</span>
+                </div>
+              </a>
+            </li>
+
+            <li class="project-index-item" data-project="5">
+              <a href="projects/contenido.html" class="project-index-link">
+                <div class="index-item-left">
+                  <span class="index-item-num">05</span>
+                  <span class="index-item-title">Piezas gráficas</span>
+                </div>
+                <div class="index-item-right">
+                  <span class="index-item-cat">Campañas</span>
+                  <span class="index-item-year">2023</span>
+                  <span class="index-item-arrow" aria-hidden="true">&rarr;</span>
+                </div>
+              </a>
+            </li>
+
+
+          </ul>
+        </nav>
+
+        <!-- Bottom Navigation Row (Distributed across project block width) -->
+        <nav class="project-list-footer" aria-label="Navegación secundaria">
+          <a href="sobremi.html" class="stage-footer-link">SOBRE MÍ</a>
+          <div class="contact-button-wrapper">
+            <button type="button" class="stage-footer-link contact-trigger-btn" id="contact-trigger"
+              aria-expanded="false" aria-controls="contact-drawer">CONTACTO</button>
+
+            <!-- Expandable Contact Options Drawer -->
+            <div class="contact-drawer" id="contact-drawer" aria-hidden="true">
+              <div class="contact-drawer-inner">
+                <a href="mailto:juan-pablo.catalan@uc.cl" class="contact-sublink">EMAIL</a>
+                <a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer"
+                  class="contact-sublink">LINKED IN</a>
+                <a href="https://www.instagram.com/jp.catalan/" target="_blank" rel="noopener noreferrer"
+                  class="contact-sublink">INSTAGRAM</a>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">JUAN-PABLO CATALÁN</span>
+      <span class="footer-copy">&copy; 2026</span>
+    </div>
+  </footer>
+
+  <!-- Custom Yellow Cursor Element -->
+  <div class="custom-cursor-wrapper" id="custom-cursor-wrapper" aria-hidden="true">
+    <div class="custom-cursor-dot" id="custom-cursor-dot"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/three.min.js"></script>
+  <script src="js/GLTFLoader.js"></script>
+  <script src="js/smiley3d.js?v=30"></script>
+  <script src="js/script.js?v=103"></script>
+  <script>
+    document.getElementById('mobile-notice-close').addEventListener('click', function () {
+      document.getElementById('mobile-notice').classList.add('is-hidden');
+      document.body.classList.add('notice-dismissed');
+    });
+  </script>
+</body>
+
+</html>

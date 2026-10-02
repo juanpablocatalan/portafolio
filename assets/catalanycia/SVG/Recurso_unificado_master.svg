@@ -1,0 +1,190 @@
+<svg id="unified-logotipo-master-svg" class="unified-logotipo-svg" viewBox="0 0 1484.63 198.53" xmlns="http://www.w3.org/2000/svg" aria-label="Retícula maestra unificada de construcción tipográfica de Catalán y Cía.">
+  <defs>
+    <style>
+      .uni-handle-line { stroke: #f28e0e; stroke-width: 0.5px; fill: none; stroke-miterlimit: 10; }
+      .uni-handle-dot { fill: #f28e0e; }
+      .uni-anchor-node { fill: #e61466; }
+      .uni-letter-fill { fill: #69112a; fill-opacity: 0.25; stroke: #69112a; stroke-width: 0.4px; }
+      .uni-stem-fill { fill: #f9cee1; fill-opacity: 0.5; stroke: #69112a; stroke-width: 0.3px; }
+      .uni-arch-fill { fill: #f28e0e; fill-opacity: 0.32; stroke: #f28e0e; stroke-width: 0.3px; }
+      .uni-annotation-text { fill: #1d1d1b; font-family: "TT Commons Pro", "TT Commons Pro Medium", sans-serif; font-size: 10.73px; font-weight: 700; }
+    </style>
+    <pattern id="master-unified-grid-pattern" width="3.9686" height="3.9686" patternUnits="userSpaceOnUse">
+      <path d="M 3.9686 0 L 0 0 0 3.9686" fill="none" stroke="#9d9d9c" stroke-width="0.1pt" shape-rendering="crispEdges" />
+    </pattern>
+  </defs>
+  <!-- Fondo y Retícula Continua Unificada (374 x 50 Módulos de 3.9686pt) -->
+  <rect x="0" y="0" width="1484.63" height="198.53" fill="#fafafa" />
+  <rect x="0" y="0" width="1484.63" height="198.53" fill="url(#master-unified-grid-pattern)" />
+  <!-- Glifo: c (Offset x=0.00) -->
+  <g id="unified-glyph-c" class="unified-glyph-group" data-glyph="c" transform="translate(0.00, 0)">
+    <path class="uni-letter-fill" d="M126.98,178.58c-55.56,0-77.52-158.74-11.91-158.74,21.69,0,31.69,15.87,39.63,39.69l23.86-11.91c-11.92-19.84-27.78-35.72-63.5-35.72-99.21,0-91.33,162.71-.05,174.61,31.73,4.14,55.63-15.87,67.53-39.69h-19.91c-3.97,15.87-11.85,31.75-35.66,31.75Z" />
+    <circle class="uni-handle-dot" cx="150.8" cy="11.91" r=".79" />
+    <circle class="uni-handle-dot" cx="134.93" cy="19.84" r=".79" />
+    <circle class="uni-handle-dot" cx="15.87" cy="11.91" r=".79" />
+    <circle class="uni-handle-dot" cx="47.62" cy="19.84" r=".79" />
+    <circle class="uni-handle-dot" cx="166.68" cy="27.78" r=".79" />
+    <circle class="uni-handle-dot" cx="146.83" cy="35.72" r=".79" />
+    <line class="uni-handle-line" x1="166.68" y1="27.78" x2="178.57" y2="47.62" />
+    <line class="uni-handle-line" x1="146.83" y1="35.72" x2="154.7" y2="59.53" />
+    <line class="uni-handle-line" x1="15.87" y1="11.91" x2="150.8" y2="11.91" />
+    <circle class="uni-handle-dot" cx="23.81" cy="174.61" r=".79" />
+    <line class="uni-handle-line" x1="23.81" y1="174.61" x2="146.83" y2="190.49" />
+    <line class="uni-handle-line" x1="47.62" y1="19.84" x2="134.93" y2="19.84" />
+    <rect class="uni-anchor-node" x="177.77" y="46.83" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="153.91" y="58.73" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="114.28" y="11.11" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="114.28" y="19.05" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="114.22" y="185.73" width="1.59" height="1.59" />
+    <circle class="uni-handle-dot" cx="146.83" cy="190.49" r=".79" />
+    <circle class="uni-handle-dot" cx="158.74" cy="162.71" r=".79" />
+    <circle class="uni-handle-dot" cx="170.65" cy="170.65" r=".79" />
+    <line class="uni-handle-line" x1="162.64" y1="146.83" x2="158.74" y2="162.71" />
+    <line class="uni-handle-line" x1="182.48" y1="146.83" x2="170.65" y2="170.65" />
+    <rect class="uni-anchor-node" x="161.91" y="146.04" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="181.76" y="146.04" width="1.59" height="1.59" />
+  </g>
+  <!-- Glifo: a (Offset x=198.43) -->
+  <g id="unified-glyph-a" class="unified-glyph-group" data-glyph="a" transform="translate(198.43, 0)">
+    <path class="uni-letter-fill" d="M127.03,119.11c-7.94,11.91-15.86,15.87-27.78,15.87-7.94,0-15.87-7.94-15.87-15.87,0-23.81,43.65-15.87,55.56-35.72,0,0-3.97,23.81-11.91,35.72ZM67.51,39.73v31.75c23.81,0,39.69-15.87,55.56-15.87,7.94,0,15.87,3.97,15.87,11.91,0,27.78-87.31,3.97-87.31,59.53,0,23.81,15.87,31.75,35.72,31.75,23.81,0,35.72-23.81,43.65-31.75,0,0-15.87,23.81-15.87,31.75h31.75v-91.28c0-27.78-47.62-27.78-79.37-27.78Z" />
+    <circle class="uni-handle-dot" cx="107.21" cy="55.61" r=".79" />
+    <circle class="uni-handle-dot" cx="131.02" cy="55.61" r=".79" />
+    <circle class="uni-handle-dot" cx="91.33" cy="71.48" r=".79" />
+    <circle class="uni-handle-dot" cx="83.4" cy="95.29" r=".79" />
+    <circle class="uni-handle-dot" cx="83.38" cy="127.04" r=".79" />
+    <circle class="uni-handle-dot" cx="91.33" cy="134.98" r=".79" />
+    <circle class="uni-handle-dot" cx="111.18" cy="134.98" r=".79" />
+    <circle class="uni-handle-dot" cx="134.99" cy="107.2" r=".79" />
+    <circle class="uni-handle-dot" cx="127.05" cy="103.23" r=".79" />
+    <circle class="uni-handle-dot" cx="119.06" cy="131.01" r=".79" />
+    <circle class="uni-handle-dot" cx="123.08" cy="134.98" r=".79" />
+    <circle class="uni-handle-dot" cx="51.63" cy="71.48" r=".79" />
+    <circle class="uni-handle-dot" cx="51.63" cy="150.85" r=".79" />
+    <circle class="uni-handle-dot" cx="67.51" cy="158.79" r=".79" />
+    <circle class="uni-handle-dot" cx="111.18" cy="158.79" r=".79" />
+    <circle class="uni-handle-dot" cx="115.15" cy="150.85" r=".79" />
+    <line class="uni-handle-line" x1="67.51" y1="71.48" x2="91.33" y2="71.48" />
+    <line class="uni-handle-line" x1="107.21" y1="55.61" x2="131.02" y2="55.61" />
+    <line class="uni-handle-line" x1="91.33" y1="134.98" x2="111.28" y2="134.98" />
+    <circle class="uni-handle-dot" cx="99.27" cy="39.73" r=".79" />
+    <circle class="uni-handle-dot" cx="146.88" cy="39.73" r=".79" />
+    <circle class="uni-handle-dot" cx="138.96" cy="59.58" r=".79" />
+    <circle class="uni-handle-dot" cx="138.96" cy="95.29" r=".79" />
+    <line class="uni-handle-line" x1="67.51" y1="39.73" x2="99.3" y2="39.73" />
+    <rect class="uni-anchor-node" x="122.29" y="54.82" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="146.1" y="158" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="98.46" y="134.19" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="66.71" y="38.94" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="66.71" y="70.69" width="1.59" height="1.59" />
+    <line class="uni-handle-line" x1="51.63" y1="71.48" x2="51.63" y2="150.85" />
+    <line class="uni-handle-line" x1="67.52" y1="158.79" x2="111.18" y2="158.79" />
+    <rect class="uni-anchor-node" x="50.84" y="126.25" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="86.57" y="158" width="1.59" height="1.59" />
+    <line class="uni-handle-line" x1="119.08" y1="131.01" x2="134.99" y2="107.2" />
+    <line class="uni-handle-line" x1="83.4" y1="95.29" x2="83.38" y2="127.04" />
+    <line class="uni-handle-line" x1="127.03" y1="103.23" x2="138.94" y2="83.39" />
+    <rect class="uni-anchor-node" x="138.15" y="82.59" width="1.59" height="1.59" />
+    <line class="uni-handle-line" x1="138.96" y1="59.58" x2="138.96" y2="95.29" />
+    <line class="uni-handle-line" x1="146.88" y1="39.73" x2="146.88" y2="67.51" />
+    <rect class="uni-anchor-node" x="138.15" y="66.72" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="126.26" y="118.31" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="82.6" y="118.31" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="146.08" y="66.72" width="1.59" height="1.59" />
+    <line class="uni-handle-line" x1="131" y1="127.04" x2="123.08" y2="134.98" />
+    <rect class="uni-anchor-node" x="130.23" y="126.25" width="1.59" height="1.59" />
+    <line class="uni-handle-line" x1="115.15" y1="150.85" x2="115.15" y2="158.79" />
+    <rect class="uni-anchor-node" x="114.35" y="158" width="1.59" height="1.59" />
+  </g>
+  <!-- Glifo: tl (Offset x=396.96) -->
+  <g id="unified-glyph-tl" class="unified-glyph-group" data-glyph="tl" transform="translate(396.96, 0)">
+    <polygon class="uni-letter-fill" points="194.45 31.76 194.45 182.56 226.2 182.56 226.2 15.88 194.45 31.76" />
+    <rect class="uni-anchor-node" x="193.66" y="181.77" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="225.41" y="181.77" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="225.41" y="15.09" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="193.66" y="30.96" width="1.59" height="1.59" />
+    <rect class="uni-letter-fill" x="329.41" y="63.51" width="31.75" height="119.06" />
+    <rect class="uni-anchor-node" x="328.62" y="181.77" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="360.42" y="181.77" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="328.62" y="62.71" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="360.42" y="62.71" width="1.59" height="1.59" />
+    <polygon class="uni-letter-fill" points="95.29 63.51 79.42 63.51 79.42 23.82 47.67 39.7 47.67 63.51 31.8 63.51 31.8 71.44 47.67 71.44 47.67 182.56 79.42 182.56 79.42 71.44 95.29 71.44 95.29 63.51" />
+    <rect class="uni-anchor-node" x="78.63" y="23.03" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="46.88" y="38.9" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="46.88" y="70.65" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="46.88" y="62.71" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="31" y="70.65" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="31" y="62.71" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="94.5" y="70.65" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="94.5" y="62.71" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="78.63" y="70.65" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="46.88" y="181.81" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="78.63" y="181.81" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="78.63" y="62.71" width="1.59" height="1.59" />
+  </g>
+  <!-- Glifo: y (Offset x=793.91) -->
+  <g id="unified-glyph-y" class="unified-glyph-group" data-glyph="y" transform="translate(793.91, 0)">
+  </g>
+  <!-- Glifo: n (Offset x=992.44) -->
+  <g id="unified-glyph-n" class="unified-glyph-group" data-glyph="n" transform="translate(992.44, 0)">
+    <path class="uni-stem-fill" d="M83.39,158.79h-23.81V39.74h31.75c0,15.87-7.94,11.91-7.94,39.68v79.37Z" />
+    <path class="uni-stem-fill" d="M171.26,39.74h22.68c15.64,0,28.35,12.7,28.35,28.35v90.71h-79.37v-90.71c0-15.64,12.7-28.35,28.35-28.35Z" />
+    <path class="uni-arch-fill" d="M165.03,55.61h11.34c7.82,0,14.17,6.35,14.17,14.17v89.01h-39.69v-89.01c0-7.82,6.35-14.17,14.17-14.17Z" />
+    <circle class="uni-handle-dot" cx="83.39" cy="51.64" r=".79" />
+    <circle class="uni-handle-dot" cx="91.33" cy="55.61" r=".79" />
+    <line class="uni-handle-line" x1="83.39" y1="51.64" x2="83.39" y2="79.42" />
+    <line class="uni-handle-line" x1="91.33" y1="39.74" x2="91.33" y2="55.61" />
+    <rect class="uni-anchor-node" x="90.53" y="38.94" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="82.59" y="78.63" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="82.59" y="158" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="58.78" y="158" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="142.12" y="158" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="58.78" y="38.94" width="1.59" height="1.59" />
+    <polygon class="uni-stem-fill" points="31.8 158.79 7.99 158.79 7.99 39.74 39.73 39.74 31.8 79.42 31.8 158.79" />
+    <rect class="uni-anchor-node" x="38.94" y="38.94" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="31" y="78.63" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="31" y="158" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="7.19" y="158" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="7.19" y="38.94" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="181.83" y="38.94" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="150.06" y="74.66" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="169.9" y="54.82" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="189.76" y="74.66" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="221.49" y="78.63" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="189.76" y="158" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="150.06" y="158" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="221.49" y="158" width="1.59" height="1.59" />
+    <path class="uni-stem-fill" d="M281.81,39.73h0c-21.92,0-39.69,17.77-39.69,39.69v79.37h7.94v-83.34c0-10.96,8.88-19.84,19.84-19.84s19.84,8.88,19.84,19.84v83.34h31.75v-79.37c0-21.92-17.77-39.69-39.68-39.69Z" />
+    <rect class="uni-anchor-node" x="241.34" y="158" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="281.04" y="38.94" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="249.27" y="74.66" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="269.11" y="54.82" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="288.97" y="74.66" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="320.71" y="78.63" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="288.97" y="158" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="249.27" y="158" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="320.71" y="158" width="1.59" height="1.59" />
+    <text class="uni-annotation-text" transform="translate(109.91 106.56)"><tspan x="0" y="0">+</tspan></text>
+    <text class="uni-annotation-text" transform="translate(39.74 106.56)"><tspan x="0" y="0">→</tspan></text>
+    <text class="uni-annotation-text" transform="translate(226.25 106.56)"><tspan x="0" y="0">→</tspan></text>
+    <text class="uni-annotation-text" transform="translate(347.88 106.56)"><tspan x="0" y="0">=</tspan></text>
+    <g>
+    <path class="uni-letter-fill" d="M444.51,39.74h0c-21.91,0-39.68,17.76-39.68,39.67,0-23.8,7.94-23.8,7.94-39.67h-31.75v119.06h31.75v-83.34c0-10.96,8.88-19.84,19.84-19.84h0c10.96,0,19.84,8.88,19.84,19.84v83.34h31.75v-79.37c0-21.92-17.77-39.69-39.69-39.69Z" />
+    <circle class="uni-handle-dot" cx="404.85" cy="51.64" r=".79" />
+    <circle class="uni-handle-dot" cx="412.78" cy="55.61" r=".79" />
+    <line class="uni-handle-line" x1="404.85" y1="51.64" x2="404.85" y2="79.42" />
+    <line class="uni-handle-line" x1="412.78" y1="39.74" x2="412.78" y2="55.61" />
+    <rect class="uni-anchor-node" x="380.24" y="158" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="411.99" y="158" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="380.24" y="38.94" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="411.99" y="38.94" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="443.74" y="38.94" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="411.97" y="74.66" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="431.81" y="54.82" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="451.67" y="74.66" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="483.4" y="78.63" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="404.05" y="78.63" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="451.67" y="158" width="1.59" height="1.59" />
+    <rect class="uni-anchor-node" x="483.4" y="158" width="1.59" height="1.59" />
+    </g>
+  </g>
+</svg>

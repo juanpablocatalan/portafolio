@@ -1,0 +1,2318 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+  </script>
+  <title>Piezas gráficas</title>
+  <meta name="description" content="Campañas Digitales y sistemas de contenido para FEUC y Sutil Wines por Juan Pablo.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="../assets/happy-face.svg">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="../css/style.css?v=106">
+
+  <style>
+    /* ─── VARIABLES & BASE STYLES ─────────────────────────────────────── */
+    :root {
+      --cd-bg: #f7f7f8;
+      --cd-surface: #ffffff;
+      --cd-border: rgba(0, 0, 0, 0.08);
+      --cd-text-main: #111111;
+      --cd-text-muted: #6e6e73;
+      --cd-sutil-accent: #721c24;
+      --cd-feuc-accent: #004b87;
+      --cd-accent-yellow: rgb(255, 255, 0);
+      --cd-radius: 0px;
+      --cd-radius-sm: 0px;
+
+      /* Variables de Iluminación, Sombras y Contraste Fondo FEUC */
+      --feuc-bg-brightness: 0.60;
+      --feuc-bg-contrast: 0.50;
+      --feuc-bg-opacity: 0.75;
+      --feuc-bg-shadows: 0.40;
+      --feuc-bg-blur: 0px;
+      --feuc-bg-position: center top;
+      --feuc-bg-scale: 1.0;
+    }
+
+    body {
+      background-color: var(--color-bg, #f5f5f7);
+      color: var(--color-text, #111111);
+      overflow-x: hidden;
+    }
+
+    /* ─── FONDO DINÁMICO FEUC (CAPAS DE IMAGEN B&W Y VIÑETA DE SOMBRAS) ─ */
+    .feuc-page-bg {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      background: #000000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s ease;
+    }
+
+    body.has-feuc-bg .feuc-page-bg {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .feuc-bg-image {
+      position: absolute;
+      inset: 0;
+      background-image: var(--feuc-bg-url, url('../assets/RRSS-graficas/Casa_Central_Pontificia_Universidad_Catolica_de_Chile.jpg'));
+      background-size: cover;
+      background-position: var(--feuc-bg-position, center top);
+      background-repeat: no-repeat;
+      filter: grayscale(100%) brightness(var(--feuc-bg-brightness)) contrast(var(--feuc-bg-contrast)) blur(var(--feuc-bg-blur));
+      opacity: var(--feuc-bg-opacity);
+      transform: scale(var(--feuc-bg-scale, 1.0));
+      transition: filter 0.05s linear, opacity 0.05s linear, transform 0.1s ease, background-image 0.25s ease;
+    }
+
+    .feuc-bg-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, transparent 20%, rgba(0, 0, 0, var(--feuc-bg-shadows)) 100%),
+        linear-gradient(to bottom, rgba(0, 0, 0, var(--feuc-bg-shadows)) 0%, transparent 18%, transparent 82%, rgba(0, 0, 0, var(--feuc-bg-shadows)) 100%);
+      pointer-events: none;
+    }
+
+    /* ─── FONDO DINÁMICO SUTIL WINES ────────────────────────────────── */
+    .sutil-page-bg {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      background: #000000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s ease;
+    }
+
+    body.has-sutil-bg .sutil-page-bg {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .sutil-bg-image {
+      position: absolute;
+      inset: 0;
+      background-image: url('../assets/RRSS-graficas/Foto-01-.jpg');
+      background-size: cover;
+      background-position: var(--sutil-bg-position, center top);
+      background-repeat: no-repeat;
+      filter: grayscale(100%) brightness(var(--sutil-bg-brightness, 0.60)) contrast(var(--sutil-bg-contrast, 0.50)) blur(var(--sutil-bg-blur, 0px));
+      opacity: var(--sutil-bg-opacity, 0.75);
+      transform: scale(var(--sutil-bg-scale, 1.0));
+      transition: filter 0.05s linear, opacity 0.05s linear, transform 0.1s ease, background-image 0.25s ease;
+    }
+
+    .sutil-bg-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, transparent 20%, rgba(0, 0, 0, var(--sutil-bg-shadows, 0.40)) 100%),
+        linear-gradient(to bottom, rgba(0, 0, 0, var(--sutil-bg-shadows, 0.40)) 0%, transparent 18%, transparent 82%, rgba(0, 0, 0, var(--sutil-bg-shadows, 0.40)) 100%);
+      pointer-events: none;
+    }
+
+    /* ─── FONDO DINÁMICO FUNDACIÓN RESPUESTAS ────────────────────────── */
+    .respuestas-page-bg {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      background: #000000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s ease;
+    }
+
+    body.has-respuestas-bg .respuestas-page-bg {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .respuestas-bg-image {
+      position: absolute;
+      inset: 0;
+      background-image: url('../assets/RRSS-graficas/FR/IMG_4343.jpg');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      filter: grayscale(100%) brightness(0.60) contrast(0.50);
+      opacity: 0.75;
+      transform: scale(1.0);
+      transition: filter 0.05s linear, opacity 0.05s linear, transform 0.1s ease, background-image 0.25s ease;
+    }
+
+    .respuestas-bg-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, transparent 20%, rgba(0, 0, 0, 0.40) 100%),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.40) 0%, transparent 18%, transparent 82%, rgba(0, 0, 0, 0.40) 100%);
+      pointer-events: none;
+    }
+
+    .site-header,
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── ENCABEZADO DE PÁGINA (TÍTULO ALINEADO CON EL CONTENIDO) ───── */
+    .campaigns-page-header {
+      display: grid;
+      grid-template-columns: 310px 1fr;
+      gap: clamp(2rem, 4vw, 5rem);
+      padding: clamp(2.5rem, 5vh, 4rem) var(--page-margin) clamp(1.5rem, 3vh, 2.5rem);
+      align-items: flex-end;
+    }
+
+    @media (min-width: 1440px) {
+      .campaigns-page-header {
+        grid-template-columns: 350px 1fr;
+      }
+    }
+
+    .campaigns-page-desc {
+      font-family: var(--font-primary, -apple-system, sans-serif);
+      font-size: clamp(0.95rem, 1.15vw, 1.08rem);
+      line-height: 1.55;
+      color: var(--cd-text-muted, #6e6e73);
+      max-width: 680px;
+      margin-top: 0.85rem;
+      margin-bottom: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    /* ─── SPLIT LAYOUT: SIDEBAR + STAGE ─────────────────────────────── */
+    .campaigns-split-layout {
+      display: grid;
+      grid-template-columns: 310px 1fr;
+      gap: clamp(2rem, 4vw, 5rem);
+      padding: 0 var(--page-margin);
+      align-items: flex-start;
+      position: relative;
+    }
+
+    @media (min-width: 1440px) {
+      .campaigns-split-layout {
+        grid-template-columns: 350px 1fr;
+      }
+    }
+
+    /* ─── SIDEBAR LISTADO IZQUIERDO (STICKY) ─────────────────────────── */
+    .campaigns-sidebar {
+      position: sticky;
+      top: clamp(80px, 12vh, 105px);
+      align-self: flex-start;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 0, 0, 0.12) transparent;
+      padding-right: 1rem;
+    }
+
+    .campaigns-sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .campaigns-sidebar::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.12);
+      border-radius: 4px;
+    }
+
+    .sidebar-inner-card {
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+
+    .sidebar-header-label {
+      font-family: var(--font-mono, monospace);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: rgb(255, 255, 255);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 0.5rem;
+    }
+
+    .sidebar-client-group {
+      margin-bottom: 0.25rem;
+      padding-bottom: 0.25rem;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-client-group.is-open {
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+
+    .sidebar-client-group:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .sidebar-client-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      padding: 4px 0;
+      background: transparent;
+      border: none;
+      font-family: 'SF Mono', var(--font-mono, monospace);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgb(255, 255, 255);
+      cursor: pointer;
+      text-align: left;
+      transition: none;
+    }
+
+    .sidebar-client-btn:hover {
+      color: rgb(255, 255, 0);
+      opacity: 1;
+    }
+
+    .sidebar-client-btn:hover .sidebar-client-toggle-icon {
+      color: rgb(255, 255, 0);
+    }
+
+    .sidebar-client-toggle-icon {
+      font-size: 1.03rem;
+      color: rgba(255, 255, 255, 0.7);
+      transition: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .sidebar-client-group.is-open .sidebar-client-toggle-icon {
+      color: var(--cd-accent-yellow, rgb(255, 255, 0));
+      transform: rotate(180deg);
+    }
+
+    /* ─── SWAP DE COLOR: cliente activo ↔ título del proyecto ──────────── */
+    /* Cuando el grupo está abierto, el nombre del cliente toma el amarillo */
+    .sidebar-client-group.is-open>.sidebar-client-btn {
+      color: var(--cd-accent-yellow, rgb(255, 255, 0));
+    }
+
+    /* Cuando hay fondo activo, el título del proyecto toma el blanco del sidebar */
+    body.has-feuc-bg .stage-project-title,
+    body.has-sutil-bg .stage-project-title,
+    body.has-respuestas-bg .stage-project-title {
+
+      color: rgb(255, 255, 255);
+    }
+
+    /* ─── COLOR h1 con cliente activo: blanco, baja opacidad, multiply ─── */
+    body.has-feuc-bg .project-title,
+    body.has-sutil-bg .project-title,
+    body.has-respuestas-bg .project-title {
+      color: rgba(255, 255, 255, 0.5);
+      mix-blend-mode: multiply;
+    }
+
+    .sidebar-items-list {
+      list-style: none;
+      padding: 0;
+      margin: 4px 0 4px 0;
+      border-left: none;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      animation: none;
+      width: 100%;
+    }
+
+    .sidebar-client-group.is-open .sidebar-items-list {
+      display: flex;
+    }
+
+    .sidebar-sub-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      width: 100%;
+    }
+
+    .sidebar-sub-heading {
+      font-family: 'SF Mono', var(--font-mono, monospace);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgb(255, 255, 255);
+      padding: 4px 0;
+      opacity: 1;
+      background: transparent !important;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      display: block;
+      width: fit-content;
+      transition: none;
+    }
+
+    .sidebar-sub-heading:hover {
+      color: rgb(255, 255, 0) !important;
+      background: transparent !important;
+      opacity: 1;
+    }
+
+    .sidebar-sub-heading.active {
+      color: var(--cd-accent-yellow, rgb(255, 255, 0)) !important;
+      background: transparent !important;
+      opacity: 1 !important;
+    }
+
+    .sidebar-sub-list {
+      list-style: none;
+      padding: 0;
+      margin: 1px 0 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      width: 100%;
+    }
+
+    .sidebar-sub-list li {
+      display: flex;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .sidebar-item-link {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding: 2px 6px;
+      font-family: 'SF Mono', var(--font-mono, monospace);
+      font-size: 0.83rem;
+      font-weight: 500;
+      text-decoration: none;
+      background: transparent;
+      border: none;
+      border-radius: 0px;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      box-sizing: border-box;
+      white-space: nowrap;
+      line-height: 1.25;
+      transition: none;
+    }
+
+    .sidebar-item-num {
+      color: var(--cd-text-muted);
+      flex-shrink: 0;
+      transition: none;
+    }
+
+    .sidebar-item-name {
+      color: rgb(255, 255, 255);
+      transition: none;
+    }
+
+    .sidebar-item-link:hover {
+      background: rgb(255, 255, 0);
+    }
+
+    .sidebar-item-link:hover .sidebar-item-num,
+    .sidebar-item-link:hover .sidebar-item-name {
+      color: #000000 !important;
+      font-weight: 600;
+    }
+
+    .sidebar-item-link.active {
+      background: rgb(255, 255, 255);
+    }
+
+    .sidebar-item-link.active .sidebar-item-num,
+    .sidebar-item-link.active .sidebar-item-name {
+      color: #000000 !important;
+      font-weight: 600;
+    }
+
+    .sidebar-item-link.active:hover {
+      background: rgb(255, 255, 0);
+    }
+
+    .sidebar-item-link.active:hover .sidebar-item-num,
+    .sidebar-item-link.active:hover .sidebar-item-name {
+      color: #000000 !important;
+      font-weight: 600;
+    }
+
+    .sidebar-sub-heading.sidebar-item-link {
+      font-family: 'SF Mono', var(--font-mono, monospace);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgb(255, 255, 255);
+      padding: 4px 0;
+      opacity: 1;
+      display: block;
+      width: fit-content;
+      line-height: 1.4;
+      text-decoration: none;
+      background: transparent !important;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      transition: none;
+      transform: none !important;
+    }
+
+    .sidebar-sub-heading.sidebar-item-link:hover {
+      color: rgb(255, 255, 0) !important;
+      background: transparent !important;
+      opacity: 1;
+      transform: none !important;
+    }
+
+    .sidebar-sub-heading.sidebar-item-link.active {
+      color: var(--cd-accent-yellow, rgb(255, 255, 0)) !important;
+      background: transparent !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .sidebar-sub-heading.sidebar-item-link.active:hover {
+      color: rgb(255, 255, 0) !important;
+      background: transparent !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+
+
+    /* ─── STAGE PRINCIPAL (PROYECTO ACTIVO ÚNICO) ─────────────────────── */
+    .campaigns-stage-area {
+      min-width: 0;
+      position: relative;
+      width: 100%;
+    }
+
+    .project-panel {
+      display: none;
+      width: 100%;
+      text-align: left;
+      animation: none;
+    }
+
+    .project-panel.is-active {
+      display: block;
+    }
+
+    /* Header del proyecto activo (alineado a la izquierda) */
+    .stage-project-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: clamp(1.5rem, 2.5vw, 2rem);
+      padding-bottom: 1.25rem;
+      width: 100%;
+      text-align: left;
+      align-items: flex-start;
+    }
+
+    .stage-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .stage-client-tag {
+      font-family: var(--font-mono, monospace);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      color: var(--cd-text-main);
+      text-transform: uppercase;
+    }
+
+    /* Cuando el fondo oscuro está activo, la etiqueta del cliente en el stage
+       se aclara para seguir visible (mantiene el rol de color secundario) */
+    body.has-feuc-bg .stage-client-tag,
+    body.has-sutil-bg .stage-client-tag,
+    body.has-respuestas-bg .stage-client-tag {
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    .stage-format-badge {
+      font-family: var(--font-mono, monospace);
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0;
+      background: none;
+      color: var(--cd-text-muted);
+    }
+
+    .stage-project-title {
+      font-family: var(--font-primary, -apple-system, sans-serif);
+      font-size: clamp(1.8rem, 2.8vw, 2.6rem);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin: 0;
+      color: var(--cd-text-main);
+    }
+
+    .stage-project-desc {
+      font-size: clamp(0.92rem, 1.1vw, 1.05rem);
+      line-height: 1.5;
+      color: var(--cd-text-muted);
+      margin: 0;
+      max-width: 680px;
+    }
+
+    /* Contenedor de la pieza visual centrado (sin bordes ni marcos) */
+    .stage-media-card {
+      position: relative;
+      background: transparent !important;
+      border-radius: 0 !important;
+      overflow: visible !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      max-width: 500px;
+      margin: 0 auto clamp(3.2rem, 5vw, 4.5rem) auto;
+    }
+
+    .stage-media-card img,
+    .graphic-visual-canvas,
+    .ig-slide-img,
+    .ig-carousel-container,
+    .ig-carousel-viewport,
+    .ig-slide-img-wrap {
+      border-radius: 0 !important;
+      border: none !important;
+      outline: none !important;
+    }
+
+    .graphic-visual-canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 0 !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.6), 0 4px 14px rgba(0, 0, 0, 0.35);
+    }
+
+    /* ─── CARRUSELES DE INSTAGRAM EN EL STAGE (PROPORCIÓN CUADRADA 1:1) ── */
+    .ig-carousel-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      overflow: visible;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      user-select: none;
+    }
+
+    .ig-carousel-viewport {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: transparent;
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.6), 0 4px 14px rgba(0, 0, 0, 0.35);
+    }
+
+    #panel-sutil-2 .ig-carousel-viewport {
+      box-shadow: none !important;
+    }
+
+    #panel-sutil-2 .ig-slide-img {
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.6), 0 4px 14px rgba(0, 0, 0, 0.35);
+    }
+
+    .ig-carousel-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .ig-slide-img-wrap {
+      min-width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent !important;
+      border: none !important;
+      outline: none !important;
+    }
+
+    .ig-slide-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border: none !important;
+      outline: none !important;
+    }
+
+    .ig-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: transparent;
+      border: 1px solid var(--cd-accent-yellow, rgb(255, 255, 0));
+      color: var(--cd-accent-yellow, rgb(255, 255, 0));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      pointer-events: auto;
+      z-index: 25;
+      font-family: var(--font-mono, monospace);
+      font-size: 0.95rem;
+      line-height: 1;
+      padding: 0;
+      user-select: none;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .ig-nav-btn:hover {
+      background: var(--cd-accent-yellow, rgb(255, 255, 0));
+      color: #000000;
+      border-color: var(--cd-accent-yellow, rgb(255, 255, 0));
+      transform: translateY(-50%) scale(1.08);
+    }
+
+    .ig-nav-btn:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+
+    .ig-nav-btn.prev {
+      left: clamp(-52px, -5vw, -40px);
+    }
+
+    .ig-nav-btn.next {
+      right: clamp(-52px, -5vw, -40px);
+    }
+
+    #panel-sutil-2 .ig-carousel-container[data-active-slide="0"] .ig-nav-btn.prev {
+      left: calc(50% - 391px - 46px);
+    }
+
+    #panel-sutil-2 .ig-carousel-container[data-active-slide="0"] .ig-nav-btn.next {
+      right: calc(50% - 391px - 46px);
+    }
+
+    @media (max-width: 768px) {
+      .ig-nav-btn.prev,
+      #panel-sutil-2 .ig-carousel-container[data-active-slide="0"] .ig-nav-btn.prev {
+        left: 8px;
+      }
+
+      .ig-nav-btn.next,
+      #panel-sutil-2 .ig-carousel-container[data-active-slide="0"] .ig-nav-btn.next {
+        right: 8px;
+      }
+    }
+
+    .ig-counter-pill {
+      position: absolute;
+      top: auto;
+      bottom: -54px;
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      color: var(--cd-accent-yellow, rgb(255, 255, 0));
+      font-family: 'SF Mono', var(--font-mono, monospace);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0;
+      border-radius: 0;
+      z-index: 12;
+      border: none;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .ig-pagination-dots {
+      position: absolute;
+      top: auto;
+      bottom: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 12;
+    }
+
+    .ig-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .ig-dot.active {
+      background: var(--cd-accent-yellow, rgb(255, 255, 0));
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    /* Aspect ratios para imágenes individuales centradas */
+    .aspect-portrait {
+      aspect-ratio: 4 / 5;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .aspect-story {
+      aspect-ratio: 9 / 16;
+      max-height: 500px;
+      max-width: 282px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .aspect-square {
+      aspect-ratio: 1 / 1;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .aspect-original {
+      max-height: 500px;
+      width: fit-content;
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: transparent !important;
+    }
+
+    .aspect-original img {
+      max-height: 500px;
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      box-shadow: 0 16px 42px rgba(0, 0, 0, 0.6), 0 4px 14px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Barra de navegación de proyecto (Anterior / Siguiente) */
+    .stage-nav-footer {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--cd-border);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .stage-nav-footer.is-visible {
+      display: flex;
+    }
+
+    .stage-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono, monospace);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--cd-text-main);
+      background: transparent;
+      border: 1px solid var(--cd-border);
+      padding: 8px 16px;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .stage-nav-btn:hover {
+      background: #111111;
+      color: #ffffff;
+      border-color: #111111;
+    }
+
+    .stage-counter-display {
+      font-family: var(--font-mono, monospace);
+      font-size: 0.78rem;
+      color: var(--cd-text-muted);
+    }
+
+    /* ─── LIGHTBOX MODAL ──────────────────────────────────────────────── */
+    .cd-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: clamp(1rem, 3vw, 2.5rem);
+      box-sizing: border-box;
+    }
+
+    .cd-modal-backdrop.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .cd-modal-content {
+      position: relative;
+      max-width: 860px;
+      width: 100%;
+      background: #111111;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+      transform: scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .cd-modal-backdrop.is-open .cd-modal-content {
+      transform: scale(1);
+    }
+
+    .cd-modal-image-wrap {
+      width: 100%;
+      max-height: 72vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000000;
+      overflow: hidden;
+    }
+
+    .cd-modal-image-wrap img {
+      max-width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+    }
+
+    .cd-modal-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 20;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .cd-modal-close-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.08);
+    }
+
+    /* ─── RESPONSIVE BREAKPOINTS ──────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .campaigns-split-layout {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .campaigns-sidebar {
+        position: static;
+        max-height: none;
+        padding-right: 0;
+      }
+
+      .sidebar-items-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        border-left: none;
+        padding-left: 0;
+        gap: 6px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Fondo dinámico FEUC (Imagen B&W + Viñeta de sombras) -->
+  <div class="feuc-page-bg" id="feuc-bg" aria-hidden="true">
+    <div class="feuc-bg-image"></div>
+    <div class="feuc-bg-vignette"></div>
+  </div>
+
+  <!-- Fondo dinámico Fundación Respuestas (IMG_4343.jpg B&W + Viñeta de sombras) -->
+  <div class="respuestas-page-bg" id="respuestas-bg" aria-hidden="true">
+    <div class="respuestas-bg-image"></div>
+    <div class="respuestas-bg-vignette"></div>
+  </div>
+
+  <!-- Fondo dinámico Sutil Wines (Foto-01-.jpg B&W + Viñeta de sombras) -->
+  <div class="sutil-page-bg" id="sutil-bg" aria-hidden="true">
+    <div class="sutil-bg-image"></div>
+    <div class="sutil-bg-vignette"></div>
+  </div>
+
+  <!-- Barra superior del portafolio -->
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="back-link">INICIO</a>
+      <nav class="site-nav" aria-label="Navegación principal">
+        <ul>
+          <li><a href="../sobremi.html" class="nav-link">SOBRE MÍ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+
+    <!-- Título Principal de la Página (Alineado con la columna del proyecto) -->
+    <section class="campaigns-page-header" aria-label="Cabecera del Proyecto">
+      <div class="header-col-spacer" aria-hidden="true"></div>
+      <div class="header-col-content">
+        <h1 class="project-title"
+          style="font-size: clamp(2.2rem, 4.2vw, 3.8rem); line-height: 1.05; letter-spacing: -0.03em; margin: 0; transition: none;">
+          Piezas gráficas
+        </h1>
+        <p class="campaigns-page-desc" id="page-desc">
+          Creación de contenido y piezas gráficas personalizadas bajo las directrices y manuales de marca de cada cliente, optimizadas para canales digitales como web, redes sociales, email marketing y soportes impresos.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SPLIT LAYOUT: LISTADO IZQUIERDO + STAGE PROYECTO ACTIVO
+         =================================================================== -->
+    <div class="campaigns-split-layout">
+
+      <!-- COLUMNA IZQUIERDA: Listado de Campañas -->
+      <aside class="campaigns-sidebar" aria-label="Índice de campañas y clientes">
+        <div class="sidebar-inner-card">
+          <div class="sidebar-header-label">
+            <span>ÍNDICE DE Gráficas</span>
+            <span>24 PROYECTOS</span>
+          </div>
+
+          <!-- Cliente 01: FEUC (11 Proyectos) -->
+          <div class="sidebar-client-group" id="group-feuc">
+            <button type="button" class="sidebar-client-btn" aria-expanded="false" data-client-group="group-feuc">
+              <span class="sidebar-client-toggle-icon">▾</span>
+              <span>FEUC</span>
+            </button>
+            <div class="sidebar-items-list" role="list">
+
+              <!-- Sub-sección: Instagram (01 - 09) -->
+              <div class="sidebar-sub-section">
+                <button type="button" class="sidebar-sub-heading">Instagram</button>
+                <ul class="sidebar-sub-list">
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-1">
+                      <span class="sidebar-item-num">01</span>
+                      <span class="sidebar-item-name">Escuela de Dirigencia Social</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-2">
+                      <span class="sidebar-item-num">02</span>
+                      <span class="sidebar-item-name">TRICEL 2023</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-3">
+                      <span class="sidebar-item-num">03</span>
+                      <span class="sidebar-item-name">Acto de homenaje CEREN</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-4">
+                      <span class="sidebar-item-num">04</span>
+                      <span class="sidebar-item-name">Convocatoria CNA</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-5">
+                      <span class="sidebar-item-num">05</span>
+                      <span class="sidebar-item-name">Actualización FUAS 2024</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-6">
+                      <span class="sidebar-item-num">06</span>
+                      <span class="sidebar-item-name">Presupuestos Participativos</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-7">
+                      <span class="sidebar-item-num">07</span>
+                      <span class="sidebar-item-name">Elecciones FEUC 2024</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-8">
+                      <span class="sidebar-item-num">08</span>
+                      <span class="sidebar-item-name">Beneficio Banner</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-9">
+                      <span class="sidebar-item-num">09</span>
+                      <span class="sidebar-item-name">Carta al director</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Sub-sección: Mailing (10) -->
+              <div class="sidebar-sub-section">
+                <button type="button" class="sidebar-sub-heading">Mailing</button>
+                <ul class="sidebar-sub-list">
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-11">
+                      <span class="sidebar-item-num">10</span>
+                      <span class="sidebar-item-name">Listas elecciones FEUC 2024</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Sub-sección: Físicos (11) -->
+              <div class="sidebar-sub-section">
+                <button type="button" class="sidebar-sub-heading">Físicos</button>
+                <ul class="sidebar-sub-list">
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-12">
+                      <span class="sidebar-item-num">11</span>
+                      <span class="sidebar-item-name">Paloma Publicitaria</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Cliente 02: Fundación Respuestas (4 Proyectos) -->
+          <div class="sidebar-client-group" id="group-respuestas">
+            <button type="button" class="sidebar-client-btn" aria-expanded="false" data-client-group="group-respuestas">
+              <span class="sidebar-client-toggle-icon">▾</span>
+              <span>Fundación Respuestas</span>
+            </button>
+            <div class="sidebar-items-list" role="list">
+
+              <!-- Sub-sección: Merch (12 - 14) -->
+              <div class="sidebar-sub-section">
+                <button type="button" class="sidebar-sub-heading">Merch</button>
+                <ul class="sidebar-sub-list">
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-respuestas-1">
+                      <span class="sidebar-item-num">12</span>
+                      <span class="sidebar-item-name">Polera</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-respuestas-3">
+                      <span class="sidebar-item-num">13</span>
+                      <span class="sidebar-item-name">Totebag</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-respuestas-2">
+                      <span class="sidebar-item-num">14</span>
+                      <span class="sidebar-item-name">Objetos</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Sub-sección: GIF (15) -->
+              <div class="sidebar-sub-section">
+                <button type="button" class="sidebar-sub-heading">GIF</button>
+                <ul class="sidebar-sub-list">
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-respuestas-4">
+                      <span class="sidebar-item-num">15</span>
+                      <span class="sidebar-item-name">Inauguración</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Cliente 03: Sutil Wines (9 Proyectos) -->
+          <div class="sidebar-client-group" id="group-sutil">
+            <button type="button" class="sidebar-client-btn" aria-expanded="false" data-client-group="group-sutil">
+              <span class="sidebar-client-toggle-icon">▾</span>
+              <span>Sutil Wines</span>
+            </button>
+            <div class="sidebar-items-list" role="list">
+
+              <!-- Sub-sección: Web (16 - 19) -->
+              <div class="sidebar-sub-section">
+                <button type="button" class="sidebar-sub-heading">Web</button>
+                <ul class="sidebar-sub-list">
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-1">
+                      <span class="sidebar-item-num">16</span>
+                      <span class="sidebar-item-name">Año Nuevo Chino</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-2">
+                      <span class="sidebar-item-num">17</span>
+                      <span class="sidebar-item-name">Banner Booz</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-3">
+                      <span class="sidebar-item-num">18</span>
+                      <span class="sidebar-item-name">Lanzamiento Espumante La Playa</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-5">
+                      <span class="sidebar-item-num">19</span>
+                      <span class="sidebar-item-name">Oferta Template Nacional</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Sub-sección: Mailing (20 - 22) -->
+              <div class="sidebar-sub-section">
+                <button type="button" class="sidebar-sub-heading">Mailing</button>
+                <ul class="sidebar-sub-list">
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-6">
+                      <span class="sidebar-item-num">20</span>
+                      <span class="sidebar-item-name">Lanzamiento Espumante La Playa</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-4">
+                      <span class="sidebar-item-num">21</span>
+                      <span class="sidebar-item-name">Oferta Espumante Socios</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-7">
+                      <span class="sidebar-item-num">22</span>
+                      <span class="sidebar-item-name">Liquidación Top Wine Group</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Sub-sección: Instagram (23 - 24) -->
+              <div class="sidebar-sub-section">
+                <button type="button" class="sidebar-sub-heading">Instagram</button>
+                <ul class="sidebar-sub-list">
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-8">
+                      <span class="sidebar-item-num">23</span>
+                      <span class="sidebar-item-name">Lanzamiento Espumante La Playa</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-9">
+                      <span class="sidebar-item-num">24</span>
+                      <span class="sidebar-item-name">Oferta laboral</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- COLUMNA DERECHA: STAGE DEL PROYECTO SELECCIONADO ÚNICO -->
+      <section class="campaigns-stage-area" id="campaigns-stage" aria-label="Visualizador de proyecto seleccionado">
+
+        <!-- ===============================================================
+             PROYECTOS FEUC (01 - 12)
+             =============================================================== -->
+
+        <!-- 01. Portada Reel: Dirigencia Social -->
+        <article class="project-panel" id="panel-feuc-1" data-project-index="1">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Portada Reel</span>
+              <span class="stage-format-badge">2023</span>
+            </div>
+            <h2 class="stage-project-title">Escuela de Dirigencia Social</h2>
+          </div>
+          <div class="stage-media-card aspect-story" style="background: #003366;">
+            <img src="../assets/RRSS-graficas/primer-reel.jpg" alt="Portada Reel Escuela de Dirigencia Social"
+              class="graphic-visual-canvas" loading="lazy">
+          </div>
+        </article>
+
+        <!-- 02. TRICEL 2023: Preinscripción & Elecciones (Carrusel 8 slides) -->
+        <article class="project-panel" id="panel-feuc-2" data-project-index="2">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Carrusel</span>
+              <span class="stage-format-badge">2023</span>
+            </div>
+            <h2 class="stage-project-title">TRICEL 2023</h2>
+          </div>
+          <div class="stage-media-card">
+            <div class="ig-carousel-container" data-slides-count="8">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 8</div>
+              <div class="ig-carousel-viewport">
+                <div class="ig-carousel-track">
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/1.jpg" alt="Slide 1 TRICEL 2023"
+                      class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/2.jpg" alt="Slide 2 TRICEL 2023"
+                      class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/3.jpg" alt="Slide 3 TRICEL 2023"
+                      class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/4.jpg" alt="Slide 4 TRICEL 2023"
+                      class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/5.jpg" alt="Slide 5 TRICEL 2023"
+                      class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/6.jpg" alt="Slide 6 TRICEL 2023"
+                      class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/7.jpg" alt="Slide 7 TRICEL 2023"
+                      class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/8.jpg" alt="Slide 8 TRICEL 2023"
+                      class="ig-slide-img" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span><span class="ig-dot"></span><span
+                  class="ig-dot"></span><span class="ig-dot"></span><span class="ig-dot"></span><span
+                  class="ig-dot"></span><span class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 03. Ceremonia de Certificados (Carrusel 5 slides) -->
+        <article class="project-panel" id="panel-feuc-3" data-project-index="3">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Carrusel</span>
+              <span class="stage-format-badge">2023</span>
+            </div>
+            <h2 class="stage-project-title">Acto de homenaje CEREN</h2>
+          </div>
+          <div class="stage-media-card">
+            <div class="ig-carousel-container" data-slides-count="5">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 5</div>
+              <div class="ig-carousel-viewport">
+                <div class="ig-carousel-track">
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/2CEREN.jpg"
+                      alt="Slide 1 Ceremonia" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/2_1CEREN.jpg"
+                      alt="Slide 2 Ceremonia" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/2_2CEREN.jpg"
+                      alt="Slide 3 Ceremonia" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/2_3CEREN.jpg"
+                      alt="Slide 4 Ceremonia" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/2_4CEREN.jpg"
+                      alt="Slide 5 Ceremonia" class="ig-slide-img" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span><span class="ig-dot"></span><span
+                  class="ig-dot"></span><span class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 04. Convocatoria de Proyectos (Carrusel 4 slides) -->
+        <article class="project-panel" id="panel-feuc-4" data-project-index="4">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Carrusel</span>
+              <span class="stage-format-badge">2023</span>
+            </div>
+            <h2 class="stage-project-title">Convocatoria CNA</h2>
+          </div>
+          <div class="stage-media-card">
+            <div class="ig-carousel-container" data-slides-count="4">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 4</div>
+              <div class="ig-carousel-viewport">
+                <div class="ig-carousel-track">
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/3CONVP.jpg"
+                      alt="Slide 1 Convocatoria" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/3_1CONVP.jpg"
+                      alt="Slide 2 Convocatoria" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/3_2CONVP.jpg"
+                      alt="Slide 3 Convocatoria" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/3_3CONVP.jpg"
+                      alt="Slide 4 Convocatoria" class="ig-slide-img" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span><span class="ig-dot"></span><span
+                  class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 05. Guía FUAS / Becas (Carrusel 3 slides) -->
+        <article class="project-panel" id="panel-feuc-5" data-project-index="5">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Carrusel</span>
+              <span class="stage-format-badge">2023</span>
+            </div>
+            <h2 class="stage-project-title">Actualización FUAS 2024</h2>
+          </div>
+          <div class="stage-media-card">
+            <div class="ig-carousel-container" data-slides-count="3">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 3</div>
+              <div class="ig-carousel-viewport">
+                <div class="ig-carousel-track">
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/4_1FUAS.jpg" alt="Slide 1 FUAS"
+                      class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/4FUAS.jpg" alt="Slide 2 FUAS"
+                      class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/4_2FUAS.jpg" alt="Slide 3 FUAS"
+                      class="ig-slide-img" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span><span class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 06. Presupuestos Participativos (Carrusel 5 slides) -->
+        <article class="project-panel" id="panel-feuc-6" data-project-index="6">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Carrusel</span>
+              <span class="stage-format-badge">2023</span>
+            </div>
+            <h2 class="stage-project-title">Presupuestos Participativos</h2>
+          </div>
+          <div class="stage-media-card">
+            <div class="ig-carousel-container" data-slides-count="5">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 5</div>
+              <div class="ig-carousel-viewport">
+                <div class="ig-carousel-track">
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/5PPAR.jpg"
+                      alt="Slide 1 Presupuestos" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/5_1PPAR.jpg"
+                      alt="Slide 2 Presupuestos" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/5_2PPAR.jpg"
+                      alt="Slide 3 Presupuestos" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/5_3PPAR.jpg"
+                      alt="Slide 4 Presupuestos" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/5_4PPAR.jpg"
+                      alt="Slide 5 Presupuestos" class="ig-slide-img" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span><span class="ig-dot"></span><span
+                  class="ig-dot"></span><span class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 07. Escuela de Formación FEUC (Carrusel 5 slides) -->
+        <article class="project-panel" id="panel-feuc-7" data-project-index="7">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Carrusel</span>
+              <span class="stage-format-badge">2023</span>
+            </div>
+            <h2 class="stage-project-title">Elecciones FEUC 2024</h2>
+          </div>
+          <div class="stage-media-card">
+            <div class="ig-carousel-container" data-slides-count="5">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 5</div>
+              <div class="ig-carousel-viewport">
+                <div class="ig-carousel-track">
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/6EFEU.jpg" alt="Slide 1 Escuela"
+                      class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/6_1EFEU.jpg"
+                      alt="Slide 2 Escuela" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/6_2EFEU.jpg"
+                      alt="Slide 3 Escuela" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/6_3EFEU.jpg"
+                      alt="Slide 4 Escuela" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/6_4EFEU.jpg"
+                      alt="Slide 5 Escuela" class="ig-slide-img" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span><span class="ig-dot"></span><span
+                  class="ig-dot"></span><span class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 08. Mapa de Campus & Guía (Carrusel 4 slides) -->
+        <article class="project-panel" id="panel-feuc-8" data-project-index="8">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Carrusel</span>
+              <span class="stage-format-badge">2023</span>
+            </div>
+            <h2 class="stage-project-title">Beneficio Banner</h2>
+          </div>
+          <div class="stage-media-card">
+            <div class="ig-carousel-container" data-slides-count="4">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 4</div>
+              <div class="ig-carousel-viewport">
+                <div class="ig-carousel-track">
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/7MAPA.jpg" alt="Slide 1 Mapa"
+                      class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/7_1MAPA.jpg" alt="Slide 2 Mapa"
+                      class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/7_3MAPA.jpg" alt="Slide 3 Mapa"
+                      class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/7_2MAPA.jpg" alt="Slide 4 Mapa"
+                      class="ig-slide-img" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span><span class="ig-dot"></span><span
+                  class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 09. Consejo Directivo FEUC (Carrusel 2 slides) -->
+        <article class="project-panel" id="panel-feuc-9" data-project-index="9">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Carrusel</span>
+              <span class="stage-format-badge">2023</span>
+            </div>
+            <h2 class="stage-project-title">Carta al director</h2>
+          </div>
+          <div class="stage-media-card">
+            <div class="ig-carousel-container" data-slides-count="2">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 2</div>
+              <div class="ig-carousel-viewport">
+                <div class="ig-carousel-track">
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/9CDIRE.jpg" alt="Slide 1 Consejo"
+                      class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/9_1CDIRE.jpg"
+                      alt="Slide 2 Consejo" class="ig-slide-img" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 10. Mailing Institucional -->
+        <article class="project-panel" id="panel-feuc-11" data-project-index="10">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Mailing</span>
+              <span class="stage-format-badge">2023</span>
+            </div>
+            <h2 class="stage-project-title">Listas elecciones FEUC 2024</h2>
+          </div>
+          <div class="stage-media-card aspect-original">
+            <img src="../assets/RRSS-graficas/1x/mailing.jpg" alt="Mailing Institucional FEUC"
+              class="graphic-visual-canvas" loading="lazy">
+          </div>
+        </article>
+
+        <!-- 11. Campaña Paloma Territorial -->
+        <article class="project-panel" id="panel-feuc-12" data-project-index="11">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Afiche</span>
+              <span class="stage-format-badge">2023</span>
+            </div>
+            <h2 class="stage-project-title">Paloma Publicitaria</h2>
+          </div>
+          <div class="stage-media-card"
+            style="display: flex; gap: clamp(16px, 2.5vw, 28px); justify-content: center; align-items: center; max-width: 860px;">
+            <img src="../assets/RRSS-graficas/Paloma.jpg" alt="Paloma Publicitaria Gráfica"
+              class="graphic-visual-canvas"
+              style="max-height: 500px; width: auto; max-width: calc(50% - 14px); object-fit: contain;" loading="lazy">
+            <img src="../assets/RRSS-graficas/IMG_1388.jpg" alt="Paloma Publicitaria Fotografía"
+              class="graphic-visual-canvas"
+              style="max-height: 500px; width: auto; max-width: calc(50% - 14px); object-fit: contain;" loading="lazy">
+          </div>
+        </article>
+
+
+        <!-- ===============================================================
+             PROYECTOS FUNDACIÓN RESPUESTAS (12 - 15)
+             =============================================================== -->
+
+        <!-- 12. Respuestas: Polera -->
+        <article class="project-panel" id="panel-respuestas-1" data-project-index="12">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Mock up</span>
+              <span class="stage-format-badge">2025</span>
+            </div>
+            <h2 class="stage-project-title">Polera</h2>
+          </div>
+          <div class="stage-media-card" style="max-width: 660px;">
+            <div class="ig-carousel-container" style="aspect-ratio: 4 / 3;" data-slides-count="2">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 2</div>
+              <div class="ig-carousel-viewport">
+                <div class="ig-carousel-track">
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/FR/Mock-up-1.jpg"
+                      alt="Slide 1 Polera Fundación Respuestas" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/FR/Mock-up-2.jpg"
+                      alt="Slide 2 Polera Fundación Respuestas" class="ig-slide-img" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 13. Respuestas: Totebag -->
+        <article class="project-panel" id="panel-respuestas-3" data-project-index="13">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Mock up</span>
+              <span class="stage-format-badge">2025</span>
+            </div>
+            <h2 class="stage-project-title">Totebag</h2>
+          </div>
+          <div class="stage-media-card" style="max-width: 660px;">
+            <div class="ig-carousel-container" style="aspect-ratio: 4 / 3;" data-slides-count="2">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 2</div>
+              <div class="ig-carousel-viewport">
+                <div class="ig-carousel-track">
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/FR/mock-up-4.jpg"
+                      alt="Slide 1 Totebag Fundación Respuestas" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/FR/mock-up-5.jpg"
+                      alt="Slide 2 Totebag Fundación Respuestas" class="ig-slide-img" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 14. Respuestas: Objetos -->
+        <article class="project-panel" id="panel-respuestas-2" data-project-index="14">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Mock up</span>
+              <span class="stage-format-badge">2025</span>
+            </div>
+            <h2 class="stage-project-title">Objetos</h2>
+          </div>
+          <div class="stage-media-card" style="max-width: 660px;">
+            <div class="ig-carousel-container" style="aspect-ratio: 4 / 3;" data-slides-count="2">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 2</div>
+              <div class="ig-carousel-viewport">
+                <div class="ig-carousel-track">
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/FR/mock-up-3.jpg"
+                      alt="Slide 1 Objetos Fundación Respuestas" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/FR/mock-up6.jpg"
+                      alt="Slide 2 Objetos Fundación Respuestas" class="ig-slide-img" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 15. Respuestas: Inauguración -->
+        <article class="project-panel" id="panel-respuestas-4" data-project-index="15">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">ANIMACIÓN</span>
+              <span class="stage-format-badge">2025</span>
+            </div>
+            <h2 class="stage-project-title">Inauguración</h2>
+          </div>
+          <div class="stage-media-card aspect-original" style="max-width: 1020px; width: 100%;">
+            <img src="../assets/RRSS-graficas/FR/fundacion-respuestas.gif"
+              alt="GIF Animado Inauguración Fundación Respuestas" class="graphic-visual-canvas"
+              style="width: 100%; max-width: 1020px; height: auto; max-height: none;" loading="lazy">
+          </div>
+        </article>
+
+        <!-- ===============================================================
+             PROYECTOS SUTIL WINES (16 - 24)
+             =============================================================== -->
+
+        <!-- 16. Sutil: Año Nuevo Chino -->
+        <article class="project-panel" id="panel-sutil-1" data-project-index="16">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">WEB ASIA</span>
+              <span class="stage-format-badge">2024</span>
+            </div>
+            <h2 class="stage-project-title">Año Nuevo Chino</h2>
+          </div>
+          <div class="stage-media-card aspect-original">
+            <img src="../assets/RRSS-graficas/1x/chino.jpg" alt="Año Nuevo Chino Sutil Wines"
+              class="graphic-visual-canvas" loading="lazy">
+          </div>
+        </article>
+
+        <!-- 17. Sutil: Banner Booz -->
+        <article class="project-panel" id="panel-sutil-2" data-project-index="17">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">BANNER BOOZ.CL</span>
+              <span class="stage-format-badge">2024</span>
+            </div>
+            <h2 class="stage-project-title">Puntajes Revista LA CAV</h2>
+          </div>
+          <div class="stage-media-card" style="max-width: 1020px; min-height: 500px; display: flex; align-items: center; justify-content: center;">
+            <div class="ig-carousel-container" style="width: 100%; height: 500px; max-height: 500px;" data-slides-count="2" data-active-slide="0">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 2</div>
+              <div class="ig-carousel-viewport" style="height: 100%;">
+                <div class="ig-carousel-track" style="height: 100%;">
+                  <div class="ig-slide-img-wrap" style="height: 100%; display: flex; align-items: center; justify-content: center;"><img src="../assets/RRSS-graficas/web.booz.jpg" alt="Banner Booz Web"
+                      class="ig-slide-img" style="object-fit: contain; max-height: 500px; max-width: 100%; width: auto; height: auto;" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap" style="height: 100%; display: flex; align-items: center; justify-content: center;"><img src="../assets/RRSS-graficas/movil.booz.jpg"
+                      alt="Banner Booz Móvil" class="ig-slide-img" style="object-fit: contain; max-width: 1020px; width: 100%; height: auto;" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 18. Sutil: Lanzamiento espumante la playa -->
+        <article class="project-panel" id="panel-sutil-3" data-project-index="18">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">BANNER BOOZ.CL</span>
+              <span class="stage-format-badge">2024</span>
+            </div>
+            <h2 class="stage-project-title">Lanzamiento Espumante La Playa</h2>
+          </div>
+          <div class="stage-media-card" style="max-width: 1020px; min-height: 500px; display: flex; align-items: center; justify-content: center;">
+            <div class="ig-carousel-container" style="aspect-ratio: 2000 / 496; width: 100%;" data-slides-count="2">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 2</div>
+              <div class="ig-carousel-viewport">
+                <div class="ig-carousel-track">
+                  <div class="ig-slide-img-wrap"><img
+                      src="../assets/RRSS-graficas/sutilok/PROPUESTA-01_Mesa-de-trabajo-1-copia-5.jpg"
+                      alt="Slide 1 Lanzamiento Espumante" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img
+                      src="../assets/RRSS-graficas/sutilok/PROPUESTA-01_Mesa-de-trabajo-1-copia.jpg"
+                      alt="Slide 2 Lanzamiento Espumante" class="ig-slide-img" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 19. Sutil: Oferta Template Nacional -->
+        <article class="project-panel" id="panel-sutil-5" data-project-index="19">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">TEMPLATE</span>
+              <span class="stage-format-badge">2024</span>
+            </div>
+            <h2 class="stage-project-title">Template Ofertas</h2>
+          </div>
+          <div class="stage-media-card aspect-original">
+            <img src="../assets/RRSS-graficas/sutilok/Propuestas.jpg" alt="Oferta Template Nacional"
+              class="graphic-visual-canvas" loading="lazy">
+          </div>
+        </article>
+
+        <!-- 20. Sutil: Mailing Espumante -->
+        <article class="project-panel" id="panel-sutil-6" data-project-index="20">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">MAILING</span>
+              <span class="stage-format-badge">2024</span>
+            </div>
+            <h2 class="stage-project-title">Lanzamiento Espumante La Playa</h2>
+          </div>
+          <div class="stage-media-card aspect-square">
+            <img src="../assets/RRSS-graficas/sutilok/Cuadradas-_Mesa-de-trabajo-1-copia-12.jpg"
+              alt="Lanzamiento Espumante La Playa" class="graphic-visual-canvas" loading="lazy">
+          </div>
+        </article>
+
+        <!-- 21. Sutil: Oferta Espumante Socios -->
+        <article class="project-panel" id="panel-sutil-4" data-project-index="21">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">MAILING</span>
+              <span class="stage-format-badge">2024</span>
+            </div>
+            <h2 class="stage-project-title">Oferta Espumante Socios</h2>
+          </div>
+          <div class="stage-media-card aspect-original">
+            <img src="../assets/RRSS-graficas/sutilok/50-tercer-encargo-09.jpg" alt="Oferta Espumante Socios"
+              class="graphic-visual-canvas" loading="lazy">
+          </div>
+        </article>
+
+        <!-- 22. Sutil: Liquidación Top Wine Group -->
+        <article class="project-panel" id="panel-sutil-7" data-project-index="22">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">MAILING</span>
+              <span class="stage-format-badge">2024</span>
+            </div>
+            <h2 class="stage-project-title">Liquidación Top Wine Group</h2>
+          </div>
+          <div class="stage-media-card" style="max-height: 500px; max-width: 354px;">
+            <div class="ig-carousel-container" style="aspect-ratio: 1415 / 2000; height: 100%; max-height: 500px;"
+              data-slides-count="2">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 2</div>
+              <div class="ig-carousel-viewport">
+                <div class="ig-carousel-track">
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/sutilok/sin-titulo-12.jpg"
+                      alt="Slide 1 Liquidación Top Wine Group" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/sutilok/sin-titulo-13.jpg"
+                      alt="Slide 2 Liquidación Top Wine Group" class="ig-slide-img" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 23. Sutil: Lanzamiento Espumante La Playa -->
+        <article class="project-panel" id="panel-sutil-8" data-project-index="23">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Story</span>
+              <span class="stage-format-badge">2024</span>
+            </div>
+            <h2 class="stage-project-title">Lanzamiento Espumante La Playa</h2>
+          </div>
+          <div class="stage-media-card aspect-story">
+            <div class="ig-carousel-container" style="aspect-ratio: 9 / 16; height: 100%; max-height: 500px;"
+              data-slides-count="2">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 2</div>
+              <div class="ig-carousel-viewport">
+                <div class="ig-carousel-track">
+                  <div class="ig-slide-img-wrap"><img
+                      src="../assets/RRSS-graficas/sutilok/diseno-lanzamiento-mesa-de-trabajo-1-copia-4.jpg"
+                      alt="Slide 1 Lanzamiento Espumante La Playa" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/sutilok/diseno-lanzamiento-12.jpg"
+                      alt="Slide 2 Lanzamiento Espumante La Playa" class="ig-slide-img" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 24. Sutil: Oferta laboral -->
+        <article class="project-panel" id="panel-sutil-9" data-project-index="24">
+          <div class="stage-project-header">
+            <div class="stage-meta-row">
+              <span class="stage-client-tag">Story</span>
+              <span class="stage-format-badge">2024</span>
+            </div>
+            <h2 class="stage-project-title">Oferta laboral</h2>
+          </div>
+          <div class="stage-media-card aspect-story">
+            <div class="ig-carousel-container" style="aspect-ratio: 9 / 16; height: 100%; max-height: 500px;"
+              data-slides-count="2">
+              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
+              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
+              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 2</div>
+              <div class="ig-carousel-viewport">
+                <div class="ig-carousel-track">
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/Laboral-oferta.jpg"
+                      alt="Slide 1 Oferta Laboral" class="ig-slide-img" loading="lazy"></div>
+                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/Laboral-oferta-2.jpg"
+                      alt="Slide 2 Oferta Laboral" class="ig-slide-img" loading="lazy"></div>
+                </div>
+              </div>
+              <div class="ig-pagination-dots">
+                <span class="ig-dot active"></span><span class="ig-dot"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+
+
+      </section>
+
+    </div>
+
+    <!-- Modal Lightbox para detalle de piezas -->
+    <div class="cd-modal-backdrop" id="cdModalBackdrop" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="cd-modal-content" id="cdModalContent">
+        <button type="button" class="cd-modal-close-btn" id="cdModalClose" aria-label="Cerrar modal">&times;</button>
+        <div class="cd-modal-image-wrap" id="cdModalMediaContainer">
+          <!-- Contenido inyectado dinámicamente -->
+        </div>
+      </div>
+    </div>
+
+
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">JUAN PABLO</span>
+      <ul class="footer-nav" aria-label="Enlaces de contacto y redes">
+        <li><a href="mailto:juan-pablo.catalan@uc.cl" class="footer-link">EMAIL</a></li>
+        <li><a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer"
+            class="footer-link">LINKED IN</a></li>
+        <li><a href="https://www.instagram.com/jp.catalan/" target="_blank" rel="noopener noreferrer"
+            class="footer-link">INSTAGRAM</a></li>
+      </ul>
+      <span class="footer-copy">&copy; 2026</span>
+    </div>
+  </footer>
+
+  <!-- Scripts: Single Project Stage Controller, Carousel Logic & Background Gallery Manager -->
+  <script>
+    (function () {
+      const mainTitle = document.querySelector('.project-title');
+      const itemLinks = document.querySelectorAll('.sidebar-item-link');
+      const panels = document.querySelectorAll('.project-panel');
+      const clientBtns = document.querySelectorAll('.sidebar-client-btn');
+      const clientGroups = document.querySelectorAll('.sidebar-client-group');
+      const stageFooter = document.querySelector('.stage-nav-footer');
+      const prevBtn = document.getElementById('stagePrevBtn');
+      const nextBtn = document.getElementById('stageNextBtn');
+      const counterDisplay = document.getElementById('stageCounterDisplay');
+      const totalProjects = panels.length;
+      let currentIndex = -1;
+
+      // Sincronizar automáticamente los títulos de la lista con los stage-project-title
+      itemLinks.forEach((link, idx) => {
+        if (link.classList.contains('sidebar-sub-heading')) return;
+        const panel = panels[idx];
+        if (panel) {
+          const titleEl = panel.querySelector('.stage-project-title');
+          const numSpan = link.querySelector('.sidebar-item-num');
+          const nameSpan = link.querySelector('.sidebar-item-name');
+          const numStr = (idx + 1).toString().padStart(2, '0');
+          if (numSpan) numSpan.textContent = numStr;
+          if (titleEl && nameSpan) {
+            nameSpan.textContent = titleEl.textContent.trim();
+          }
+        }
+      });
+
+      // Actualizar título principal de forma inmediata
+      const pageDesc = document.getElementById('page-desc');
+      function updateMainTitle(text) {
+        if (!mainTitle) return;
+        mainTitle.textContent = text;
+        if (pageDesc) {
+          pageDesc.style.display = (text === 'Piezas gráficas') ? 'block' : 'none';
+        }
+      }
+
+      // Desplegar/cerrar grupo de cliente
+      clientBtns.forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetGroup = btn.closest('.sidebar-client-group');
+          const isOpen = targetGroup.classList.contains('is-open');
+          const isFeuc = targetGroup.id === 'group-feuc';
+
+          if (!isOpen) {
+            // Abrir este grupo y cerrar los demás
+            clientGroups.forEach((group) => {
+              group.classList.remove('is-open');
+              const gBtn = group.querySelector('.sidebar-client-btn');
+              if (gBtn) gBtn.setAttribute('aria-expanded', 'false');
+            });
+            targetGroup.classList.add('is-open');
+            btn.setAttribute('aria-expanded', 'true');
+
+            // Al apretar el cliente, abrir automáticamente su primer proyecto
+            if (isFeuc) {
+              switchProject(0);
+            } else {
+              const firstGroupLink = targetGroup.querySelector('.sidebar-item-link');
+              if (firstGroupLink) {
+                const linkIdx = Array.from(itemLinks).indexOf(firstGroupLink);
+                switchProject(linkIdx !== -1 ? linkIdx : 0);
+              } else {
+                if (targetGroup.id === 'group-sutil') {
+                  updateMainTitle('Sutil Wines');
+                  document.body.classList.add('has-sutil-bg');
+                  document.body.classList.remove('has-feuc-bg');
+                  document.body.classList.remove('has-respuestas-bg');
+                } else {
+                  updateMainTitle('Fundación Respuestas');
+                  document.body.classList.remove('has-feuc-bg');
+                  document.body.classList.add('has-respuestas-bg');
+                  document.body.classList.remove('has-sutil-bg');
+                }
+              }
+            }
+          } else {
+            // Si ya está abierto, se colapsa y se oculta la publicación
+            targetGroup.classList.remove('is-open');
+            btn.setAttribute('aria-expanded', 'false');
+            panels.forEach(p => p.classList.remove('is-active'));
+            itemLinks.forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.sidebar-sub-heading').forEach(h => h.classList.remove('active'));
+            if (stageFooter) stageFooter.classList.remove('is-visible');
+            currentIndex = -1;
+            updateMainTitle('Piezas gráficas');
+            document.body.classList.remove('has-feuc-bg');
+            document.body.classList.remove('has-sutil-bg');
+            document.body.classList.remove('has-respuestas-bg');
+          }
+        });
+      });
+
+      // Activar un proyecto específico
+      function switchProject(index) {
+        if (index < 0) index = totalProjects - 1;
+        if (index >= totalProjects) index = 0;
+        currentIndex = index;
+
+        // Cambiar título y fondo según el cliente activo
+        const activeLink = itemLinks[currentIndex];
+        const parentGroup = activeLink ? activeLink.closest('.sidebar-client-group') : null;
+        if (parentGroup && parentGroup.id === 'group-sutil') {
+          updateMainTitle('Sutil Wines');
+          document.body.classList.remove('has-feuc-bg');
+          document.body.classList.remove('has-respuestas-bg');
+          document.body.classList.add('has-sutil-bg');
+        } else if (parentGroup && parentGroup.id === 'group-respuestas') {
+          updateMainTitle('Fundación Respuestas');
+          document.body.classList.remove('has-feuc-bg');
+          document.body.classList.add('has-respuestas-bg');
+          document.body.classList.remove('has-sutil-bg');
+        } else {
+          updateMainTitle('FEUC');
+          document.body.classList.add('has-feuc-bg');
+          document.body.classList.remove('has-respuestas-bg');
+          document.body.classList.remove('has-sutil-bg');
+        }
+
+        // Ocultar todos los paneles y mostrar solo el activo
+        panels.forEach((panel, idx) => {
+          const isActive = idx === currentIndex;
+          panel.classList.toggle('is-active', isActive);
+        });
+
+        // Mostrar la barra de navegación del stage si estaba oculta
+        if (stageFooter) {
+          stageFooter.classList.add('is-visible');
+        }
+
+        // Actualizar links en la barra lateral
+        itemLinks.forEach((link, idx) => {
+          const isActive = idx === currentIndex;
+          link.classList.toggle('active', isActive);
+
+          // Si este link es el activo, asegurar que su grupo padre esté abierto
+          if (isActive) {
+            const parentGroup = link.closest('.sidebar-client-group');
+            if (parentGroup && !parentGroup.classList.contains('is-open')) {
+              clientGroups.forEach((group) => {
+                group.classList.remove('is-open');
+                const gBtn = group.querySelector('.sidebar-client-btn');
+                if (gBtn) gBtn.setAttribute('aria-expanded', 'false');
+              });
+              parentGroup.classList.add('is-open');
+              const activeBtn = parentGroup.querySelector('.sidebar-client-btn');
+              if (activeBtn) activeBtn.setAttribute('aria-expanded', 'true');
+            }
+          }
+        });
+
+        // Actualizar estado activo en los encabezados de sub-sección (Instagram, Mailing, Paloma)
+        document.querySelectorAll('.sidebar-sub-section').forEach((sec) => {
+          const heading = sec.querySelector('.sidebar-sub-heading');
+          const hasActiveLink = !!sec.querySelector('.sidebar-item-link.active');
+          if (heading) {
+            heading.classList.toggle('active', hasActiveLink);
+          }
+        });
+
+        // Actualizar contador
+        if (counterDisplay) {
+          const numStr = (currentIndex + 1).toString().padStart(2, '0');
+          const totalStr = totalProjects.toString().padStart(2, '0');
+          counterDisplay.textContent = `PROYECTO ${numStr} DE ${totalStr}`;
+        }
+
+        // Si es pantalla pequeña, hacer scroll suave al inicio del stage
+        if (window.innerWidth <= 1024) {
+          const stageEl = document.getElementById('campaigns-stage');
+          if (stageEl) stageEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+
+      // Eventos de click en links de la barra lateral
+      itemLinks.forEach((link, idx) => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          switchProject(idx);
+        });
+      });
+
+      // Eventos de click en los encabezados de sub-sección con hijos (ej. Instagram)
+      const subHeadings = document.querySelectorAll('.sidebar-sub-heading:not(.sidebar-item-link)');
+      subHeadings.forEach((heading) => {
+        heading.addEventListener('click', (e) => {
+          e.preventDefault();
+          const parentSubSection = heading.closest('.sidebar-sub-section');
+          if (parentSubSection) {
+            const firstLink = parentSubSection.querySelector('.sidebar-item-link');
+            if (firstLink) {
+              const linkIdx = Array.from(itemLinks).indexOf(firstLink);
+              if (linkIdx !== -1) {
+                switchProject(linkIdx);
+              }
+            }
+          }
+        });
+      });
+
+      // ─── CONTROLADOR DE CARRUSELES DENTRO DE LOS PANELES ───
+      function initCarousels(scope = document) {
+        const carousels = scope.querySelectorAll('.ig-carousel-container');
+        carousels.forEach((carousel) => {
+          const track = carousel.querySelector('.ig-carousel-track');
+          const slides = carousel.querySelectorAll('.ig-slide-img-wrap');
+          const cPrevBtn = carousel.querySelector('.ig-nav-btn.prev');
+          const cNextBtn = carousel.querySelector('.ig-nav-btn.next');
+          const currSlideText = carousel.querySelector('.ig-curr-slide');
+          const dots = carousel.querySelectorAll('.ig-dot');
+          const totalSlides = slides.length;
+          let slideIdx = 0;
+
+          function updateCarousel() {
+            track.style.transform = `translateX(-${slideIdx * 100}%)`;
+            if (currSlideText) currSlideText.textContent = slideIdx + 1;
+            dots.forEach((dot, idx) => {
+              dot.classList.toggle('active', idx === slideIdx);
+            });
+            carousel.setAttribute('data-active-slide', slideIdx);
+          }
+          carousel.setAttribute('data-active-slide', '0');
+
+          function nextSlide() {
+            if (totalSlides <= 1) return;
+            slideIdx = (slideIdx < totalSlides - 1) ? slideIdx + 1 : 0;
+            updateCarousel();
+          }
+
+          function prevSlide() {
+            if (totalSlides <= 1) return;
+            slideIdx = (slideIdx > 0) ? slideIdx - 1 : totalSlides - 1;
+            updateCarousel();
+          }
+
+          carousel._nextSlide = nextSlide;
+          carousel._prevSlide = prevSlide;
+
+          if (cPrevBtn) {
+            cPrevBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              prevSlide();
+            });
+          }
+
+          if (cNextBtn) {
+            cNextBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              nextSlide();
+            });
+          }
+
+          // Swipe táctil
+          let startX = 0;
+          carousel.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+          }, { passive: true });
+
+          carousel.addEventListener('touchend', (e) => {
+            const endX = e.changedTouches[0].clientX;
+            const diffX = startX - endX;
+            if (Math.abs(diffX) > 40) {
+              if (diffX > 0) {
+                nextSlide();
+              } else {
+                prevSlide();
+              }
+            }
+          }, { passive: true });
+        });
+      }
+
+      initCarousels();
+
+      // Navegación por imágenes dentro del proyecto activo (si tiene varias imágenes / carrusel)
+      function getActiveCarousel() {
+        if (currentIndex < 0 || !panels[currentIndex]) return null;
+        return panels[currentIndex].querySelector('.ig-carousel-container');
+      }
+
+      function nextAction() {
+        const carousel = getActiveCarousel();
+        if (carousel && typeof carousel._nextSlide === 'function') {
+          carousel._nextSlide();
+        }
+      }
+
+      function prevAction() {
+        const carousel = getActiveCarousel();
+        if (carousel && typeof carousel._prevSlide === 'function') {
+          carousel._prevSlide();
+        }
+      }
+
+      // Botones Anterior / Siguiente en el Stage (avanzan imágenes del proyecto, sin cambiar de proyecto)
+      if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          prevAction();
+        });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          nextAction();
+        });
+      }
+
+      // Teclas de flecha izquierda/derecha para navegar imágenes del proyecto si lo dispone
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' && !e.target.closest('input, textarea')) {
+          e.preventDefault();
+          nextAction();
+        } else if (e.key === 'ArrowLeft' && !e.target.closest('input, textarea')) {
+          e.preventDefault();
+          prevAction();
+        }
+      });
+
+    })();
+  </script>
+
+  <script src="../js/script.js?v=103"></script>
+</body>
+
+</html>

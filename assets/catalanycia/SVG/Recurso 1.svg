@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 80.86 80.86">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#Degradado_sin_nombre_21);
+      }
+    </style>
+    <radialGradient id="Degradado_sin_nombre_21" data-name="Degradado sin nombre 21" cx="40.43" cy="40.43" fx="40.43" fy="40.43" r="40.43" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#68112a"/>
+      <stop offset=".01" stop-color="#68112a" stop-opacity=".96"/>
+      <stop offset=".12" stop-color="#68112a" stop-opacity=".67"/>
+      <stop offset=".23" stop-color="#68112a" stop-opacity=".42"/>
+      <stop offset=".35" stop-color="#68112a" stop-opacity=".23"/>
+      <stop offset=".5" stop-color="#68112a" stop-opacity=".1"/>
+      <stop offset=".68" stop-color="#68112a" stop-opacity=".02"/>
+      <stop offset="1" stop-color="#68112a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <g id="Capa_3" data-name="Capa 3">
+    <g id="Capa_1-2" data-name="Capa 1">
+      <circle class="cls-1" cx="40.43" cy="40.43" r="40.43"/>
+    </g>
+  </g>
+</svg>

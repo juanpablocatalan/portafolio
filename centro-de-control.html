@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centro de Control — Portafolio Juan Pablo</title>
+  <meta name="description" content="Panel de administración y centro de control independiente para gestionar el catálogo de proyectos del portafolio.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/happy-face.svg">
+
+  <!-- Core Stylesheet for Admin -->
+  <link rel="stylesheet" href="css/admin.css?v=1">
+</head>
+
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="admin-header">
+    <div class="admin-container admin-header-inner">
+      <div class="brand-section">
+        <a href="index.html" class="brand-logo" title="Ir al sitio web">
+          <span>juan-pablo</span>*<span class="brand-bold">catalán</span>
+        </a>
+        <span class="brand-badge">CENTRO DE CONTROL</span>
+      </div>
+
+      <div class="admin-nav-actions">
+        <a href="index.html" target="_blank" class="btn btn-ghost btn-sm" title="Abrir portafolio en una nueva pestaña">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          Ver Sitio Web
+        </a>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="openCodeSnippetModal()" title="Generar código listo para index.html">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          Generar Código
+        </button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openAddModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          + Agregar Proyecto
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Stage -->
+  <main class="admin-container" style="flex: 1; padding-top: 1rem; padding-bottom: 3rem;">
+
+    <!-- Dashboard Quick Stats Strip -->
+    <section class="admin-stats-strip" aria-label="Estadísticas de proyectos">
+      <div class="stat-card">
+        <div class="stat-card-label">
+          <span>Total Proyectos</span>
+          <span class="stat-indicator total"></span>
+        </div>
+        <div class="stat-card-value" id="stat-total">12</div>
+        <div class="stat-card-sub">En catálogo general</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-label">
+          <span>Visibles en Web</span>
+          <span class="stat-indicator live"></span>
+        </div>
+        <div class="stat-card-value" id="stat-visible" style="color: var(--admin-accent);">12</div>
+        <div class="stat-card-sub">Actualmente mostrados</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-label">
+          <span>Ocultos / Borradores</span>
+          <span class="stat-indicator draft"></span>
+        </div>
+        <div class="stat-card-value" id="stat-hidden">0</div>
+        <div class="stat-card-sub">No visibles para el público</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-label">
+          <span>Categorías</span>
+          <span class="stat-indicator categories"></span>
+        </div>
+        <div class="stat-card-value" id="stat-categories">10</div>
+        <div class="stat-card-sub">Disciplinas activas</div>
+      </div>
+    </section>
+
+    <!-- Toolbar: Search, Filters & View Options -->
+    <section class="admin-toolbar" aria-label="Herramientas de filtrado y visualización">
+      <div class="toolbar-left">
+        <!-- Search Input -->
+        <div class="search-box">
+          <span class="search-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </span>
+          <input type="text" id="search-input" class="search-input" placeholder="Buscar por título, categoría, año o tag...">
+        </div>
+
+        <!-- Filter Status Pills -->
+        <div class="filter-pills" role="tablist">
+          <button type="button" class="pill-btn active" data-filter="all">Todos</button>
+          <button type="button" class="pill-btn" data-filter="visible">Visibles en Web</button>
+          <button type="button" class="pill-btn" data-filter="hidden">Ocultos</button>
+        </div>
+      </div>
+
+      <div class="toolbar-right">
+        <!-- View Switcher -->
+        <div class="view-switcher" role="group" aria-label="Cambiar vista">
+          <button type="button" class="view-btn active" data-view="table" title="Vista Tabla">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            Tabla
+          </button>
+          <button type="button" class="view-btn" data-view="grid" title="Vista Cuadrícula">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            Tarjetas
+          </button>
+        </div>
+
+        <!-- Backup / Data Tools -->
+        <button type="button" class="btn btn-secondary btn-sm" onclick="exportJSON()" title="Descargar respaldo JSON">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Exportar JSON
+        </button>
+
+        <button type="button" class="btn btn-secondary btn-sm" onclick="triggerImportJSON()" title="Cargar archivo JSON">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          Importar
+        </button>
+        <input type="file" id="import-json-input" accept=".json" style="display: none;">
+
+        <button type="button" class="btn btn-ghost btn-sm" onclick="resetToDefaults()" title="Restablecer catálogo original">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+          Restablecer
+        </button>
+      </div>
+    </section>
+
+    <!-- Projects List & Grid Container -->
+    <section id="projects-container" aria-label="Listado de proyectos"></section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="admin-footer">
+    <div class="admin-container admin-footer-inner">
+      <span>CENTRO DE CONTROL &mdash; JUAN PABLO CATALÁN</span>
+      <span>Almacenamiento Local Activo (LocalStorage)</span>
+    </div>
+  </footer>
+
+  <!-- ======================================================================
+       MODALES
+       ====================================================================== -->
+
+  <!-- Modal: Agregar Proyecto -->
+  <div class="modal-overlay" id="modal-add">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2 class="modal-title">+ Agregar Nuevo Proyecto</h2>
+        <button type="button" class="modal-close-btn" onclick="closeAllModals()">&times;</button>
+      </div>
+      <form id="form-add-project" onsubmit="handleAddProjectSubmit(event)">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="add-num">Número / ID</label>
+              <input type="text" id="add-num" class="form-input" placeholder="ej. 13" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="add-year">Año</label>
+              <input type="text" id="add-year" class="form-input" placeholder="2026" required>
+            </div>
+
+            <div class="form-group form-full">
+              <label class="form-label" for="add-title">Título del Proyecto</label>
+              <input type="text" id="add-title" class="form-input" placeholder="Nombre de la marca o trabajo" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="add-category">Categoría Corta</label>
+              <input type="text" id="add-category" class="form-input" placeholder="Brand Identity" required>
+              <span class="form-help">Aparece en la columna derecha de la web</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="add-category-full">Categoría Extendida</label>
+              <input type="text" id="add-category-full" class="form-input" placeholder="Brand Identity & Direction">
+              <span class="form-help">Aparece en la carátula de previsualización</span>
+            </div>
+
+            <div class="form-group form-full">
+              <label class="form-label" for="add-cover">Ruta de Imagen de Portada</label>
+              <input type="text" id="add-cover" class="form-input" oninput="updateAddImagePreview(this.value)" placeholder="assets/projects/project-01.jpg" required>
+              
+              <!-- Quick Image Picker & Preview -->
+              <div class="image-preview-box" style="margin-top: 0.5rem;">
+                <img src="assets/projects/project-01.jpg" id="add-cover-preview" class="image-preview-thumb" alt="Vista previa de imagen">
+                <div style="flex: 1;">
+                  <span class="form-help" style="display: block; margin-bottom: 0.35rem;">Seleccionar de las imágenes existentes:</span>
+                  <div class="preset-images-strip" id="add-preset-strip"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group form-full">
+              <label class="form-label" for="add-url">Enlace / Archivo HTML de Destino</label>
+              <input type="text" id="add-url" class="form-input" placeholder="projects/project-13.html" required>
+            </div>
+
+            <div class="form-group form-full">
+              <label class="form-label" for="add-description">Descripción / Resumen</label>
+              <textarea id="add-description" class="form-textarea" placeholder="Breve sinopsis o enfoque conceptual del proyecto..."></textarea>
+            </div>
+
+            <div class="form-group form-full">
+              <label class="form-label" for="add-tags">Etiquetas / Disciplinas (separadas por comas)</label>
+              <input type="text" id="add-tags" class="form-input" placeholder="Branding, Art Direction, Editorial">
+            </div>
+
+            <div class="form-group form-full" style="padding-top: 0.5rem;">
+              <label class="visibility-toggle-wrapper" style="cursor: pointer;">
+                <span class="switch">
+                  <input type="checkbox" id="add-visible" checked>
+                  <span class="slider"></span>
+                </span>
+                <span style="font-weight: 600; font-size: 0.88rem;">Mostrar inmediatamente en la web</span>
+              </label>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeAllModals()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Proyecto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Editar Proyecto -->
+  <div class="modal-overlay" id="modal-edit">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2 class="modal-title">Editar Proyecto</h2>
+        <button type="button" class="modal-close-btn" onclick="closeAllModals()">&times;</button>
+      </div>
+      <form id="form-edit-project" onsubmit="handleEditProjectSubmit(event)">
+        <input type="hidden" id="edit-id">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="edit-num">Número / ID</label>
+              <input type="text" id="edit-num" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="edit-year">Año</label>
+              <input type="text" id="edit-year" class="form-input" required>
+            </div>
+
+            <div class="form-group form-full">
+              <label class="form-label" for="edit-title">Título del Proyecto</label>
+              <input type="text" id="edit-title" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="edit-category">Categoría Corta</label>
+              <input type="text" id="edit-category" class="form-input" required>
+              <span class="form-help">Columna derecha</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="edit-category-full">Categoría Extendida</label>
+              <input type="text" id="edit-category-full" class="form-input">
+              <span class="form-help">Carátula izquierda</span>
+            </div>
+
+            <div class="form-group form-full">
+              <label class="form-label" for="edit-cover">Ruta de Imagen de Portada</label>
+              <input type="text" id="edit-cover" class="form-input" oninput="updateEditImagePreview(this.value)" required>
+              
+              <!-- Image Selector & Preview -->
+              <div class="image-preview-box" style="margin-top: 0.5rem;">
+                <img src="assets/projects/project-01.jpg" id="edit-cover-preview" class="image-preview-thumb" alt="Vista previa de imagen">
+                <div style="flex: 1;">
+                  <span class="form-help" style="display: block; margin-bottom: 0.35rem;">Cambiar por una imagen existente:</span>
+                  <div class="preset-images-strip" id="edit-preset-strip"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group form-full">
+              <label class="form-label" for="edit-url">Enlace / Archivo HTML</label>
+              <input type="text" id="edit-url" class="form-input" required>
+            </div>
+
+            <div class="form-group form-full">
+              <label class="form-label" for="edit-description">Descripción / Resumen</label>
+              <textarea id="edit-description" class="form-textarea"></textarea>
+            </div>
+
+            <div class="form-group form-full">
+              <label class="form-label" for="edit-tags">Etiquetas / Disciplinas</label>
+              <input type="text" id="edit-tags" class="form-input">
+            </div>
+
+            <div class="form-group form-full" style="padding-top: 0.5rem;">
+              <label class="visibility-toggle-wrapper" style="cursor: pointer;">
+                <span class="switch">
+                  <input type="checkbox" id="edit-visible">
+                  <span class="slider"></span>
+                </span>
+                <span style="font-weight: 600; font-size: 0.88rem;">Mostrar este proyecto en la web</span>
+              </label>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeAllModals()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Actualizar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Simulador de Vista Previa -->
+  <div class="modal-overlay" id="modal-preview">
+    <div class="modal-window modal-window-lg">
+      <div class="modal-header">
+        <h2 class="modal-title">Simulador de Portafolio en Vivo</h2>
+        <button type="button" class="modal-close-btn" onclick="closeAllModals()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.8rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">
+          Así es como se visualiza este proyecto dentro del diseño editorial de la página principal:
+        </p>
+
+        <div class="simulator-layout">
+          <!-- Left Preview Card Simulation -->
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--admin-text-muted); text-transform: uppercase; margin-bottom: 0.5rem;">
+              [ Escenario Izquierdo: Preview Card ]
+            </div>
+            <div class="sim-preview-card">
+              <img src="" id="sim-preview-img" class="sim-preview-img" alt="Portada de proyecto" onerror="this.src='assets/projects/project-01.jpg'">
+              <div class="sim-preview-caption">
+                <span id="sim-preview-num-title" style="font-weight: 700;"></span>
+                <span id="sim-preview-cat" style="color: var(--admin-text-muted);"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column Item Simulation -->
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--admin-text-muted); text-transform: uppercase; margin-bottom: 0.5rem;">
+              [ Escenario Derecho: Fila del Listado ]
+            </div>
+            <div style="background: #080808; border: 1px solid #222; border-radius: var(--radius-sm); padding: 1.5rem;">
+              <div style="font-family: var(--font-mono); font-size: 0.65rem; color: #555; text-transform: uppercase; margin-bottom: 0.75rem;">TRABAJOS</div>
+              <div class="sim-list-item">
+                <div style="display: flex; gap: 0.75rem; align-items: baseline;">
+                  <span id="sim-item-num" style="font-family: var(--font-mono); color: var(--admin-accent); font-size: 0.85rem;">01</span>
+                  <span id="sim-item-title" class="sim-item-title">Nombre</span>
+                </div>
+                <div class="sim-item-meta">
+                  <span id="sim-item-cat">Categoría</span>
+                  <span id="sim-item-year">2026</span>
+                  <span>&rarr;</span>
+                </div>
+              </div>
+
+              <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #1a1a1a;">
+                <span style="font-size: 0.72rem; color: #666; display: block; margin-bottom: 0.25rem;">DESCRIPCIÓN DEL PROYECTO:</span>
+                <p id="sim-desc" style="font-size: 0.82rem; color: #aaa;"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeAllModals()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Exportar Snippet de Código -->
+  <div class="modal-overlay" id="modal-code">
+    <div class="modal-window modal-window-lg">
+      <div class="modal-header">
+        <h2 class="modal-title">Snippet HTML Generado para index.html</h2>
+        <button type="button" class="modal-close-btn" onclick="closeAllModals()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.82rem; color: var(--admin-text-muted); margin-bottom: 1rem;">
+          Este bloque de código incluye únicamente los proyectos <strong>marcados como visibles</strong> en su orden actual. Puedes copiarlo y reemplazar el bloque correspondiente en <code>index.html</code> cuando desees reflejar los cambios en producción.
+        </p>
+        <pre class="code-box" id="code-snippet-box"></pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeAllModals()">Cerrar</button>
+        <button type="button" class="btn btn-primary" onclick="copySnippetCode()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          Copiar al Portapapeles
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/admin.js?v=1"></script>
+</body>
+
+</html>

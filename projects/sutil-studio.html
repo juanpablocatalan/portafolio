@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estudio de Iluminación 3D — Sutil Wines</title>
+  <meta name="description" content="Laboratorio y galería interactiva de iluminación 3D para la botella Sutil Wines.">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="../css/style.css">
+
+  <style>
+    :root {
+      --bg-studio: #f4f4f6;
+      --panel-bg: rgba(18, 18, 22, 0.84);
+      --panel-border: rgba(255, 255, 255, 0.12);
+      --accent: #82192C;
+      --accent-hover: #9c2237;
+      --text-main: #f5f5f7;
+      --text-muted: #a1a1a9;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--bg-studio);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-main);
+      user-select: none;
+    }
+
+    /* ── Header Bar ── */
+    .studio-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      pointer-events: none;
+    }
+
+    .studio-back-btn {
+      pointer-events: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--panel-border);
+      border-radius: 999px;
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .studio-back-btn:hover {
+      background: rgba(35, 35, 42, 0.95);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .studio-badge {
+      pointer-events: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--panel-border);
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--text-main);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .studio-badge-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #22c55e;
+    }
+
+    /* ── 3D Viewport ── */
+    #studio-viewport {
+      width: 100vw;
+      height: 100vh;
+      display: block;
+      cursor: grab;
+      transition: background 0.3s ease;
+    }
+
+    #studio-viewport:active {
+      cursor: grabbing;
+    }
+
+    /* ── Floating Controls Panel ── */
+    .controls-panel {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      bottom: 1.5rem;
+      width: 380px;
+      max-width: calc(100vw - 3rem);
+      background: var(--panel-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--panel-border);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+    }
+
+    .controls-panel.collapsed {
+      transform: translateX(calc(100% + 2rem));
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .panel-header {
+      padding: 1.25rem 1.4rem;
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .panel-toggle-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 99;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--panel-border);
+      color: #fff;
+      padding: 0.7rem 1.1rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      transition: all 0.25s ease;
+    }
+
+    .panel-toggle-btn:hover {
+      background: rgba(40, 40, 48, 0.95);
+      transform: translateY(-1px);
+    }
+
+    .panel-close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      transition: color 0.2s;
+    }
+
+    .panel-close-btn:hover {
+      color: #fff;
+    }
+
+    .panel-body {
+      padding: 1.2rem 1.4rem;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .panel-body::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .panel-body::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+    }
+
+    /* ── Presets Grid ── */
+    .section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .presets-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+    }
+
+    .preset-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 0.65rem 0.75rem;
+      color: var(--text-main);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .preset-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .preset-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(130, 25, 44, 0.4);
+    }
+
+    /* ── Controls Groups ── */
+    .control-group {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .control-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .control-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+
+    .control-label {
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .control-val {
+      color: var(--text-muted);
+      font-family: ui-monospace, monospace;
+      font-size: 0.75rem;
+    }
+
+    /* ── Sliders ── */
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 5px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.15);
+      outline: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      transition: transform 0.15s ease, background 0.2s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      background: var(--accent);
+    }
+
+    /* ── Color & Switch row ── */
+    .color-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+
+    input[type="color"] {
+      -webkit-appearance: none;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      width: 34px;
+      height: 28px;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 6px;
+    }
+
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 36px;
+      height: 20px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider-toggle {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.18);
+      transition: 0.3s;
+      border-radius: 34px;
+    }
+
+    .slider-toggle:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider-toggle {
+      background-color: var(--accent);
+    }
+
+    input:checked + .slider-toggle:before {
+      transform: translateX(16px);
+    }
+
+    /* ── Footer Actions ── */
+    .panel-footer {
+      padding: 1rem 1.4rem;
+      border-top: 1px solid var(--panel-border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .action-btn {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 10px;
+      border: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .action-btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .action-btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .action-btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* ── Toast notification ── */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #18181b;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 0.7rem 1.4rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      z-index: 999;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Floating Header -->
+  <header class="studio-header">
+    <a href="project-05.html" class="studio-back-btn">
+      <span aria-hidden="true">&larr;</span> Volver a Sutil Wines
+    </a>
+
+    <div class="studio-badge">
+      <span class="studio-badge-dot"></span>
+      <span>Lighting Lab — Sutil Caspana</span>
+    </div>
+  </header>
+
+  <!-- Open Panel Button (visible when panel is closed) -->
+  <button class="panel-toggle-btn" id="open-panel-btn" style="display: none;">
+    <span>🎛️ Controles de Luz</span>
+  </button>
+
+  <!-- 3D Canvas -->
+  <canvas id="studio-viewport"></canvas>
+
+  <!-- Controls Panel -->
+  <aside class="controls-panel" id="controls-panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span>🎛️ Estudio de Iluminación</span>
+      </div>
+      <button class="panel-close-btn" id="close-panel-btn" title="Ocultar panel">&times;</button>
+    </div>
+
+    <div class="panel-body">
+
+      <!-- Selector de Diseños de Botella -->
+      <div>
+        <div class="section-title">Diseño de Etiqueta (8 Diseños)</div>
+        <div class="presets-grid" style="grid-template-columns: repeat(4, 1fr); gap: 0.4rem;">
+          <button class="preset-btn design-btn active" data-design="0" style="justify-content: center; padding: 0.5rem; font-family: monospace; font-size: 0.85rem;">01</button>
+          <button class="preset-btn design-btn" data-design="1" style="justify-content: center; padding: 0.5rem; font-family: monospace; font-size: 0.85rem;">02</button>
+          <button class="preset-btn design-btn" data-design="2" style="justify-content: center; padding: 0.5rem; font-family: monospace; font-size: 0.85rem;">03</button>
+          <button class="preset-btn design-btn" data-design="3" style="justify-content: center; padding: 0.5rem; font-family: monospace; font-size: 0.85rem;">04</button>
+          <button class="preset-btn design-btn" data-design="4" style="justify-content: center; padding: 0.5rem; font-family: monospace; font-size: 0.85rem;">05</button>
+          <button class="preset-btn design-btn" data-design="5" style="justify-content: center; padding: 0.5rem; font-family: monospace; font-size: 0.85rem;">06</button>
+          <button class="preset-btn design-btn" data-design="6" style="justify-content: center; padding: 0.5rem; font-family: monospace; font-size: 0.85rem;">07</button>
+          <button class="preset-btn design-btn" data-design="7" style="justify-content: center; padding: 0.5rem; font-family: monospace; font-size: 0.85rem;">08</button>
+        </div>
+      </div>
+
+      <!-- Presets -->
+      <div>
+        <div class="section-title">Presets de Estudio</div>
+        <div class="presets-grid">
+          <button class="preset-btn active" data-preset="commercial">
+            <span>📸</span> Comercial (Ref)
+          </button>
+          <button class="preset-btn" data-preset="dual-softbox">
+            <span>💡</span> Doble Softbox
+          </button>
+          <button class="preset-btn" data-preset="dark-luxury">
+            <span>🍷</span> Cava / Dark
+          </button>
+          <button class="preset-btn" data-preset="high-key">
+            <span>☀️</span> High-Key Brillante
+          </button>
+        </div>
+      </div>
+
+      <!-- Softboxes (Reflejos en el Vidrio) -->
+      <div>
+        <div class="section-title">Softboxes (Reflejos en Vidrio)</div>
+        <div class="control-group">
+
+          <!-- Softbox Izquierdo: Intensidad -->
+          <div class="control-item">
+            <div class="control-label-row">
+              <span class="control-label">Softbox Izquierdo (Intensidad)</span>
+              <span class="control-val" id="val-sb-left">1.0</span>
+            </div>
+            <input type="range" id="sb-left" min="0" max="2" step="0.05" value="1.0">
+          </div>
+
+          <!-- Softbox Izquierdo: Ancho / Difusión -->
+          <div class="control-item">
+            <div class="control-label-row">
+              <span class="control-label">Softbox Izquierdo (Ancho)</span>
+              <span class="control-val" id="val-sb-left-w">70px</span>
+            </div>
+            <input type="range" id="sb-left-w" min="20" max="140" step="5" value="70">
+          </div>
+
+          <!-- Softbox Derecho: Intensidad -->
+          <div class="control-item">
+            <div class="control-label-row">
+              <span class="control-label">Softbox Derecho (Intensidad)</span>
+              <span class="control-val" id="val-sb-right">0.65</span>
+            </div>
+            <input type="range" id="sb-right" min="0" max="2" step="0.05" value="0.65">
+          </div>
+
+          <!-- Softbox Derecho: Ancho -->
+          <div class="control-item">
+            <div class="control-label-row">
+              <span class="control-label">Softbox Derecho (Ancho)</span>
+              <span class="control-val" id="val-sb-right-w">60px</span>
+            </div>
+            <input type="range" id="sb-right-w" min="20" max="140" step="5" value="60">
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Luces Directas -->
+      <div>
+        <div class="section-title">Luces Directas</div>
+        <div class="control-group">
+
+          <div class="control-item">
+            <div class="control-label-row">
+              <span class="control-label">Key Light Izquierda</span>
+              <span class="control-val" id="val-light-left">1.4</span>
+            </div>
+            <input type="range" id="light-left" min="0" max="3" step="0.1" value="1.4">
+          </div>
+
+          <div class="control-item">
+            <div class="control-label-row">
+              <span class="control-label">Luz Frontal (Etiqueta)</span>
+              <span class="control-val" id="val-light-front">0.9</span>
+            </div>
+            <input type="range" id="light-front" min="0" max="2.5" step="0.05" value="0.9">
+          </div>
+
+          <div class="control-item">
+            <div class="control-label-row">
+              <span class="control-label">Rim Light Derecha</span>
+              <span class="control-val" id="val-light-right">0.85</span>
+            </div>
+            <input type="range" id="light-right" min="0" max="2.5" step="0.05" value="0.85">
+          </div>
+
+          <div class="control-item">
+            <div class="control-label-row">
+              <span class="control-label">Luz Cenital (Corona/Tapa)</span>
+              <span class="control-val" id="val-light-top">0.5</span>
+            </div>
+            <input type="range" id="light-top" min="0" max="2" step="0.05" value="0.5">
+          </div>
+
+          <div class="control-item">
+            <div class="control-label-row">
+              <span class="control-label">Luz Ambiente</span>
+              <span class="control-val" id="val-light-ambient">0.6</span>
+            </div>
+            <input type="range" id="light-ambient" min="0" max="1.5" step="0.05" value="0.6">
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Materiales y Vidrio -->
+      <div>
+        <div class="section-title">Materiales y Acabados</div>
+        <div class="control-group">
+
+          <!-- Vidrio: Rugosidad -->
+          <div class="control-item">
+            <div class="control-label-row">
+              <span class="control-label">Vidrio (Rugosidad)</span>
+              <span class="control-val" id="val-glass-rough">0.12</span>
+            </div>
+            <input type="range" id="glass-rough" min="0.02" max="0.5" step="0.01" value="0.12">
+          </div>
+
+          <!-- Tapa: Color -->
+          <div class="color-row">
+            <span class="control-label">Color de Tapa (Cápsula)</span>
+            <input type="color" id="cap-color" value="#82192C">
+          </div>
+
+          <!-- Tapa: Rugosidad -->
+          <div class="control-item">
+            <div class="control-label-row">
+              <span class="control-label">Tapa (Satinado / Rugosidad)</span>
+              <span class="control-val" id="val-cap-rough">0.22</span>
+            </div>
+            <input type="range" id="cap-rough" min="0.05" max="0.6" step="0.02" value="0.22">
+          </div>
+
+          <!-- Sombra de Contacto -->
+          <div class="control-item">
+            <div class="control-label-row">
+              <span class="control-label">Sombra de Contacto</span>
+              <span class="control-val" id="val-shadow-op">0.85</span>
+            </div>
+            <input type="range" id="shadow-op" min="0" max="1" step="0.05" value="0.85">
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Cámara y Render -->
+      <div>
+        <div class="section-title">Cámara y Render</div>
+        <div class="control-group">
+
+          <div class="control-item">
+            <div class="control-label-row">
+              <span class="control-label">Exposición (Tone Mapping)</span>
+              <span class="control-val" id="val-exposure">1.05</span>
+            </div>
+            <input type="range" id="exposure" min="0.5" max="2.0" step="0.05" value="1.05">
+          </div>
+
+          <div class="switch-row">
+            <span class="control-label">Auto-rotación</span>
+            <label class="switch">
+              <input type="checkbox" id="auto-rotate-toggle">
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+
+          <div class="color-row">
+            <span class="control-label">Color de Fondo del Estudio</span>
+            <input type="color" id="bg-color" value="#F4F4F6">
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer Buttons -->
+    <div class="panel-footer">
+      <button class="action-btn action-btn-primary" id="copy-config-btn">
+        <span>📋 Copiar Configuración</span>
+      </button>
+      <button class="action-btn action-btn-secondary" id="reset-btn">
+        <span>🔄 Restablecer Iluminación</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">Configuración copiada al portapapeles</div>
+
+  <!-- Three.js Scripts -->
+  <script src="../js/three.min.js"></script>
+  <script src="../js/GLTFLoader.js"></script>
+
+  <script>
+    (function () {
+      const canvas = document.getElementById('studio-viewport');
+      const panel = document.getElementById('controls-panel');
+      const openBtn = document.getElementById('open-panel-btn');
+      const closeBtn = document.getElementById('close-panel-btn');
+      const toast = document.getElementById('toast');
+
+      // ── Toggle Panel ──
+      closeBtn.addEventListener('click', () => {
+        panel.classList.add('collapsed');
+        openBtn.style.display = 'inline-flex';
+      });
+
+      openBtn.addEventListener('click', () => {
+        panel.classList.remove('collapsed');
+        openBtn.style.display = 'none';
+      });
+
+      // ── Renderer ──
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.05;
+
+      // ── Scene & Camera ──
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.01, 100);
+      camera.position.set(0, 0, 4);
+
+      // ── Resize ──
+      function resize() {
+        renderer.setSize(window.innerWidth, window.innerHeight, false);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      // ── Lights ──
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+      scene.add(ambientLight);
+
+      const leftKeyLight = new THREE.DirectionalLight(0xffffff, 1.4);
+      leftKeyLight.position.set(-3.0, 2.5, 3.0);
+      scene.add(leftKeyLight);
+
+      const rightRimLight = new THREE.DirectionalLight(0xffffff, 0.85);
+      rightRimLight.position.set(3.2, 1.8, 2.5);
+      scene.add(rightRimLight);
+
+      const frontSoftLight = new THREE.DirectionalLight(0xffffff, 0.9);
+      frontSoftLight.position.set(0, 0.5, 4.2);
+      scene.add(frontSoftLight);
+
+      const topRimLight = new THREE.DirectionalLight(0xffffff, 0.5);
+      topRimLight.position.set(0, 4.0, -1.0);
+      scene.add(topRimLight);
+
+      // ── Contact Shadow ──
+      const shadowCanvas = document.createElement('canvas');
+      shadowCanvas.width = 256;
+      shadowCanvas.height = 256;
+      const sCtx = shadowCanvas.getContext('2d');
+      const sGrad = sCtx.createRadialGradient(128, 128, 10, 128, 128, 120);
+      sGrad.addColorStop(0, 'rgba(12, 12, 16, 0.7)');
+      sGrad.addColorStop(0.3, 'rgba(20, 20, 25, 0.4)');
+      sGrad.addColorStop(0.65, 'rgba(30, 30, 35, 0.12)');
+      sGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      sCtx.fillStyle = sGrad;
+      sCtx.fillRect(0, 0, 256, 256);
+
+      const shadowTex = new THREE.CanvasTexture(shadowCanvas);
+      const shadowMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.85, 0.85),
+        new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, opacity: 0.85 })
+      );
+      shadowMesh.rotation.x = -Math.PI / 2;
+      shadowMesh.position.set(0, -1.095, 0);
+      scene.add(shadowMesh);
+
+      // ── PMREM Environment Generator ──
+      const pmremGenerator = new THREE.PMREMGenerator(renderer);
+      pmremGenerator.compileEquirectangularShader();
+
+      const envCanvas = document.createElement('canvas');
+      envCanvas.width = 1024;
+      envCanvas.height = 512;
+      const envCtx = envCanvas.getContext('2d');
+
+      let currentEnvMap = null;
+
+      function updateEnvironmentMap(sbLeftIntensity, sbLeftWidth, sbRightIntensity, sbRightWidth) {
+        envCtx.fillStyle = '#050507';
+        envCtx.fillRect(0, 0, 1024, 512);
+
+        // Softbox izquierdo
+        if (sbLeftIntensity > 0) {
+          const w = sbLeftWidth;
+          const leftStrip = envCtx.createLinearGradient(325 - w / 2, 0, 325 + w / 2, 0);
+          leftStrip.addColorStop(0, 'rgba(255,255,255,0)');
+          leftStrip.addColorStop(0.3, `rgba(255,255,255,${Math.min(1, 0.95 * sbLeftIntensity)})`);
+          leftStrip.addColorStop(0.65, `rgba(255,255,255,${Math.min(1, 0.95 * sbLeftIntensity)})`);
+          leftStrip.addColorStop(1, 'rgba(255,255,255,0)');
+          envCtx.fillStyle = leftStrip;
+          envCtx.fillRect(325 - w / 2, 30, w, 450);
+        }
+
+        // Softbox derecho
+        if (sbRightIntensity > 0) {
+          const w = sbRightWidth;
+          const rightStrip = envCtx.createLinearGradient(700 - w / 2, 0, 700 + w / 2, 0);
+          rightStrip.addColorStop(0, 'rgba(255,255,255,0)');
+          rightStrip.addColorStop(0.4, `rgba(255,255,255,${Math.min(1, 0.7 * sbRightIntensity)})`);
+          rightStrip.addColorStop(0.7, `rgba(255,255,255,${Math.min(1, 0.7 * sbRightIntensity)})`);
+          rightStrip.addColorStop(1, 'rgba(255,255,255,0)');
+          envCtx.fillStyle = rightStrip;
+          envCtx.fillRect(700 - w / 2, 45, w, 420);
+        }
+
+        // Luz cenital suave
+        const topSoft = envCtx.createRadialGradient(512, 60, 10, 512, 60, 140);
+        topSoft.addColorStop(0, 'rgba(255,255,255,0.4)');
+        topSoft.addColorStop(1, 'rgba(255,255,255,0)');
+        envCtx.fillStyle = topSoft;
+        envCtx.fillRect(380, 0, 264, 180);
+
+        const envTexture = new THREE.CanvasTexture(envCanvas);
+        if (currentEnvMap) currentEnvMap.dispose();
+        currentEnvMap = pmremGenerator.fromEquirectangular(envTexture).texture;
+        scene.environment = currentEnvMap;
+        envTexture.dispose();
+      }
+
+      updateEnvironmentMap(1.0, 70, 0.65, 60);
+
+      // ── 3D Model & Label Setup ──
+      let model = null;
+      let baseMesh = null;
+      let capMesh = null;
+      let etiquetaTex = null;
+
+      const labelDesigns = [
+        '../assets/Sutil/Etiquetas/ETIQUETAS-01.jpg',
+        '../assets/Sutil/Etiquetas/ETIQUETAS-02.jpg',
+        '../assets/Sutil/Etiquetas/ETIQUETAS-03.jpg',
+        '../assets/Sutil/Etiquetas/ETIQUETAS-04.jpg',
+        '../assets/Sutil/Etiquetas/ETIQUETAS-05.jpg',
+        '../assets/Sutil/Etiquetas/ETIQUETAS-06.jpg',
+        '../assets/Sutil/Etiquetas/ETIQUETAS-07.jpg',
+        '../assets/Sutil/Etiquetas/ETIQUETAS-08.jpg'
+      ];
+
+      let currentStudioDesign = 0;
+      const studioTextureCache = {};
+      const CV_SIZE = 2048;
+
+      function generateStudioCanvasTexture(img) {
+        const cv = document.createElement('canvas');
+        cv.width = CV_SIZE;
+        cv.height = CV_SIZE;
+        const ctx = cv.getContext('2d');
+
+        ctx.fillStyle = '#020202';
+        ctx.fillRect(0, 0, CV_SIZE, CV_SIZE);
+
+        const metricV = 2.1666;
+        const metricU = 1.5716;
+        const imgAspect = (img.naturalWidth || 1004) / (img.naturalHeight || 1300);
+
+        const labelWidthV = 0.225 * 0.85;
+        const labelHeightU = labelWidthV * (metricV / metricU) / imgAspect;
+
+        const uCenter = 0.3715;
+        const vCenter = 0.373;
+
+        const cx = CV_SIZE * uCenter;
+        const cy = CV_SIZE * vCenter;
+        const lw = CV_SIZE * labelWidthV;
+        const lh = CV_SIZE * labelHeightU;
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(-Math.PI / 2);
+        ctx.drawImage(img, -lw / 2, -lh / 2, lw, lh);
+        ctx.restore();
+
+        const tex = new THREE.CanvasTexture(cv);
+        tex.encoding = THREE.sRGBEncoding;
+        tex.flipY = false;
+        tex.needsUpdate = true;
+        return tex;
+      }
+
+      function loadStudioDesignTexture(idx, callback) {
+        if (studioTextureCache[idx]) {
+          if (callback) callback(studioTextureCache[idx]);
+          return;
+        }
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function () {
+          const tex = generateStudioCanvasTexture(img);
+          studioTextureCache[idx] = tex;
+          if (callback) callback(tex);
+        };
+        img.src = labelDesigns[idx];
+      }
+
+      loadStudioDesignTexture(0, tex => {
+        if (baseMesh) {
+          baseMesh.material.map = tex;
+          baseMesh.material.needsUpdate = true;
+        }
+      });
+
+      function setStudioDesign(idx) {
+        currentStudioDesign = idx;
+        document.querySelectorAll('.design-btn').forEach(btn => {
+          btn.classList.toggle('active', parseInt(btn.dataset.design) === idx);
+        });
+        loadStudioDesignTexture(idx, tex => {
+          if (baseMesh) {
+            baseMesh.material.map = tex;
+            baseMesh.material.needsUpdate = true;
+          }
+        });
+      }
+
+      document.querySelectorAll('.design-btn').forEach(btn => {
+        btn.addEventListener('click', () => setStudioDesign(parseInt(btn.dataset.design)));
+      });
+
+      // Load GLTF
+      const gltfLoader = new THREE.GLTFLoader();
+      gltfLoader.load(
+        '../assets/Sutil/GLTF/sutil.glb',
+        function (gltf) {
+          model = gltf.scene;
+
+          const meshes = [];
+          model.traverse(function (child) {
+            if (child.isMesh) {
+              const bb = new THREE.Box3().setFromObject(child);
+              const cy = bb.getCenter(new THREE.Vector3()).y;
+              meshes.push({ mesh: child, cy: cy });
+            }
+          });
+          meshes.sort((a, b) => a.cy - b.cy);
+
+          if (meshes.length > 0) {
+            baseMesh = meshes[0].mesh;
+            baseMesh.material = new THREE.MeshStandardMaterial({
+              color: 0xffffff,
+              roughness: parseFloat(document.getElementById('glass-rough').value),
+              metalness: 0.04
+            });
+            if (studioTextureCache[currentStudioDesign]) {
+              baseMesh.material.map = studioTextureCache[currentStudioDesign];
+              baseMesh.material.needsUpdate = true;
+            } else {
+              loadStudioDesignTexture(currentStudioDesign, function(tex) {
+                baseMesh.material.map = tex;
+                baseMesh.material.needsUpdate = true;
+              });
+            }
+          }
+
+          if (meshes.length > 1) {
+            capMesh = meshes[1].mesh;
+            capMesh.material = new THREE.MeshStandardMaterial({
+              color: new THREE.Color(document.getElementById('cap-color').value),
+              roughness: parseFloat(document.getElementById('cap-rough').value),
+              metalness: 0.15
+            });
+          }
+
+          const box = new THREE.Box3().setFromObject(model);
+          const center = box.getCenter(new THREE.Vector3());
+          const size = box.getSize(new THREE.Vector3());
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const scale = 2.2 / maxDim;
+
+          model.scale.setScalar(scale);
+          model.position.copy(center.multiplyScalar(-scale));
+
+          scene.add(model);
+        },
+        undefined,
+        err => console.error(err)
+      );
+
+      // ── UI Controls & Bindings ──
+      const inputs = {
+        sbLeft: document.getElementById('sb-left'),
+        sbLeftW: document.getElementById('sb-left-w'),
+        sbRight: document.getElementById('sb-right'),
+        sbRightW: document.getElementById('sb-right-w'),
+        lightLeft: document.getElementById('light-left'),
+        lightFront: document.getElementById('light-front'),
+        lightRight: document.getElementById('light-right'),
+        lightTop: document.getElementById('light-top'),
+        lightAmbient: document.getElementById('light-ambient'),
+        glassRough: document.getElementById('glass-rough'),
+        capColor: document.getElementById('cap-color'),
+        capRough: document.getElementById('cap-rough'),
+        shadowOp: document.getElementById('shadow-op'),
+        exposure: document.getElementById('exposure'),
+        autoRotate: document.getElementById('auto-rotate-toggle'),
+        bgColor: document.getElementById('bg-color')
+      };
+
+      let envUpdateTimeout = null;
+      function debouncedEnvUpdate() {
+        if (envUpdateTimeout) clearTimeout(envUpdateTimeout);
+        envUpdateTimeout = setTimeout(() => {
+          updateEnvironmentMap(
+            parseFloat(inputs.sbLeft.value),
+            parseFloat(inputs.sbLeftW.value),
+            parseFloat(inputs.sbRight.value),
+            parseFloat(inputs.sbRightW.value)
+          );
+        }, 30);
+      }
+
+      // Softbox Left
+      inputs.sbLeft.addEventListener('input', e => {
+        document.getElementById('val-sb-left').textContent = e.target.value;
+        debouncedEnvUpdate();
+      });
+      inputs.sbLeftW.addEventListener('input', e => {
+        document.getElementById('val-sb-left-w').textContent = e.target.value + 'px';
+        debouncedEnvUpdate();
+      });
+
+      // Softbox Right
+      inputs.sbRight.addEventListener('input', e => {
+        document.getElementById('val-sb-right').textContent = e.target.value;
+        debouncedEnvUpdate();
+      });
+      inputs.sbRightW.addEventListener('input', e => {
+        document.getElementById('val-sb-right-w').textContent = e.target.value + 'px';
+        debouncedEnvUpdate();
+      });
+
+      // Direct Lights
+      inputs.lightLeft.addEventListener('input', e => {
+        leftKeyLight.intensity = parseFloat(e.target.value);
+        document.getElementById('val-light-left').textContent = e.target.value;
+      });
+      inputs.lightFront.addEventListener('input', e => {
+        frontSoftLight.intensity = parseFloat(e.target.value);
+        document.getElementById('val-light-front').textContent = e.target.value;
+      });
+      inputs.lightRight.addEventListener('input', e => {
+        rightRimLight.intensity = parseFloat(e.target.value);
+        document.getElementById('val-light-right').textContent = e.target.value;
+      });
+      inputs.lightTop.addEventListener('input', e => {
+        topRimLight.intensity = parseFloat(e.target.value);
+        document.getElementById('val-light-top').textContent = e.target.value;
+      });
+      inputs.lightAmbient.addEventListener('input', e => {
+        ambientLight.intensity = parseFloat(e.target.value);
+        document.getElementById('val-light-ambient').textContent = e.target.value;
+      });
+
+      // Materials
+      inputs.glassRough.addEventListener('input', e => {
+        const val = parseFloat(e.target.value);
+        if (baseMesh) baseMesh.material.roughness = val;
+        document.getElementById('val-glass-rough').textContent = val.toFixed(2);
+      });
+      inputs.capColor.addEventListener('input', e => {
+        if (capMesh) capMesh.material.color.set(e.target.value);
+      });
+      inputs.capRough.addEventListener('input', e => {
+        const val = parseFloat(e.target.value);
+        if (capMesh) capMesh.material.roughness = val;
+        document.getElementById('val-cap-rough').textContent = val.toFixed(2);
+      });
+      inputs.shadowOp.addEventListener('input', e => {
+        const val = parseFloat(e.target.value);
+        shadowMesh.material.opacity = val;
+        document.getElementById('val-shadow-op').textContent = val.toFixed(2);
+      });
+
+      // Camera / Render
+      inputs.exposure.addEventListener('input', e => {
+        const val = parseFloat(e.target.value);
+        renderer.toneMappingExposure = val;
+        document.getElementById('val-exposure').textContent = val.toFixed(2);
+      });
+      inputs.bgColor.addEventListener('input', e => {
+        document.body.style.background = e.target.value;
+      });
+
+      // ── Presets ──
+      const presets = {
+        commercial: {
+          sbLeft: 1.0, sbLeftW: 70, sbRight: 0.65, sbRightW: 60,
+          lightLeft: 1.4, lightFront: 0.9, lightRight: 0.85, lightTop: 0.5, lightAmbient: 0.6,
+          glassRough: 0.12, capRough: 0.22, capColor: '#82192C', shadowOp: 0.85, exposure: 1.05,
+          bgColor: '#F4F4F6'
+        },
+        'dual-softbox': {
+          sbLeft: 1.25, sbLeftW: 85, sbRight: 1.1, sbRightW: 85,
+          lightLeft: 1.2, lightFront: 0.8, lightRight: 1.2, lightTop: 0.4, lightAmbient: 0.5,
+          glassRough: 0.08, capRough: 0.18, capColor: '#82192C', shadowOp: 0.9, exposure: 1.1,
+          bgColor: '#FFFFFF'
+        },
+        'dark-luxury': {
+          sbLeft: 0.8, sbLeftW: 50, sbRight: 0.4, sbRightW: 40,
+          lightLeft: 0.9, lightFront: 0.5, lightRight: 0.6, lightTop: 0.7, lightAmbient: 0.35,
+          glassRough: 0.15, capRough: 0.25, capColor: '#5a0e1c', shadowOp: 0.95, exposure: 0.95,
+          bgColor: '#121214'
+        },
+        'high-key': {
+          sbLeft: 1.5, sbLeftW: 100, sbRight: 1.2, sbRightW: 90,
+          lightLeft: 1.6, lightFront: 1.4, lightRight: 1.3, lightTop: 0.8, lightAmbient: 0.85,
+          glassRough: 0.09, capRough: 0.2, capColor: '#901d33', shadowOp: 0.6, exposure: 1.25,
+          bgColor: '#FFFFFF'
+        }
+      };
+
+      function applyPreset(pName) {
+        const p = presets[pName];
+        if (!p) return;
+
+        inputs.sbLeft.value = p.sbLeft;
+        inputs.sbLeftW.value = p.sbLeftW;
+        inputs.sbRight.value = p.sbRight;
+        inputs.sbRightW.value = p.sbRightW;
+
+        inputs.lightLeft.value = p.lightLeft;
+        inputs.lightFront.value = p.lightFront;
+        inputs.lightRight.value = p.lightRight;
+        inputs.lightTop.value = p.lightTop;
+        inputs.lightAmbient.value = p.lightAmbient;
+
+        inputs.glassRough.value = p.glassRough;
+        inputs.capColor.value = p.capColor;
+        inputs.capRough.value = p.capRough;
+        inputs.shadowOp.value = p.shadowOp;
+        inputs.exposure.value = p.exposure;
+        inputs.bgColor.value = p.bgColor;
+
+        // Update displays
+        document.getElementById('val-sb-left').textContent = p.sbLeft;
+        document.getElementById('val-sb-left-w').textContent = p.sbLeftW + 'px';
+        document.getElementById('val-sb-right').textContent = p.sbRight;
+        document.getElementById('val-sb-right-w').textContent = p.sbRightW + 'px';
+        document.getElementById('val-light-left').textContent = p.lightLeft;
+        document.getElementById('val-light-front').textContent = p.lightFront;
+        document.getElementById('val-light-right').textContent = p.lightRight;
+        document.getElementById('val-light-top').textContent = p.lightTop;
+        document.getElementById('val-light-ambient').textContent = p.lightAmbient;
+        document.getElementById('val-glass-rough').textContent = p.glassRough.toFixed(2);
+        document.getElementById('val-cap-rough').textContent = p.capRough.toFixed(2);
+        document.getElementById('val-shadow-op').textContent = p.shadowOp.toFixed(2);
+        document.getElementById('val-exposure').textContent = p.exposure.toFixed(2);
+
+        // Apply to 3D scene
+        leftKeyLight.intensity = p.lightLeft;
+        frontSoftLight.intensity = p.lightFront;
+        rightRimLight.intensity = p.lightRight;
+        topRimLight.intensity = p.lightTop;
+        ambientLight.intensity = p.lightAmbient;
+        if (baseMesh) baseMesh.material.roughness = p.glassRough;
+        if (capMesh) {
+          capMesh.material.color.set(p.capColor);
+          capMesh.material.roughness = p.capRough;
+        }
+        shadowMesh.material.opacity = p.shadowOp;
+        renderer.toneMappingExposure = p.exposure;
+        document.body.style.background = p.bgColor;
+
+        updateEnvironmentMap(p.sbLeft, p.sbLeftW, p.sbRight, p.sbRightW);
+
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.preset === pName);
+        });
+      }
+
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => applyPreset(btn.dataset.preset));
+      });
+
+      // ── Copy Config ──
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2800);
+      }
+
+      document.getElementById('copy-config-btn').addEventListener('click', () => {
+        const config = {
+          softboxLeft: { intensity: parseFloat(inputs.sbLeft.value), width: parseInt(inputs.sbLeftW.value) },
+          softboxRight: { intensity: parseFloat(inputs.sbRight.value), width: parseInt(inputs.sbRightW.value) },
+          lights: {
+            leftKey: parseFloat(inputs.lightLeft.value),
+            frontSoft: parseFloat(inputs.lightFront.value),
+            rightRim: parseFloat(inputs.lightRight.value),
+            topRim: parseFloat(inputs.lightTop.value),
+            ambient: parseFloat(inputs.lightAmbient.value)
+          },
+          materials: {
+            glassRoughness: parseFloat(inputs.glassRough.value),
+            capColor: inputs.capColor.value,
+            capRoughness: parseFloat(inputs.capRough.value),
+            shadowOpacity: parseFloat(inputs.shadowOp.value)
+          },
+          render: {
+            exposure: parseFloat(inputs.exposure.value),
+            backgroundColor: inputs.bgColor.value
+          }
+        };
+
+        navigator.clipboard.writeText(JSON.stringify(config, null, 2))
+          .then(() => showToast('✓ Configuración copiada al portapapeles'))
+          .catch(() => showToast('Error al copiar configuración'));
+      });
+
+      document.getElementById('reset-btn').addEventListener('click', () => {
+        applyPreset('commercial');
+        showToast('Valores restablecidos');
+      });
+
+      // ── Orbit Drag & Rotation ──
+      let isDragging = false;
+      let prevX = 0, prevY = 0;
+      let rotX = 0, rotY = 0;
+      let velX = 0, velY = 0;
+
+      canvas.addEventListener('pointerdown', e => {
+        isDragging = true;
+        inputs.autoRotate.checked = false;
+        prevX = e.clientX;
+        canvas.setPointerCapture(e.pointerId);
+      });
+
+      canvas.addEventListener('pointermove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevX;
+        velX = dx * 0.004;
+        rotY += velX;
+        prevX = e.clientX;
+      });
+
+      canvas.addEventListener('pointerup', () => { isDragging = false; });
+
+      // ── Render Loop ──
+      function animate() {
+        requestAnimationFrame(animate);
+
+        if (model) {
+          if (inputs.autoRotate.checked) {
+            rotY += 0.003;
+          } else if (!isDragging) {
+            velX *= 0.92;
+            rotY += velX;
+          }
+          model.rotation.y = rotY;
+          model.rotation.x = 0;
+          model.rotation.z = 0;
+        }
+
+        renderer.render(scene, camera);
+      }
+      animate();
+    })();
+  </script>
+
+</body>
+
+</html>

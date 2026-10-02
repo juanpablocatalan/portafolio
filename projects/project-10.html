@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+  </script>
+  <title>3D WORKS — Juan Pablo</title>
+  <meta name="description" content="Case study for 3D WORKS by Juan Pablo — Spatial CGI & Interactive Rhino Model.">
+  
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/project10.css">
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="back-link">INICIO</a>
+      <nav class="site-nav" aria-label="Navegación principal">
+        <ul>
+          <li><a href="../index.html" class="nav-link">PROYECTOS</a></li>
+          <li><a href="../about.html" class="nav-link">SOBRE MÍ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content">
+
+    <!-- Project Header & Meta Grid -->
+    <section class="project-header-section container">
+
+      <!-- Monumental Headline -->
+      <h1 class="project-headline reveal reveal-delay-1">3D WORKS</h1>
+
+      <!-- Metadata Grid -->
+      <div class="project-meta-grid grid-12 reveal reveal-delay-2">
+        <div class="col-3 meta-item">
+          <span class="meta-label">Category</span>
+          <span class="meta-value">Industrial 3D &amp; Spatial CGI</span>
+        </div>
+        <div class="col-3 meta-item">
+          <span class="meta-label">Source</span>
+          <span class="meta-value">Rhinoceros 3D &bull; WebGL</span>
+        </div>
+        <div class="col-3 meta-item">
+          <span class="meta-label">Year</span>
+          <span class="meta-value">2026</span>
+        </div>
+        <div class="col-3 meta-item">
+          <span class="meta-label">Author</span>
+          <span class="meta-value">Juan Pablo</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 3D Interactive Stage Showcase Container -->
+    <div class="container">
+      <section class="p10-stage-container reveal" aria-label="Visor 3D Interactivo">
+        
+        <!-- Viewport Frame -->
+        <div class="p10-viewport-frame" id="project10-3d-stage">
+          
+          <!-- Technical Corner Marks -->
+          <span class="p10-corner p10-corner-tl" aria-hidden="true"></span>
+          <span class="p10-corner p10-corner-tr" aria-hidden="true"></span>
+          <span class="p10-corner p10-corner-bl" aria-hidden="true"></span>
+          <span class="p10-corner p10-corner-br" aria-hidden="true"></span>
+
+          <!-- Loading Indicator -->
+          <div class="p10-loading-overlay" id="p10-loading-status">
+            Iniciando motor 3D...
+          </div>
+
+          <!-- Top Technical HUD -->
+          <div class="p10-hud-top" id="p10-controls-hud">
+            <div class="p10-hud-badge">
+              <span class="p10-live-dot"></span>
+              <span id="p10-poly-count">103,510 tris</span> &bull; <span>32 &times; 16 &times; 11.4 mm</span>
+            </div>
+            <div class="p10-hud-hint">
+              [Arrastra para rotar 360&deg; &bull; Scroll para zoom]
+            </div>
+          </div>
+
+          <!-- Three.js Canvas -->
+          <canvas id="project10-3d-canvas"></canvas>
+
+          <!-- Floating Studio Controls Toolbar -->
+          <div class="p10-hud-bottom">
+            <!-- Material Selector -->
+            <div class="p10-toolbar-group">
+              <span class="p10-toolbar-label">Material</span>
+              <button type="button" class="p10-btn p10-mat-btn active" data-mat="chrome">
+                <span class="p10-mat-swatch" style="background: #e2e8f0;"></span> Cromo
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="graphite">
+                <span class="p10-mat-swatch" style="background: #27272a;"></span> Grafito
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="ceramic">
+                <span class="p10-mat-swatch" style="background: #f8fafc;"></span> Cerámica
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="legoYellow">
+                <span class="p10-mat-swatch" style="background: #eab308;"></span> Lego
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="wireframe">
+                Malla
+              </button>
+            </div>
+
+            <!-- View Camera Presets & Auto Rotate -->
+            <div class="p10-toolbar-group">
+              <span class="p10-toolbar-label">Vista</span>
+              <button type="button" class="p10-btn" id="p10-btn-reset">Reset</button>
+              <button type="button" class="p10-btn" id="p10-btn-top">Superior</button>
+              <button type="button" class="p10-btn" id="p10-btn-front">Frontal</button>
+              <button type="button" class="p10-btn active" id="p10-btn-autorotate">Giro Auto</button>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+    </div>
+
+    <!-- Case Study Narrative & Modular Details -->
+    <div class="container">
+
+      <!-- Introductory Statement -->
+      <section class="grid-12 section-block reveal" aria-label="Introducción del Proyecto">
+        <div class="col-8 col-start-3 project-intro-block">
+          <h2 class="project-intro-statement">
+            Exploración de modelado paramétrico y volumetría industrial exportada directamente desde Rhinoceros a la web interactiva en tiempo real.
+          </h2>
+          <div class="project-narrative-body">
+            <p>
+              Esta pieza investiga la traslación de tolerancias constructivas y superficies de precisión modeladas en CAD hacia sistemas de visualización WebGL. A través de sombreadores PBR adaptativos, la geometría reacciona dinámicamente a la luz de estudio, permitiendo examinar relieves, encastres y la topología original de la malla.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Technical Specifications & Credits Grid -->
+      <section class="grid-12 section-block p10-narrative-grid reveal" aria-label="Especificaciones Técnicas">
+        <div class="col-5 col-start-2">
+          <span class="meta-label" style="display: block; margin-bottom: 0.5rem;">Ficha Técnica CAD</span>
+          <table class="p10-spec-table">
+            <tbody>
+              <tr>
+                <td>Software CAD</td>
+                <td>Rhinoceros 3D (Mac)</td>
+              </tr>
+              <tr>
+                <td>Dimensiones Reales</td>
+                <td>32.00 &times; 16.00 &times; 11.43 mm</td>
+              </tr>
+              <tr>
+                <td>Topología de Malla</td>
+                <td>103,510 Triángulos / 107,987 Vértices</td>
+              </tr>
+              <tr>
+                <td>Formato Web</td>
+                <td>glTF 2.0 Binary (.glb)</td>
+              </tr>
+              <tr>
+                <td>Motor de Render</td>
+                <td>Three.js WebGL &bull; PBR Shading</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col-4 col-start-8">
+          <span class="meta-label" style="display: block; margin-bottom: 0.5rem;">Créditos &bull; Disciplina</span>
+          <table class="p10-spec-table">
+            <tbody>
+              <tr>
+                <td>Modelado 3D</td>
+                <td>Juan Pablo Catalán</td>
+              </tr>
+              <tr>
+                <td>Dirección de Arte</td>
+                <td>Personal Archive</td>
+              </tr>
+              <tr>
+                <td>Iluminación &amp; Shaders</td>
+                <td>Three.js Custom Pipeline</td>
+              </tr>
+              <tr>
+                <td>Año</td>
+                <td>2026</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Next Project Navigation Banner -->
+    <section class="section-block next-project-section">
+      <a href="project-04.html" class="next-project-link">
+        <span class="next-label">SIGUIENTE PROYECTO</span>
+        <div class="next-title-row">
+          <h2 class="next-title">Fundación Respuestas</h2>
+          <span class="next-arrow" aria-hidden="true">&rarr;</span>
+        </div>
+      </a>
+    </section>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">JUAN PABLO</span>
+      <ul class="footer-nav" aria-label="Enlaces de contacto y redes">
+        <li><a href="mailto:juan-pablo.catalan@uc.cl" class="footer-link">EMAIL</a></li>
+        <li><a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer" class="footer-link">LINKED IN</a></li>
+        <li><a href="https://www.instagram.com/jp.catalan/" target="_blank" rel="noopener noreferrer" class="footer-link">INSTAGRAM</a></li>
+      </ul>
+      <span class="footer-copy">&copy; 2026</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/three.min.js"></script>
+  <script src="../js/GLTFLoader.js"></script>
+  <script src="../js/model-p10-data.js"></script>
+  <script src="../js/project10-3d.js"></script>
+  <script src="../js/script.js"></script>
+</body>
+</html>

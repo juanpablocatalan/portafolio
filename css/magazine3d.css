@@ -1,0 +1,511 @@
+/* ==========================================================================
+   3D CLOSED MAGAZINE MOCKUP LIBRARY — STYLES
+   Editorial, Minimalist & Interactive 3D Showcase for Fronteo
+   ========================================================================== */
+
+.library-hero {
+  padding-top: clamp(2.5rem, 6vh, 4.5rem);
+  padding-bottom: clamp(1.5rem, 3.5vh, 3rem);
+  border-bottom: 1px solid var(--color-border);
+  position: relative;
+}
+
+.library-header-title {
+  font-family: var(--font-primary);
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  margin-bottom: var(--space-xs);
+  color: var(--color-text);
+}
+
+.library-header-desc {
+  font-family: var(--font-primary);
+  font-size: var(--text-base);
+  color: #a3a3a3;
+  max-width: 68ch;
+  line-height: 1.6;
+}
+
+.library-instruction-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: #00e5ff;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: var(--space-sm);
+  background: rgba(0, 229, 255, 0.07);
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 229, 255, 0.22);
+}
+
+.library-instruction-badge .pulse-dot {
+  width: 6px;
+  height: 6px;
+  background: #00e5ff;
+  border-radius: 50%;
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+/* Quick Filter Pills */
+.library-quick-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: var(--space-md);
+}
+
+.filter-pill {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.filter-pill:hover,
+.filter-pill.active {
+  color: #fff;
+  border-color: #777;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ==========================================================================
+   3D MAGAZINE EXHIBIT SECTIONS
+   ========================================================================== */
+.magazine-3d-exhibit {
+  min-height: 85vh;
+  min-height: 85dvh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: clamp(3rem, 6vh, 6rem) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.exhibit-info-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-md);
+  z-index: 5;
+}
+
+.exhibit-vol-tag {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.exhibit-title {
+  font-family: var(--font-primary);
+  font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--color-text);
+}
+
+.exhibit-desc {
+  font-size: var(--text-base);
+  color: #a0a0a0;
+  line-height: 1.6;
+}
+
+.exhibit-specs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-sm);
+  margin-top: var(--space-xs);
+}
+
+.spec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.spec-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.spec-val {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.exhibit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+}
+
+.btn-editorial {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.65rem 1.25rem;
+  border: 1px solid var(--color-text);
+  color: var(--color-text);
+  background: transparent;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-editorial:hover {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+.btn-editorial-secondary {
+  border-color: #444;
+  color: #888;
+}
+
+.btn-editorial-secondary:hover {
+  border-color: #fff;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================================================
+   3D CANVAS STAGE CONTAINER & ANGLE CONTROLS
+   ========================================================================== */
+.exhibit-stage-col {
+  position: relative;
+  height: clamp(450px, 65vh, 720px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.stage-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.magazine-3d-stage {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.magazine-3d-stage:active {
+  cursor: grabbing;
+}
+
+.magazine-3d-stage canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* On-Stage Floating Angle Toolbar */
+.stage-angle-toolbar {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(18, 18, 18, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.28rem 0.4rem;
+  border-radius: 999px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 10;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.stage-angle-btn {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: #aaa;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all var(--transition-fast);
+}
+
+.stage-angle-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.stage-angle-btn.active {
+  color: #000;
+  background: #fff;
+  font-weight: 600;
+}
+
+/* Drag Hint Badge */
+.stage-drag-hint {
+  position: absolute;
+  bottom: 16px;
+  right: 18px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--color-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.65);
+  padding: 0.3rem 0.7rem;
+  border-radius: 4px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  opacity: 0.75;
+  transition: opacity var(--transition-fast);
+}
+
+.magazine-3d-stage:hover .stage-drag-hint {
+  opacity: 1;
+}
+
+/* Material Sheen Badge */
+.stage-material-badge {
+  position: absolute;
+  bottom: 16px;
+  left: 18px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: #777;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ==========================================================================
+   INTERACTIVE COMPARATIVE GRID / SHELF SECTION
+   ========================================================================== */
+.library-grid-section {
+  padding: clamp(3.5rem, 7vh, 7rem) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.grid-section-heading {
+  margin-bottom: var(--space-xl);
+}
+
+.grid-3d-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+}
+
+.grid-3d-card {
+  display: flex;
+  flex-direction: column;
+  background: #0d0d0d;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.grid-3d-card:hover {
+  border-color: #555;
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+}
+
+.grid-card-stage {
+  width: 100%;
+  height: 380px;
+  position: relative;
+  background: radial-gradient(circle at 50% 50%, #171717 0%, #0d0d0d 100%);
+  cursor: grab;
+}
+
+.grid-card-stage:active {
+  cursor: grabbing;
+}
+
+.grid-card-info {
+  padding: var(--space-md);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xs);
+}
+
+.grid-card-title {
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.grid-card-meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ==========================================================================
+   FLOATING SPEED DOCK
+   ========================================================================== */
+.library-floating-dock {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(14, 14, 14, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  z-index: 100;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+}
+
+.dock-item {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #bbb;
+  background: transparent;
+  border: none;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.dock-item:hover,
+.dock-item.active {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+/* Callout in Project 01 */
+.library-project-callout {
+  margin: var(--space-xl) 0;
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border);
+  background: #0d0d0d;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.callout-text-group {
+  max-width: 600px;
+}
+
+.callout-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: #00e5ff;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+  display: block;
+}
+
+.callout-title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+.callout-desc {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  margin-top: 0.25rem;
+  line-height: 1.5;
+}
+
+/* Responsive Rules */
+@media (max-width: 960px) {
+  .magazine-3d-exhibit {
+    flex-direction: column;
+    min-height: auto;
+    padding: 3rem 0;
+  }
+  
+  .exhibit-stage-col {
+    height: 420px;
+    width: 100%;
+    margin-top: 1.5rem;
+  }
+
+  .grid-3d-row {
+    grid-template-columns: 1fr;
+  }
+
+  .stage-angle-toolbar {
+    top: 8px;
+    padding: 0.2rem 0.35rem;
+  }
+
+  .stage-angle-btn {
+    font-size: 0.62rem;
+    padding: 0.3rem 0.5rem;
+  }
+}

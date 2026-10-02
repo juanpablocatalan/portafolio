@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galería de Estilos: Puntos Ancla & Manejadores Bézier — Catalán y Cía.</title>
+  <meta name="description" content="Galería interactiva comparativa de estilos de animación para la aparición de nodos ancla y manejadores Bézier en la identidad visual de Catalán y Cía.">
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Castoro:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --color-burdeo: #69112a;
+      --color-rosado: #f9cee1;
+      --color-fucsia: #e61466;
+      --color-naranja: #f28e0e;
+      --color-verde: #cfda8c;
+      --color-grid-line: #9d9d9c;
+      --color-grid-bg: #fafafa;
+      --lab-bg: #08060a;
+      --lab-card-bg: #110e16;
+      --lab-card-inner: #16121d;
+      --lab-border: rgba(255, 255, 255, 0.08);
+      --lab-border-focus: rgba(230, 20, 102, 0.45);
+      --lab-text: #f5f4f8;
+      --lab-text-muted: #9590a0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--lab-bg);
+      color: var(--lab-text);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Navigation Header */
+    .lab-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8, 6, 10, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--lab-border);
+      padding: 14px 28px;
+    }
+
+    .lab-header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .lab-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .lab-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: all 0.25s ease;
+    }
+
+    .lab-back-btn:hover {
+      background: var(--color-fucsia);
+      border-color: var(--color-fucsia);
+      transform: translateX(-2px);
+    }
+
+    .lab-title-group h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .lab-title-group h1 span.badge {
+      font-size: 0.68rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 5px;
+      background: rgba(230, 20, 102, 0.18);
+      color: var(--color-fucsia);
+      border: 1px solid rgba(230, 20, 102, 0.35);
+      font-weight: 700;
+    }
+
+    .lab-subtitle {
+      font-size: 0.78rem;
+      color: var(--lab-text-muted);
+      margin-top: 2px;
+    }
+
+    .lab-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-action:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-action.primary {
+      background: var(--color-fucsia);
+      border-color: var(--color-fucsia);
+      box-shadow: 0 4px 14px rgba(230, 20, 102, 0.35);
+    }
+
+    .btn-action.primary:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+    }
+
+    /* Main Container */
+    .gallery-container {
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 28px 80px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* Controls Bar */
+    .gallery-controls-bar {
+      background: var(--lab-card-bg);
+      border: 1px solid var(--lab-border);
+      border-radius: 14px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .controls-left, .controls-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .control-label {
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--lab-text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .pill-group {
+      display: inline-flex;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 8px;
+      padding: 2px;
+    }
+
+    .pill-btn {
+      padding: 5px 12px;
+      border-radius: 6px;
+      background: transparent;
+      border: none;
+      color: var(--lab-text-muted);
+      font-size: 0.76rem;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .pill-btn:hover {
+      color: #fff;
+    }
+
+    .pill-btn.active {
+      background: rgba(255, 255, 255, 0.16);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .speed-slider-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 8px;
+      padding: 4px 10px;
+    }
+
+    .speed-slider-wrap input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 70px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .speed-slider-wrap input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--color-fucsia);
+      cursor: pointer;
+    }
+
+    .speed-readout {
+      font-size: 0.74rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--color-fucsia);
+      min-width: 32px;
+      text-align: right;
+    }
+
+    /* Gallery Grid (6 Options) */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      width: 100%;
+    }
+
+    @media (max-width: 1200px) {
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Option Card */
+    .option-card {
+      background: var(--lab-card-bg);
+      border: 1px solid var(--lab-border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+      transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .option-card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 16px 44px rgba(0, 0, 0, 0.6);
+    }
+
+    .option-card.is-featured {
+      border-color: var(--lab-border-focus);
+    }
+
+    /* Option Header */
+    .option-header {
+      padding: 14px 18px;
+      background: rgba(0, 0, 0, 0.35);
+      border-bottom: 1px solid var(--lab-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .option-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .option-num-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .option-num-badge.fucsia {
+      background: rgba(230, 20, 102, 0.2);
+      color: var(--color-fucsia);
+      border-color: rgba(230, 20, 102, 0.4);
+    }
+
+    .option-title-text h3 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    .option-title-text p {
+      font-size: 0.7rem;
+      color: var(--lab-text-muted);
+    }
+
+    .option-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-card-replay {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-card-replay:hover {
+      background: var(--color-fucsia);
+      border-color: var(--color-fucsia);
+      transform: rotate(-45deg);
+    }
+
+    /* Option Stage Canvas */
+    .option-stage {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: var(--color-grid-bg);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .option-stage.is-landscape {
+      aspect-ratio: 2 / 1;
+    }
+
+    body.dark-canvas .option-stage {
+      background: #0c0a10;
+    }
+
+    .option-stage svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      shape-rendering: crispEdges;
+    }
+
+    /* Option Footer / Description */
+    .option-footer {
+      padding: 14px 18px;
+      background: rgba(0, 0, 0, 0.2);
+      border-top: 1px solid var(--lab-border);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-desc {
+      font-size: 0.74rem;
+      line-height: 1.45;
+      color: var(--lab-text-muted);
+    }
+
+    .option-tags {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag-badge {
+      font-size: 0.65rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #c9c5d1;
+    }
+
+    .tag-badge.highlight {
+      background: rgba(230, 20, 102, 0.12);
+      color: #ff5b97;
+      border-color: rgba(230, 20, 102, 0.25);
+    }
+
+    .code-toggle-btn {
+      align-self: flex-start;
+      background: none;
+      border: none;
+      color: var(--lab-text-muted);
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 0;
+      transition: color 0.2s ease;
+    }
+
+    .code-toggle-btn:hover {
+      color: #fff;
+    }
+
+    .code-snippet-box {
+      display: none;
+      background: #09070d;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: #cfcbdb;
+      line-height: 1.4;
+      overflow-x: auto;
+      max-height: 140px;
+    }
+
+    .code-snippet-box.show {
+      display: block;
+    }
+
+    /* Common Vector Styling */
+    .cls-1 { fill: #f28e0e; }
+    .cls-2 { fill: #e61466; stroke: none; }
+    .cls-3 { stroke: #f28e0e; stroke-width: .5px; fill: none; stroke-miterlimit: 10; }
+    .cls-4 { stroke: #9d9d9c; stroke-width: .1px; fill: none; stroke-miterlimit: 10; }
+    .cls-5 { fill: #69112a; opacity: .25; fill-rule: evenodd; }
+    .cls-contour-stroke { stroke: #69112a; stroke-width: .7px; fill: none; stroke-miterlimit: 10; stroke-dasharray: 1000; stroke-dashoffset: 1000; }
+
+    body.dark-canvas .cls-4 { stroke: #333338; }
+    body.dark-canvas .cls-5 { fill: #f9cee1; opacity: .35; }
+    body.dark-canvas .cls-contour-stroke { stroke: #f9cee1; }
+
+    .click-ripple {
+      fill: none;
+      stroke: var(--color-fucsia, #e61466);
+      stroke-width: 0.5px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ==========================================================================
+       6 ESTILOS DE ANIMACIÓN DIFERENCIADOS PARA PUNTOS Y MANEJADORES
+       ========================================================================== */
+
+    /* --------------------------------------------------------------------------
+       ESTILO 1: POP & STRETCH ELÁSTICO (Resorte Punchy y Enérgico)
+       -------------------------------------------------------------------------- */
+    .style-1.is-animating .cls-2 {
+      transform-origin: center;
+      transform-box: fill-box;
+      transform: scale(0);
+      animation: s1-pop-elastic 0.35s cubic-bezier(0.34, 1.6, 0.64, 1) forwards;
+    }
+    .style-1.is-animating .cls-3 {
+      stroke-dasharray: 140;
+      stroke-dashoffset: 140;
+      animation: s1-handle-stretch 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .style-1.is-animating .cls-1 {
+      transform-origin: center;
+      transform-box: fill-box;
+      transform: scale(0);
+      animation: s1-dot-elastic 0.28s cubic-bezier(0.34, 1.6, 0.64, 1) forwards;
+    }
+    .style-1.is-animating .click-ripple {
+      animation: s1-ripple 0.25s ease-out forwards;
+    }
+
+    @keyframes s1-pop-elastic {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.65); }
+      75% { transform: scale(0.85); }
+      90% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    @keyframes s1-handle-stretch {
+      0% { stroke-dashoffset: 140; opacity: 0.3; }
+      50% { stroke-dashoffset: 20; opacity: 1; }
+      100% { stroke-dashoffset: 0; opacity: 1; }
+    }
+    @keyframes s1-dot-elastic {
+      0% { transform: scale(0); }
+      60% { transform: scale(1.55); }
+      80% { transform: scale(0.8); }
+      100% { transform: scale(1); }
+    }
+    @keyframes s1-ripple {
+      0% { r: 0.5px; opacity: 0.9; stroke-width: 0.7px; }
+      100% { r: 6px; opacity: 0; stroke-width: 0.05px; }
+    }
+
+    /* --------------------------------------------------------------------------
+       ESTILO 2: BLOOM RADIAL & HALO (Despliegue Suave con Resplandor)
+       -------------------------------------------------------------------------- */
+    .style-2.is-animating .cls-2 {
+      transform-origin: center;
+      transform-box: fill-box;
+      transform: scale(0);
+      filter: drop-shadow(0 0 2.5px rgba(230, 20, 102, 0.8));
+      animation: s2-node-bloom 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .style-2.is-animating .cls-3 {
+      transform-origin: center;
+      transform-box: fill-box;
+      stroke-dasharray: 140;
+      stroke-dashoffset: 140;
+      animation: s2-handle-bloom 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .style-2.is-animating .cls-1 {
+      transform-origin: center;
+      transform-box: fill-box;
+      transform: scale(0);
+      filter: drop-shadow(0 0 2px rgba(242, 142, 14, 0.8));
+      animation: s2-dot-bloom 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .style-2.is-animating .click-ripple {
+      animation: s2-ripple-halo 0.40s ease-out forwards;
+    }
+
+    @keyframes s2-node-bloom {
+      0% { transform: scale(0); opacity: 0; filter: drop-shadow(0 0 6px rgba(230, 20, 102, 1)); }
+      60% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 0px transparent); }
+    }
+    @keyframes s2-handle-bloom {
+      0% { stroke-dashoffset: 140; opacity: 0; }
+      40% { opacity: 1; }
+      100% { stroke-dashoffset: 0; opacity: 1; }
+    }
+    @keyframes s2-dot-bloom {
+      0% { transform: scale(0); opacity: 0; }
+      70% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 0px transparent); }
+    }
+    @keyframes s2-ripple-halo {
+      0% { r: 0.5px; opacity: 0.95; stroke-width: 1.2px; stroke: #ff7ebb; }
+      100% { r: 7.5px; opacity: 0; stroke-width: 0.05px; stroke: #e61466; }
+    }
+
+    /* --------------------------------------------------------------------------
+       ESTILO 3: SNAP MAGNÉTICO & LOCK (Precisión Mecánica de Software CAD)
+       -------------------------------------------------------------------------- */
+    .style-3.is-animating .cls-2 {
+      transform-origin: center;
+      transform-box: fill-box;
+      transform: scale(0);
+      animation: s3-snap-node 0.18s cubic-bezier(0, 0.95, 0.1, 1) forwards;
+    }
+    .style-3.is-animating .cls-3 {
+      stroke-dasharray: 140;
+      stroke-dashoffset: 140;
+      animation: s3-snap-handle 0.15s cubic-bezier(0, 0.95, 0.1, 1) forwards;
+    }
+    .style-3.is-animating .cls-1 {
+      transform-origin: center;
+      transform-box: fill-box;
+      transform: scale(0);
+      animation: s3-snap-dot 0.16s cubic-bezier(0, 0.95, 0.1, 1) forwards;
+    }
+    .style-3.is-animating .click-ripple {
+      animation: s3-double-snap 0.22s steps(4, end) forwards;
+    }
+
+    @keyframes s3-snap-node {
+      0% { transform: scale(2.2) rotate(15deg); opacity: 0; }
+      70% { transform: scale(0.92) rotate(-3deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    @keyframes s3-snap-handle {
+      0% { stroke-dashoffset: 140; opacity: 0; }
+      60% { stroke-dashoffset: 10; opacity: 1; }
+      100% { stroke-dashoffset: 0; opacity: 1; }
+    }
+    @keyframes s3-snap-dot {
+      0% { transform: scale(2.2); opacity: 0; }
+      75% { transform: scale(0.9); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes s3-double-snap {
+      0% { r: 1px; opacity: 1; stroke-width: 0.8px; }
+      50% { r: 3.5px; opacity: 0.7; stroke-width: 0.4px; }
+      100% { r: 5px; opacity: 0; stroke-width: 0.1px; }
+    }
+
+    /* --------------------------------------------------------------------------
+       ESTILO 4: TINTA FLUIDA & ESTELA (Caligráfico / Sedoso)
+       -------------------------------------------------------------------------- */
+    .style-4.is-animating .cls-2 {
+      transform-origin: center;
+      transform-box: fill-box;
+      transform: scale(0) rotate(-90deg);
+      animation: s4-ink-node 0.32s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+    .style-4.is-animating .cls-3 {
+      stroke-dasharray: 140;
+      stroke-dashoffset: 140;
+      animation: s4-ink-handle 0.36s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+    .style-4.is-animating .cls-1 {
+      transform-origin: center;
+      transform-box: fill-box;
+      transform: scale(0);
+      animation: s4-ink-dot 0.30s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+    .style-4.is-animating .click-ripple {
+      animation: s4-ink-ripple 0.32s ease-out forwards;
+    }
+
+    @keyframes s4-ink-node {
+      0% { transform: scale(0) rotate(-90deg); opacity: 0; }
+      60% { transform: scale(1.15) rotate(10deg); opacity: 0.9; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    @keyframes s4-ink-handle {
+      0% { stroke-dashoffset: 140; opacity: 0; stroke-width: 0.2px; }
+      50% { opacity: 0.8; stroke-width: 0.8px; }
+      100% { stroke-dashoffset: 0; opacity: 1; stroke-width: 0.5px; }
+    }
+    @keyframes s4-ink-dot {
+      0% { transform: scale(0); opacity: 0; }
+      70% { transform: scale(1.25); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes s4-ink-ripple {
+      0% { r: 0.5px; opacity: 0.85; stroke-width: 0.5px; }
+      100% { r: 5.5px; opacity: 0; stroke-width: 0.05px; }
+    }
+
+    /* --------------------------------------------------------------------------
+       ESTILO 5: CAD BLUEPRINT & DIANA TÉCNICA (Retícula Milimétrica)
+       -------------------------------------------------------------------------- */
+    .style-5.is-animating .cls-2 {
+      transform-origin: center;
+      transform-box: fill-box;
+      transform: scale(0) rotate(45deg);
+      animation: s5-cad-node 0.26s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    .style-5.is-animating .cls-3 {
+      stroke-dasharray: 4, 2;
+      animation: s5-cad-handle 0.28s linear forwards;
+    }
+    .style-5.is-animating .cls-1 {
+      transform-origin: center;
+      transform-box: fill-box;
+      transform: scale(0);
+      animation: s5-cad-dot 0.22s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    .style-5.is-animating .click-ripple {
+      animation: s5-cad-cross 0.28s ease-out forwards;
+    }
+
+    @keyframes s5-cad-node {
+      0% { transform: scale(2) rotate(45deg); opacity: 0; }
+      50% { transform: scale(0.85) rotate(15deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    @keyframes s5-cad-handle {
+      0% { stroke-dasharray: 1, 4; opacity: 0; }
+      50% { stroke-dasharray: 3, 2; opacity: 0.8; }
+      100% { stroke-dasharray: 140; stroke-dashoffset: 0; opacity: 1; }
+    }
+    @keyframes s5-cad-dot {
+      0% { transform: scale(0); opacity: 0; }
+      80% { transform: scale(1.35); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes s5-cad-cross {
+      0% { r: 0.8px; opacity: 1; stroke-width: 0.6px; stroke-dasharray: 2, 2; }
+      100% { r: 6.5px; opacity: 0; stroke-width: 0.1px; stroke-dasharray: 4, 4; }
+    }
+
+    /* --------------------------------------------------------------------------
+       ESTILO 6: PULSO RADAR & ESCANEO NEÓN (Futurista / High-Tech)
+       -------------------------------------------------------------------------- */
+    .style-6.is-animating .cls-2 {
+      transform-origin: center;
+      transform-box: fill-box;
+      transform: scale(0);
+      filter: drop-shadow(0 0 3px #e61466);
+      animation: s6-radar-node 0.30s ease-out forwards;
+    }
+    .style-6.is-animating .cls-3 {
+      stroke-dasharray: 140;
+      stroke-dashoffset: 140;
+      animation: s6-radar-handle 0.25s ease-out forwards;
+    }
+    .style-6.is-animating .cls-1 {
+      transform-origin: center;
+      transform-box: fill-box;
+      transform: scale(0);
+      filter: drop-shadow(0 0 2.5px #f28e0e);
+      animation: s6-radar-dot 0.25s ease-out forwards;
+    }
+    .style-6.is-animating .click-ripple {
+      animation: s6-radar-pulse 0.35s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    }
+
+    @keyframes s6-radar-node {
+      0% { transform: scale(0); opacity: 0; }
+      30% { transform: scale(1.5); opacity: 1; filter: drop-shadow(0 0 6px #e61466); }
+      60% { transform: scale(0.9); opacity: 0.8; }
+      80% { transform: scale(1.15); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 1px #e61466); }
+    }
+    @keyframes s6-radar-handle {
+      0% { stroke-dashoffset: 140; opacity: 0; }
+      40% { opacity: 0.5; }
+      70% { opacity: 1; }
+      100% { stroke-dashoffset: 0; opacity: 1; }
+    }
+    @keyframes s6-radar-dot {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.6); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 1px #f28e0e); }
+    }
+    @keyframes s6-radar-pulse {
+      0% { r: 0.5px; opacity: 1; stroke-width: 1px; stroke: #fff; }
+      40% { opacity: 0.8; stroke: #e61466; stroke-width: 0.6px; }
+      100% { r: 8px; opacity: 0; stroke-width: 0.05px; stroke: #e61466; }
+    }
+
+    /* Keyframes Compartidos para el Trazo del Contorno y Relleno */
+    .style-card.is-animating .cls-contour-c {
+      animation: draw-c-contour 2.67s ease-in-out forwards;
+    }
+    .style-card.is-animating .cls-contour-a-outer {
+      animation: draw-a-outer 2.143s ease-in-out forwards;
+    }
+    .style-card.is-animating .cls-contour-a-inner {
+      animation: draw-a-inner 0.857s ease-in-out 2.143s forwards;
+    }
+    .style-card.is-animating .cls-contour-t {
+      animation: draw-t-contour 2.571s ease-in-out forwards;
+    }
+    .style-card.is-animating .cls-contour-l {
+      animation: draw-l-contour 0.857s ease-in-out forwards;
+    }
+    .style-card.is-animating .cls-contour-i {
+      animation: draw-i-contour 0.857s ease-in-out forwards;
+    }
+
+    .style-card.is-animating .cls-5 {
+      opacity: 0;
+      animation: reveal-fill-final 0.33s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes draw-c-contour {
+      0% { stroke-dashoffset: 1000; }
+      14.29% { stroke-dashoffset: 974.34; }
+      28.57% { stroke-dashoffset: 865.99; }
+      42.86% { stroke-dashoffset: 542.41; }
+      57.14% { stroke-dashoffset: 442.87; }
+      71.43% { stroke-dashoffset: 408.44; }
+      85.71% { stroke-dashoffset: 330.41; }
+      100.00% { stroke-dashoffset: 0; }
+    }
+
+    @keyframes draw-a-outer {
+      0% { stroke-dashoffset: 1000; }
+      10.00% { stroke-dashoffset: 844.08; }
+      20.00% { stroke-dashoffset: 689.49; }
+      30.00% { stroke-dashoffset: 635.72; }
+      40.00% { stroke-dashoffset: 575.19; }
+      50.00% { stroke-dashoffset: 480.10; }
+      60.00% { stroke-dashoffset: 387.58; }
+      70.00% { stroke-dashoffset: 189.93; }
+      80.00% { stroke-dashoffset: 152.43; }
+      90.00% { stroke-dashoffset: 53.77; }
+      100.00% { stroke-dashoffset: 0; }
+    }
+
+    @keyframes draw-a-inner {
+      0% { stroke-dashoffset: 1000; }
+      25.00% { stroke-dashoffset: 772.00; }
+      50.00% { stroke-dashoffset: 569.39; }
+      75.00% { stroke-dashoffset: 421.39; }
+      100.00% { stroke-dashoffset: 0; }
+    }
+
+    @keyframes draw-t-contour {
+      0% { stroke-dashoffset: 1000; }
+      8.33% { stroke-dashoffset: 917.89; }
+      16.67% { stroke-dashoffset: 826.08; }
+      25.00% { stroke-dashoffset: 789.37; }
+      33.33% { stroke-dashoffset: 771.03; }
+      41.67% { stroke-dashoffset: 734.32; }
+      50.00% { stroke-dashoffset: 477.30; }
+      58.33% { stroke-dashoffset: 403.86; }
+      66.67% { stroke-dashoffset: 146.83; }
+      75.00% { stroke-dashoffset: 110.12; }
+      83.33% { stroke-dashoffset: 91.78; }
+      91.67% { stroke-dashoffset: 55.07; }
+      100.00% { stroke-dashoffset: 0; }
+    }
+
+    @keyframes draw-l-contour {
+      0% { stroke-dashoffset: 1000; }
+      25.00% { stroke-dashoffset: 907.73; }
+      50.00% { stroke-dashoffset: 474.49; }
+      75.00% { stroke-dashoffset: 391.96; }
+      100.00% { stroke-dashoffset: 0; }
+    }
+
+    @keyframes draw-i-contour {
+      0% { stroke-dashoffset: 1000; }
+      25.00% { stroke-dashoffset: 894.74; }
+      50.00% { stroke-dashoffset: 500.00; }
+      75.00% { stroke-dashoffset: 394.74; }
+      100.00% { stroke-dashoffset: 0; }
+    }
+
+    @keyframes draw-y-contour {
+      0% { stroke-dashoffset: 1000; }
+      8.33% { stroke-dashoffset: 935.32; }
+      16.67% { stroke-dashoffset: 853.73; }
+      25.00% { stroke-dashoffset: 706.85; }
+      33.33% { stroke-dashoffset: 660.40; }
+      41.67% { stroke-dashoffset: 497.20; }
+      50.00% { stroke-dashoffset: 461.08; }
+      58.33% { stroke-dashoffset: 361.40; }
+      66.67% { stroke-dashoffset: 324.19; }
+      75.00% { stroke-dashoffset: 242.26; }
+      83.33% { stroke-dashoffset: 209.62; }
+      91.67% { stroke-dashoffset: 46.44; }
+      100.00% { stroke-dashoffset: 0; }
+    }
+
+    @keyframes draw-n-contour {
+      0% { stroke-dashoffset: 1000; }
+      8.33% { stroke-dashoffset: 952.60; }   /* Punto 2 (Hombro Sup Der Fuste) */
+      16.67% { stroke-dashoffset: 891.10; }  /* Punto 3 (Cúspide Bifurcación) */
+      25.00% { stroke-dashoffset: 807.30; }  /* Punto 4 (Cresta Arco Exterior) */
+      33.33% { stroke-dashoffset: 723.50; }  /* Punto 5 (Tangente Arco Exterior Der) */
+      41.67% { stroke-dashoffset: 605.00; }  /* Punto 6 (Base Inf Der Rama Der) */
+      50.00% { stroke-dashoffset: 557.50; }  /* Punto 7 (Base Inf Izq Rama Der) */
+      58.33% { stroke-dashoffset: 433.10; }  /* Punto 8 (Arranque Arco Interior Der) */
+      66.67% { stroke-dashoffset: 391.40; }  /* Punto 9 (Cresta Arco Interior) */
+      75.00% { stroke-dashoffset: 349.70; }  /* Punto 10 (Arranque Arco Interior Izq) */
+      83.33% { stroke-dashoffset: 225.30; }  /* Punto 11 (Base Inf Der Fuste) */
+      91.67% { stroke-dashoffset: 177.90; }  /* Punto 12 (Base Inf Izq Fuste) */
+      100.00% { stroke-dashoffset: 0; }      /* Cierre en Punto 1 (Vértice Sup Izq Fuste) */
+    }
+
+    @keyframes reveal-fill-final {
+      to { opacity: .25; }
+    }
+
+    @keyframes gal-fade-out-technical {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="lab-header">
+    <div class="lab-header-inner">
+      <div class="lab-brand">
+        <a href="lab-logotipo.html" class="lab-back-btn" title="Volver al Laboratorio Principal">
+          <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i>
+          <span>LAB LOGOTIPO</span>
+        </a>
+        <div class="lab-title-group">
+          <h1>
+            Galería de Estilos: Puntos &amp; Manejadores
+            <span class="badge">6 OPCIONES COMPARATIVAS</span>
+          </h1>
+          <p class="lab-subtitle">Explora y compara distintas dinámicas de aparición para los nodos ancla fucsia, manejadores naranja y ondas de pulso.</p>
+        </div>
+      </div>
+
+      <div class="lab-header-actions">
+        <button id="btn-replay-all" class="btn-action primary" onclick="replayAll()" title="Reproducir todas las opciones al mismo tiempo (Barra Espaciadora)">
+          <i data-lucide="play" style="width: 14px; height: 14px;"></i>
+          <span>Reproducir Todas</span>
+        </button>
+        <button id="btn-toggle-theme" class="btn-action" title="Alternar Fondo Claro / Oscuro">
+          <i data-lucide="sun-moon" style="width: 14px; height: 14px;"></i>
+          <span>Fondo</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="gallery-container">
+
+    <!-- Controls Bar -->
+    <div class="gallery-controls-bar">
+      <div class="controls-left">
+        <span class="control-label">Letra / Glifo:</span>
+        <div class="pill-group">
+          <button class="pill-btn active" data-glyph="c" onclick="setGlyph('c')">Letra C (R-81)</button>
+          <button class="pill-btn" data-glyph="a" onclick="setGlyph('a')">Letra a (R-82)</button>
+          <button class="pill-btn" data-glyph="t" onclick="setGlyph('t')">Letra t (R-83-T)</button>
+          <button class="pill-btn" data-glyph="l" onclick="setGlyph('l')">Letra l (R-83-L)</button>
+          <button class="pill-btn" data-glyph="n" onclick="setGlyph('n')">Letra n (R-85)</button>
+          <button class="pill-btn" data-glyph="y" onclick="setGlyph('y')">Ligadura y (R-84)</button>
+          <button class="pill-btn" data-glyph="i" onclick="setGlyph('i')">Fuste / i (R-83-I)</button>
+        </div>
+      </div>
+
+      <div class="controls-right">
+        <span class="control-label">Velocidad:</span>
+        <div class="pill-group">
+          <button class="pill-btn" data-spd="0.3" onclick="setGlobalSpeed(0.3)">0.3x (Lento)</button>
+          <button class="pill-btn" data-spd="0.75" onclick="setGlobalSpeed(0.75)">0.75x</button>
+          <button class="pill-btn" data-spd="1" onclick="setGlobalSpeed(1)">1x</button>
+          <button class="pill-btn active" data-spd="2.1" onclick="setGlobalSpeed(2.1)">2.1x (Rápido)</button>
+        </div>
+
+        <div class="speed-slider-wrap">
+          <input type="range" id="global-speed-slider" min="0.2" max="3" step="0.05" value="2.1" oninput="setGlobalSpeed(this.value)">
+          <span id="global-speed-readout" class="speed-readout">2.1x</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 Cards Grid -->
+    <div class="gallery-grid">
+
+      <!-- Opción 1 -->
+      <div class="option-card is-featured" id="card-opt-1">
+        <div class="option-header">
+          <div class="option-title-wrap">
+            <span class="option-num-badge fucsia">OPCIÓN 1</span>
+            <div class="option-title-text">
+              <h3>Pop &amp; Stretch Elástico</h3>
+              <p>Rebote punchy con manejador de goma</p>
+            </div>
+          </div>
+          <div class="option-header-actions">
+            <button class="btn-card-replay" onclick="replayCard(1)" title="Reiniciar solo esta opción">
+              <i data-lucide="rotate-ccw" style="width: 13px; height: 13px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="option-stage style-card style-1 is-animating" id="stage-opt-1" onclick="replayCard(1)">
+          <!-- SVG dinámico -->
+        </div>
+
+        <div class="option-footer">
+          <p class="option-desc">El nodo se clava con un rebote elástico exagerado (scale: 0 &rarr; 1.65 &rarr; 0.85 &rarr; 1.0) mientras el manejador se estira rápidamente como goma tensada.</p>
+          <div class="option-tags">
+            <span class="tag-badge highlight">Punchy</span>
+            <span class="tag-badge">cubic-bezier(0.34, 1.6, 0.64, 1)</span>
+            <span class="tag-badge">Onda Expansiva</span>
+          </div>
+          <button class="code-toggle-btn" onclick="toggleCode(1)">
+            <i data-lucide="code" style="width: 12px; height: 12px;"></i>
+            <span>Ver CSS @keyframes</span>
+          </button>
+          <pre class="code-snippet-box" id="code-opt-1">/* Opción 1: Pop Elástico */
+@keyframes s1-pop-elastic {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.65); }
+  75% { transform: scale(0.85); }
+  100% { transform: scale(1); }
+}
+@keyframes s1-handle-stretch {
+  0% { stroke-dashoffset: 140; }
+  100% { stroke-dashoffset: 0; }
+}</pre>
+        </div>
+      </div>
+
+      <!-- Opción 2 -->
+      <div class="option-card" id="card-opt-2">
+        <div class="option-header">
+          <div class="option-title-wrap">
+            <span class="option-num-badge">OPCIÓN 2</span>
+            <div class="option-title-text">
+              <h3>Bloom Radial &amp; Halo</h3>
+              <p>Despliegue suave con halo luminoso</p>
+            </div>
+          </div>
+          <div class="option-header-actions">
+            <button class="btn-card-replay" onclick="replayCard(2)" title="Reiniciar solo esta opción">
+              <i data-lucide="rotate-ccw" style="width: 13px; height: 13px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="option-stage style-card style-2 is-animating" id="stage-opt-2" onclick="replayCard(2)">
+          <!-- SVG dinámico -->
+        </div>
+
+        <div class="option-footer">
+          <p class="option-desc">El nodo ancla nace desde un destello de luz fucsia con resplandor sutil, y los manejadores se abren simétricamente como pétalos de flor con desaceleración sedosa.</p>
+          <div class="option-tags">
+            <span class="tag-badge highlight">Cinematográfico</span>
+            <span class="tag-badge">drop-shadow glow</span>
+            <span class="tag-badge">Despliegue Radial</span>
+          </div>
+          <button class="code-toggle-btn" onclick="toggleCode(2)">
+            <i data-lucide="code" style="width: 12px; height: 12px;"></i>
+            <span>Ver CSS @keyframes</span>
+          </button>
+          <pre class="code-snippet-box" id="code-opt-2">/* Opción 2: Bloom Radial */
+@keyframes s2-node-bloom {
+  0% { transform: scale(0); filter: drop-shadow(0 0 6px #e61466); }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 0px transparent); }
+}</pre>
+        </div>
+      </div>
+
+      <!-- Opción 3 -->
+      <div class="option-card" id="card-opt-3">
+        <div class="option-header">
+          <div class="option-title-wrap">
+            <span class="option-num-badge">OPCIÓN 3</span>
+            <div class="option-title-text">
+              <h3>Snap Magnético &amp; Lock</h3>
+              <p>Precisión de software vectorial profesional</p>
+            </div>
+          </div>
+          <div class="option-header-actions">
+            <button class="btn-card-replay" onclick="replayCard(3)" title="Reiniciar solo esta opción">
+              <i data-lucide="rotate-ccw" style="width: 13px; height: 13px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="option-stage style-card style-3 is-animating" id="stage-opt-3" onclick="replayCard(3)">
+          <!-- SVG dinámico -->
+        </div>
+
+        <div class="option-footer">
+          <p class="option-desc">El nodo cae instantáneamente como si fuera atraído por un imán milimétrico, emitiendo un doble pulso de calibración y desplegando los manejadores con chasquido seco.</p>
+          <div class="option-tags">
+            <span class="tag-badge highlight">Mecánico</span>
+            <span class="tag-badge">Snap-to-Grid</span>
+            <span class="tag-badge">Doble Anillo</span>
+          </div>
+          <button class="code-toggle-btn" onclick="toggleCode(3)">
+            <i data-lucide="code" style="width: 12px; height: 12px;"></i>
+            <span>Ver CSS @keyframes</span>
+          </button>
+          <pre class="code-snippet-box" id="code-opt-3">/* Opción 3: Snap Magnético */
+@keyframes s3-snap-node {
+  0% { transform: scale(2.2) rotate(15deg); opacity: 0; }
+  70% { transform: scale(0.92); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}</pre>
+        </div>
+      </div>
+
+      <!-- Opción 4 -->
+      <div class="option-card" id="card-opt-4">
+        <div class="option-header">
+          <div class="option-title-wrap">
+            <span class="option-num-badge">OPCIÓN 4</span>
+            <div class="option-title-text">
+              <h3>Tinta Fluida &amp; Estela</h3>
+              <p>Caligráfico, orgánico y editorial</p>
+            </div>
+          </div>
+          <div class="option-header-actions">
+            <button class="btn-card-replay" onclick="replayCard(4)" title="Reiniciar solo esta opción">
+              <i data-lucide="rotate-ccw" style="width: 13px; height: 13px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="option-stage style-card style-4 is-animating" id="stage-opt-4" onclick="replayCard(4)">
+          <!-- SVG dinámico -->
+        </div>
+
+        <div class="option-footer">
+          <p class="option-desc">El nodo se vierte con un giro espiral suave como gota de tinta, mientras los manejadores se dibujan con una transición de grosor variable y fade sutil.</p>
+          <div class="option-tags">
+            <span class="tag-badge highlight">Editorial</span>
+            <span class="tag-badge">Rotación Suave</span>
+            <span class="tag-badge">Grosor Dinámico</span>
+          </div>
+          <button class="code-toggle-btn" onclick="toggleCode(4)">
+            <i data-lucide="code" style="width: 12px; height: 12px;"></i>
+            <span>Ver CSS @keyframes</span>
+          </button>
+          <pre class="code-snippet-box" id="code-opt-4">/* Opción 4: Tinta Fluida */
+@keyframes s4-ink-node {
+  0% { transform: scale(0) rotate(-90deg); opacity: 0; }
+  60% { transform: scale(1.15) rotate(10deg); opacity: 0.9; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}</pre>
+        </div>
+      </div>
+
+      <!-- Opción 5 -->
+      <div class="option-card" id="card-opt-5">
+        <div class="option-header">
+          <div class="option-title-wrap">
+            <span class="option-num-badge">OPCIÓN 5</span>
+            <div class="option-title-text">
+              <h3>CAD Blueprint &amp; Diana</h3>
+              <p>Retícula milimétrica y miras cruzadas</p>
+            </div>
+          </div>
+          <div class="option-header-actions">
+            <button class="btn-card-replay" onclick="replayCard(5)" title="Reiniciar solo esta opción">
+              <i data-lucide="rotate-ccw" style="width: 13px; height: 13px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="option-stage style-card style-5 is-animating" id="stage-opt-5" onclick="replayCard(5)">
+          <!-- SVG dinámico -->
+        </div>
+
+        <div class="option-footer">
+          <p class="option-desc">El punto ancla aparece rotado a 45° como un rombo/mira milimétrica que se alinea a 0°, desplegando líneas guía punteadas de precisión técnica antes de solidificarse.</p>
+          <div class="option-tags">
+            <span class="tag-badge highlight">Técnico</span>
+            <span class="tag-badge">Líneas Punteadas</span>
+            <span class="tag-badge">Rotación 45° &rarr; 0°</span>
+          </div>
+          <button class="code-toggle-btn" onclick="toggleCode(5)">
+            <i data-lucide="code" style="width: 12px; height: 12px;"></i>
+            <span>Ver CSS @keyframes</span>
+          </button>
+          <pre class="code-snippet-box" id="code-opt-5">/* Opción 5: CAD Blueprint */
+@keyframes s5-cad-node {
+  0% { transform: scale(2) rotate(45deg); opacity: 0; }
+  50% { transform: scale(0.85) rotate(15deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}</pre>
+        </div>
+      </div>
+
+      <!-- Opción 6 -->
+      <div class="option-card" id="card-opt-6">
+        <div class="option-header">
+          <div class="option-title-wrap">
+            <span class="option-num-badge">OPCIÓN 6</span>
+            <div class="option-title-text">
+              <h3>Pulso Radar &amp; Escaneo Neón</h3>
+              <p>Efecto escáner futurista con destellos</p>
+            </div>
+          </div>
+          <div class="option-header-actions">
+            <button class="btn-card-replay" onclick="replayCard(6)" title="Reiniciar solo esta opción">
+              <i data-lucide="rotate-ccw" style="width: 13px; height: 13px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="option-stage style-card style-6 is-animating" id="stage-opt-6" onclick="replayCard(6)">
+          <!-- SVG dinámico -->
+        </div>
+
+        <div class="option-footer">
+          <p class="option-desc">Un pulso de escaneo de alta intensidad ilumina el nodo con un destello estroboscópico neón, mientras los tiradores emiten ondas de sonar concéntricas.</p>
+          <div class="option-tags">
+            <span class="tag-badge highlight">Cyber Neón</span>
+            <span class="tag-badge">Pulso Sonar</span>
+            <span class="tag-badge">Destello Strobe</span>
+          </div>
+          <button class="code-toggle-btn" onclick="toggleCode(6)">
+            <i data-lucide="code" style="width: 12px; height: 12px;"></i>
+            <span>Ver CSS @keyframes</span>
+          </button>
+          <pre class="code-snippet-box" id="code-opt-6">/* Opción 6: Pulso Radar */
+@keyframes s6-radar-node {
+  0% { transform: scale(0); opacity: 0; }
+  30% { transform: scale(1.5); filter: drop-shadow(0 0 6px #e61466); }
+  60% { transform: scale(0.9); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 1px #e61466); }
+}</pre>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    lucide.createIcons();
+
+    // Glifos exactos de la identidad
+    const GLYPHS = {
+      c: {
+        id: 'c',
+        name: 'Letra C (Recurso 81)',
+        width: 198.43,
+        height: 198.43,
+        contourClass: 'cls-contour-c',
+        pathCanonical: `M 162.71 146.83 L 182.55 146.83 C 170.65 170.65, 146.83 190.49, 115.01 186.51 C 23.81 174.61, 15.87 11.91, 115.09 11.91 C 150.80 11.91, 166.68 27.78, 178.58 47.62 L 154.77 59.53 C 146.83 35.72, 134.93 19.84, 115.09 19.84 C 47.62 19.84, 71.49 178.58, 126.98 178.58 C 150.80 178.58, 158.74 162.71, 162.71 146.83 Z`,
+        baseDuration: 5.60,
+        baseFillDelay: 5.55,
+        baseNodes: [0.04, 0.80, 1.60, 2.40, 3.20, 4.00, 4.80],
+        nodes: [
+          { classId: 'node-1', rippleId: 'ripple-1', x: 161.91, y: 146.04, cx: 162.71, cy: 146.83 },
+          { classId: 'node-2', rippleId: 'ripple-2', x: 181.76, y: 146.04, cx: 182.55, cy: 146.83 },
+          { classId: 'node-3', rippleId: 'ripple-3', x: 114.22, y: 185.73, cx: 115.01, cy: 186.51 },
+          { classId: 'node-4', rippleId: 'ripple-4', x: 114.28, y: 11.11,  cx: 115.09, cy: 11.91 },
+          { classId: 'node-5', rippleId: 'ripple-5', x: 177.77, y: 46.83,  cx: 178.58, cy: 47.62 },
+          { classId: 'node-6', rippleId: 'ripple-6', x: 153.91, y: 58.73,  cx: 154.77, cy: 59.53 },
+          { classId: 'node-7', rippleId: 'ripple-7', x: 114.28, y: 19.05,  cx: 115.09, cy: 19.84 }
+        ],
+        handleLines: [
+          { classId: 'hline-1', x1: 162.64, y1: 146.83, x2: 158.74, y2: 162.71 },
+          { classId: 'hline-2', x1: 182.48, y1: 146.83, x2: 170.65, y2: 170.65 },
+          { classId: 'hline-3', x1: 23.81,  y1: 174.61, x2: 146.83, y2: 190.49 },
+          { classId: 'hline-4', x1: 15.87,  y1: 11.91,  x2: 150.8,  y2: 11.91 },
+          { classId: 'hline-5', x1: 166.68, y1: 27.78,  x2: 178.57, y2: 47.62 },
+          { classId: 'hline-6', x1: 146.83, y1: 35.72,  x2: 154.7,  y2: 59.53 },
+          { classId: 'hline-7', x1: 47.62,  y1: 19.84,  x2: 134.93, y2: 19.84 }
+        ],
+        handleDots: [
+          { classId: 'hdot-1', cx: 158.74, cy: 162.71 },
+          { classId: 'hdot-2', cx: 170.65, cy: 170.65 },
+          { classId: 'hdot-3', cx: 146.83, cy: 190.49 },
+          { classId: 'hdot-3', cx: 23.81,  cy: 174.61 },
+          { classId: 'hdot-4', cx: 150.8,  cy: 11.91 },
+          { classId: 'hdot-4', cx: 15.87,  cy: 11.91 },
+          { classId: 'hdot-5', cx: 166.68, cy: 27.78 },
+          { classId: 'hdot-6', cx: 146.83, cy: 35.72 },
+          { classId: 'hdot-7', cx: 134.93, cy: 19.84 },
+          { classId: 'hdot-7', cx: 47.62,  cy: 19.84 }
+        ]
+      },
+      a: {
+        id: 'a',
+        name: 'Letra a (Recurso 82)',
+        width: 198.43,
+        height: 198.43,
+        isMultiPath: true,
+        pathOuter: `M 67.51 39.73 C 99.26 39.74, 146.88 39.74, 146.88 67.52 V 158.80 H 115.13 C 115.13 150.86, 131.00 127.05, 131.00 127.05 C 123.07 134.99, 111.16 158.80, 87.35 158.80 C 67.50 158.80, 51.63 150.86, 51.63 127.05 C 51.63 71.49, 138.94 95.30, 138.94 67.52 C 138.94 59.58, 131.01 55.61, 123.07 55.61 C 107.20 55.61, 91.32 71.48, 67.51 71.48 V 39.73 Z`,
+        pathInner: `M 138.94 83.39 C 138.94 83.39, 134.97 107.20, 127.03 119.11 C 119.09 131.02, 111.17 134.98, 99.25 134.98 C 91.31 134.98, 83.38 127.04, 83.38 119.11 C 83.38 95.30, 127.03 103.24, 138.94 83.39 Z`,
+        pathCanonical: `M 67.51 39.73 C 99.26 39.74, 146.88 39.74, 146.88 67.52 V 158.80 H 115.13 C 115.13 150.86, 131.00 127.05, 131.00 127.05 C 123.07 134.99, 111.16 158.80, 87.35 158.80 C 67.50 158.80, 51.63 150.86, 51.63 127.05 C 51.63 71.49, 138.94 95.30, 138.94 67.52 C 138.94 59.58, 131.01 55.61, 123.07 55.61 C 107.20 55.61, 91.32 71.48, 67.51 71.48 V 39.73 Z M 138.94 83.39 C 138.94 83.39, 134.97 107.20, 127.03 119.11 C 119.09 131.02, 111.17 134.98, 99.25 134.98 C 91.31 134.98, 83.38 127.04, 83.38 119.11 C 83.38 95.30, 127.03 103.24, 138.94 83.39 Z`,
+        baseDuration: 6.30,
+        baseFillDelay: 6.25,
+        baseNodes: [0.04, 0.45, 0.90, 1.35, 1.80, 2.25, 2.70, 3.15, 3.60, 4.05, 4.50, 4.95, 5.40, 5.85],
+        nodes: [
+          { classId: 'node-1', rippleId: 'ripple-1', x: 66.71, y: 38.94, cx: 67.51, cy: 39.73 },
+          { classId: 'node-2', rippleId: 'ripple-2', x: 146.08, y: 66.72, cx: 146.88, cy: 67.52 },
+          { classId: 'node-3', rippleId: 'ripple-3', x: 146.10, y: 158.00, cx: 146.88, cy: 158.80 },
+          { classId: 'node-4', rippleId: 'ripple-4', x: 114.35, y: 158.00, cx: 115.13, cy: 158.80 },
+          { classId: 'node-5', rippleId: 'ripple-5', x: 130.23, y: 126.25, cx: 131.00, cy: 127.05 },
+          { classId: 'node-6', rippleId: 'ripple-6', x: 86.57, y: 158.00, cx: 87.35, cy: 158.80 },
+          { classId: 'node-7', rippleId: 'ripple-7', x: 50.84, y: 126.25, cx: 51.63, cy: 127.05 },
+          { classId: 'node-8', rippleId: 'ripple-8', x: 138.15, y: 66.72, cx: 138.94, cy: 67.52 },
+          { classId: 'node-9', rippleId: 'ripple-9', x: 122.29, y: 54.82, cx: 123.07, cy: 55.61 },
+          { classId: 'node-10', rippleId: 'ripple-10', x: 66.71, y: 70.69, cx: 67.51, cy: 71.48 },
+          { classId: 'node-11', rippleId: 'ripple-11', x: 138.15, y: 82.59, cx: 138.94, cy: 83.39 },
+          { classId: 'node-12', rippleId: 'ripple-12', x: 126.26, y: 118.31, cx: 127.03, cy: 119.11 },
+          { classId: 'node-13', rippleId: 'ripple-13', x: 98.46, y: 134.19, cx: 99.25, cy: 134.98 },
+          { classId: 'node-14', rippleId: 'ripple-14', x: 82.60, y: 118.31, cx: 83.38, cy: 119.11 }
+        ],
+        handleLines: [
+          { classId: 'hline-1', x1: 67.51, y1: 39.73, x2: 99.30, y2: 39.73 },
+          { classId: 'hline-2', x1: 146.88, y1: 39.73, x2: 146.88, y2: 67.51 },
+          { classId: 'hline-4', x1: 115.15, y1: 150.85, x2: 115.15, y2: 158.79 },
+          { classId: 'hline-5', x1: 131.00, y1: 127.04, x2: 123.08, y2: 134.98 },
+          { classId: 'hline-6', x1: 67.52, y1: 158.79, x2: 111.18, y2: 158.79 },
+          { classId: 'hline-7', x1: 51.63, y1: 71.48, x2: 51.63, y2: 150.85 },
+          { classId: 'hline-8', x1: 138.96, y1: 59.58, x2: 138.96, y2: 95.29 },
+          { classId: 'hline-9', x1: 107.21, y1: 55.61, x2: 131.02, y2: 55.61 },
+          { classId: 'hline-10', x1: 67.51, y1: 71.48, x2: 91.33, y2: 71.48 },
+          { classId: 'hline-11', x1: 127.03, y1: 103.23, x2: 138.94, y2: 83.39 },
+          { classId: 'hline-12', x1: 119.08, y1: 131.01, x2: 134.99, y2: 107.20 },
+          { classId: 'hline-13', x1: 91.33, y1: 134.98, x2: 111.28, y2: 134.98 },
+          { classId: 'hline-14', x1: 83.40, y1: 95.29, x2: 83.38, y2: 127.04 }
+        ],
+        handleDots: [
+          { classId: 'hdot-1', cx: 99.27, cy: 39.73 },
+          { classId: 'hdot-2', cx: 146.88, cy: 39.73 },
+          { classId: 'hdot-4', cx: 115.15, cy: 150.85 },
+          { classId: 'hdot-5', cx: 123.08, cy: 134.98 },
+          { classId: 'hdot-6', cx: 67.51, cy: 158.79 },
+          { classId: 'hdot-6', cx: 111.18, cy: 158.79 },
+          { classId: 'hdot-7', cx: 51.63, cy: 71.48 },
+          { classId: 'hdot-7', cx: 51.63, cy: 150.85 },
+          { classId: 'hdot-8', cx: 138.96, cy: 59.58 },
+          { classId: 'hdot-8', cx: 138.96, cy: 95.29 },
+          { classId: 'hdot-9', cx: 107.21, cy: 55.61 },
+          { classId: 'hdot-9', cx: 131.02, cy: 55.61 },
+          { classId: 'hdot-10', cx: 91.33, cy: 71.48 },
+          { classId: 'hdot-11', cx: 127.05, cy: 103.23 },
+          { classId: 'hdot-12', cx: 119.06, cy: 131.01 },
+          { classId: 'hdot-12', cx: 134.99, cy: 107.20 },
+          { classId: 'hdot-13', cx: 91.33, cy: 134.98 },
+          { classId: 'hdot-13', cx: 111.18, cy: 134.98 },
+          { classId: 'hdot-14', cx: 83.40, cy: 95.29 },
+          { classId: 'hdot-14', cx: 83.38, cy: 127.04 }
+        ]
+      },
+      t: {
+        id: 't',
+        name: 'Letra t (Recurso 83-T)',
+        width: 396.86,
+        height: 198.43,
+        contourClass: 'cls-contour-t',
+        pathCanonical: `M 47.67 39.70 L 79.42 23.82 L 79.42 63.51 L 95.29 63.51 L 95.29 71.44 L 79.42 71.44 L 79.42 182.56 L 47.67 182.56 L 47.67 71.44 L 31.80 71.44 L 31.80 63.51 L 47.67 63.51 Z`,
+        baseDuration: 5.40,
+        baseFillDelay: 5.35,
+        baseNodes: [0.04, 0.45, 0.90, 1.35, 1.80, 2.25, 2.70, 3.15, 3.60, 4.05, 4.50, 4.95],
+        nodes: [
+          { classId: 'node-1', rippleId: 'ripple-1', x: 46.88, y: 38.90, cx: 47.67, cy: 39.70 },
+          { classId: 'node-2', rippleId: 'ripple-2', x: 78.63, y: 23.03, cx: 79.42, cy: 23.82 },
+          { classId: 'node-3', rippleId: 'ripple-3', x: 78.63, y: 62.71, cx: 79.42, cy: 63.51 },
+          { classId: 'node-4', rippleId: 'ripple-4', x: 94.50, y: 62.71, cx: 95.29, cy: 63.51 },
+          { classId: 'node-5', rippleId: 'ripple-5', x: 94.50, y: 70.65, cx: 95.29, cy: 71.44 },
+          { classId: 'node-6', rippleId: 'ripple-6', x: 78.63, y: 70.65, cx: 79.42, cy: 71.44 },
+          { classId: 'node-7', rippleId: 'ripple-7', x: 78.63, y: 181.81, cx: 79.42, cy: 182.56 },
+          { classId: 'node-8', rippleId: 'ripple-8', x: 46.88, y: 181.81, cx: 47.67, cy: 182.56 },
+          { classId: 'node-9', rippleId: 'ripple-9', x: 46.88, y: 70.65, cx: 47.67, cy: 71.44 },
+          { classId: 'node-10', rippleId: 'ripple-10', x: 31.00, y: 70.65, cx: 31.80, cy: 71.44 },
+          { classId: 'node-11', rippleId: 'ripple-11', x: 31.00, y: 62.71, cx: 31.80, cy: 63.51 },
+          { classId: 'node-12', rippleId: 'ripple-12', x: 46.88, y: 62.71, cx: 47.67, cy: 63.51 }
+        ],
+        handleLines: [],
+        handleDots: []
+      },
+      l: {
+        id: 'l',
+        name: 'Letra l (Recurso 83-L)',
+        width: 396.86,
+        height: 198.43,
+        contourClass: 'cls-contour-l',
+        pathCanonical: `M 194.45 31.76 L 226.20 15.88 L 226.20 182.56 L 194.45 182.56 Z`,
+        baseDuration: 1.80,
+        baseFillDelay: 1.75,
+        baseNodes: [0.04, 0.45, 0.90, 1.35],
+        nodes: [
+          { classId: 'node-1', rippleId: 'ripple-1', x: 193.66, y: 30.96, cx: 194.45, cy: 31.76 },
+          { classId: 'node-2', rippleId: 'ripple-2', x: 225.41, y: 15.09, cx: 226.20, cy: 15.88 },
+          { classId: 'node-3', rippleId: 'ripple-3', x: 225.41, y: 181.77, cx: 226.20, cy: 182.56 },
+          { classId: 'node-4', rippleId: 'ripple-4', x: 193.66, y: 181.77, cx: 194.45, cy: 182.56 }
+        ],
+        handleLines: [],
+        handleDots: []
+      },
+      i: {
+        id: 'i',
+        name: 'Fuste / i (Recurso 83-I)',
+        width: 396.86,
+        height: 198.43,
+        contourClass: 'cls-contour-i',
+        pathCanonical: `M 329.41 63.51 L 361.16 63.51 L 361.16 182.57 L 329.41 182.57 Z`,
+        baseDuration: 1.80,
+        baseFillDelay: 1.75,
+        baseNodes: [0.04, 0.45, 0.90, 1.35],
+        nodes: [
+          { classId: 'node-1', rippleId: 'ripple-1', x: 328.62, y: 62.71, cx: 329.41, cy: 63.51 },
+          { classId: 'node-2', rippleId: 'ripple-2', x: 360.42, y: 62.71, cx: 361.16, cy: 63.51 },
+          { classId: 'node-3', rippleId: 'ripple-3', x: 360.42, y: 181.77, cx: 361.16, cy: 182.57 },
+          { classId: 'node-4', rippleId: 'ripple-4', x: 328.62, y: 181.77, cx: 329.41, cy: 182.57 }
+        ],
+        handleLines: [],
+        handleDots: []
+      },
+      y: {
+        id: 'y',
+        name: 'Ligadura / Letra y (Recurso 84)',
+        width: 198.43,
+        height: 198.43,
+        contourClass: 'cls-contour-y',
+        pathCanonical: `M 123.07 7.99 C 123.07 31.80, 138.92 31.79, 131.01 55.61 C 127.06 67.52, 117.17 97.13, 111.17 115.14 L 75.44 7.99 H 39.72 L 79.41 127.05 H 107.19 C 99.25 154.83, 99.25 162.77, 51.63 166.73 L 67.50 190.54 C 75.44 190.54, 99.25 186.57, 111.16 150.85 C 115.13 138.94, 119.10 127.04, 119.10 127.04 L 158.78 7.99 H 123.07 Z`,
+        baseDuration: 5.40,
+        baseFillDelay: 5.35,
+        baseNodes: [0.04, 0.45, 0.90, 1.35, 1.80, 2.25, 2.70, 3.15, 3.60, 4.05, 4.50, 4.95],
+        nodes: [
+          { classId: 'node-1', rippleId: 'ripple-1', x: 122.29, y: 7.19, cx: 123.07, cy: 7.99 },
+          { classId: 'node-2', rippleId: 'ripple-2', x: 130.23, y: 54.77, cx: 131.01, cy: 55.61 },
+          { classId: 'node-3', rippleId: 'ripple-3', x: 110.38, y: 114.34, cx: 111.17, cy: 115.14 },
+          { classId: 'node-4', rippleId: 'ripple-4', x: 74.65, y: 7.19, cx: 75.44, cy: 7.99 },
+          { classId: 'node-5', rippleId: 'ripple-5', x: 38.93, y: 7.19, cx: 39.72, cy: 7.99 },
+          { classId: 'node-6', rippleId: 'ripple-6', x: 78.62, y: 126.25, cx: 79.41, cy: 127.05 },
+          { classId: 'node-7', rippleId: 'ripple-7', x: 106.41, y: 126.25, cx: 107.19, cy: 127.05 },
+          { classId: 'node-8', rippleId: 'ripple-8', x: 50.86, y: 165.93, cx: 51.63, cy: 166.73 },
+          { classId: 'node-9', rippleId: 'ripple-9', x: 66.73, y: 189.74, cx: 67.50, cy: 190.54 },
+          { classId: 'node-10', rippleId: 'ripple-10', x: 110.38, y: 150.06, cx: 111.16, cy: 150.85 },
+          { classId: 'node-11', rippleId: 'ripple-11', x: 118.32, y: 126.25, cx: 119.10, cy: 127.04 },
+          { classId: 'node-12', rippleId: 'ripple-12', x: 158.01, y: 7.19, cx: 158.78, cy: 7.99 }
+        ],
+        handleLines: [
+          { classId: 'hline-1', x1: 123.08, y1: 7.99, x2: 123.08, y2: 31.79 },
+          { classId: 'hline-2', x1: 127.03, y1: 67.51, x2: 138.96, y2: 31.79 },
+          { classId: 'hline-7', x1: 107.19, y1: 127.04, x2: 99.27, y2: 154.82 },
+          { classId: 'hline-8', x1: 99.26, y1: 162.76, x2: 51.65, y2: 166.73 },
+          { classId: 'hline-9', x1: 75.46, y1: 190.54, x2: 67.51, y2: 190.54 },
+          { classId: 'hline-10', x1: 99.27, y1: 186.57, x2: 115.13, y2: 138.95 }
+        ],
+        handleDots: [
+          { classId: 'hdot-1', cx: 123.08, cy: 31.79 },
+          { classId: 'hdot-2', cx: 138.96, cy: 31.79 },
+          { classId: 'hdot-2', cx: 127.05, cy: 67.51 },
+          { classId: 'hdot-7', cx: 99.27, cy: 154.82 },
+          { classId: 'hdot-8', cx: 99.26, cy: 162.76 },
+          { classId: 'hdot-9', cx: 75.45, cy: 190.54 },
+          { classId: 'hdot-10', cx: 99.26, cy: 186.57 },
+          { classId: 'hdot-10', cx: 115.15, cy: 138.89 }
+        ]
+      },
+      n: {
+        id: 'n',
+        name: 'Letra n (Recurso 85)',
+        width: 198.43,
+        height: 198.43,
+        contourClass: 'cls-contour-n',
+        pathCanonical: `M 47.62 39.74 L 79.37 39.74 C 79.37 55.61, 71.45 55.61, 71.45 79.41 C 71.45 57.50, 89.20 39.74, 111.11 39.74 C 133.03 39.74, 150.80 57.51, 150.80 79.43 L 150.80 158.80 L 119.05 158.80 L 119.05 75.46 C 119.05 64.50, 110.17 55.62, 99.21 55.62 C 88.25 55.62, 79.37 64.50, 79.37 75.46 L 79.37 158.80 L 47.62 158.80 Z`,
+        baseDuration: 5.40,
+        baseFillDelay: 5.35,
+        baseNodes: [0.04, 0.45, 0.90, 1.35, 1.80, 2.25, 2.70, 3.15, 3.60, 4.05, 4.50, 4.95],
+        nodes: [
+          { classId: 'node-1', rippleId: 'ripple-1', x: 46.83, y: 38.94, cx: 47.62, cy: 39.74 },
+          { classId: 'node-2', rippleId: 'ripple-2', x: 78.58, y: 38.94, cx: 79.37, cy: 39.74 },
+          { classId: 'node-3', rippleId: 'ripple-3', x: 70.65, y: 78.63, cx: 71.45, cy: 79.41 },
+          { classId: 'node-4', rippleId: 'ripple-4', x: 110.32, y: 38.94, cx: 111.11, cy: 39.74 },
+          { classId: 'node-5', rippleId: 'ripple-5', x: 150.00, y: 78.63, cx: 150.80, cy: 79.43 },
+          { classId: 'node-6', rippleId: 'ripple-6', x: 150.00, y: 158.00, cx: 150.80, cy: 158.80 },
+          { classId: 'node-7', rippleId: 'ripple-7', x: 118.26, y: 158.00, cx: 119.05, cy: 158.80 },
+          { classId: 'node-8', rippleId: 'ripple-8', x: 118.26, y: 74.66, cx: 119.05, cy: 75.46 },
+          { classId: 'node-9', rippleId: 'ripple-9', x: 98.41, y: 54.82, cx: 99.21, cy: 55.62 },
+          { classId: 'node-10', rippleId: 'ripple-10', x: 78.58, y: 74.66, cx: 79.37, cy: 75.46 },
+          { classId: 'node-11', rippleId: 'ripple-11', x: 78.58, y: 158.00, cx: 79.37, cy: 158.80 },
+          { classId: 'node-12', rippleId: 'ripple-12', x: 46.83, y: 158.00, cx: 47.62, cy: 158.80 }
+        ],
+        handleLines: [
+          { classId: 'hline-2', x1: 79.37, y1: 39.74, x2: 79.37, y2: 55.61 },
+          { classId: 'hline-3', x1: 71.45, y1: 51.64, x2: 71.45, y2: 79.41 }
+        ],
+        handleDots: [
+          { classId: 'hdot-2', cx: 79.37, cy: 55.61 },
+          { classId: 'hdot-3', cx: 71.45, cy: 51.64 }
+        ]
+      }
+    };
+
+    let currentGlyph = 'n';
+    let currentSpeed = 2.1;
+
+    function buildSvgForGlyph(glyphKey, cardIndex) {
+      const g = GLYPHS[glyphKey];
+      const gridW = g.width;
+      const gridH = g.height;
+      const vBox = `0 0 ${gridW} ${gridH}`;
+
+      const hLines = [];
+      for (let y = 3.9686; y < gridH - 0.5; y += 3.9686) {
+        hLines.push(`<line class="cls-4" y1="${y.toFixed(2)}" x2="${gridW.toFixed(2)}" y2="${y.toFixed(2)}"/>`);
+      }
+      const vLines = [];
+      for (let x = 3.9686; x < gridW - 0.5; x += 3.9686) {
+        vLines.push(`<line class="cls-4" x1="${x.toFixed(2)}" x2="${x.toFixed(2)}" y2="${gridH.toFixed(2)}"/>`);
+      }
+
+      let strokeContoursHtml = '';
+      if (g.isMultiPath) {
+        strokeContoursHtml = `
+          <path class="cls-contour-stroke cls-contour-a-outer" pathLength="1000" d="${g.pathOuter}" />
+          <path class="cls-contour-stroke cls-contour-a-inner" pathLength="1000" d="${g.pathInner}" />
+        `;
+      } else {
+        strokeContoursHtml = `
+          <path class="cls-contour-stroke ${g.contourClass}" pathLength="1000" d="${g.pathCanonical}" />
+        `;
+      }
+
+      return `
+        <svg viewBox="${vBox}" xmlns="http://www.w3.org/2000/svg">
+          <g class="grid-lines">
+            ${hLines.join('')}
+            ${vLines.join('')}
+          </g>
+          <path class="cls-5" fill-rule="evenodd" d="${g.pathCanonical}" />
+          ${strokeContoursHtml}
+          <g class="handles-group">
+            ${g.handleLines.map(hl => `<line class="cls-3 ${hl.classId}" x1="${hl.x1}" y1="${hl.y1}" x2="${hl.x2}" y2="${hl.y2}"/>`).join('')}
+            ${g.handleDots.map(hd => `<circle class="cls-1 ${hd.classId}" cx="${hd.cx}" cy="${hd.cy}" r=".79"/>`).join('')}
+          </g>
+          <g class="ripples-group">
+            ${g.nodes.map(n => `<circle class="click-ripple ${n.rippleId}" cx="${n.cx}" cy="${n.cy}" r="0.5"/>`).join('')}
+          </g>
+          <g class="nodes-group">
+            ${g.nodes.map(n => `<rect class="cls-2 ${n.classId}" x="${n.x}" y="${n.y}" width="1.59" height="1.59"/>`).join('')}
+          </g>
+        </svg>
+      `;
+    }
+
+    function updateDynamicStyles() {
+      let speedStyle = document.getElementById('gallery-dynamic-styles');
+      if (!speedStyle) {
+        speedStyle = document.createElement('style');
+        speedStyle.id = 'gallery-dynamic-styles';
+        document.head.appendChild(speedStyle);
+      }
+
+      const g = GLYPHS[currentGlyph];
+      const duration = (g.baseDuration / currentSpeed).toFixed(3);
+      const fadeDelay = (parseFloat(duration) + 1.00).toFixed(3);
+      const fillDuration = (0.45 / currentSpeed).toFixed(3);
+      const nodeDelays = g.baseNodes.map(d => (d / currentSpeed).toFixed(3));
+      
+      const nodeRules = nodeDelays.map((d, i) => `
+        .style-card.is-animating .node-${i + 1},
+        .style-card.is-animating .ripple-${i + 1},
+        .style-card.is-animating .hline-${i + 1},
+        .style-card.is-animating .hdot-${i + 1} {
+          animation-delay: ${d}s !important;
+        }
+      `).join('');
+
+      let strokeRule = '';
+      if (g.id === 'c') {
+        strokeRule = `.style-card.is-animating .cls-contour-c { animation: draw-c-contour ${duration}s ease-in-out forwards, gal-fade-out-technical 0.35s ease-in-out ${fadeDelay}s forwards !important; }`;
+      } else if (g.id === 'a') {
+        const outerDur = (4.50 / currentSpeed).toFixed(3);
+        const innerDur = (1.80 / currentSpeed).toFixed(3);
+        const innerDel = (4.50 / currentSpeed).toFixed(3);
+        strokeRule = `
+          .style-card.is-animating .cls-contour-a-outer { animation: draw-a-outer ${outerDur}s ease-in-out forwards, gal-fade-out-technical 0.35s ease-in-out ${fadeDelay}s forwards !important; }
+          .style-card.is-animating .cls-contour-a-inner { animation: draw-a-inner ${innerDur}s ease-in-out ${innerDel}s forwards, gal-fade-out-technical 0.35s ease-in-out ${fadeDelay}s forwards !important; }
+        `;
+      } else if (g.id === 't') {
+        strokeRule = `.style-card.is-animating .cls-contour-t { animation: draw-t-contour ${duration}s ease-in-out forwards, gal-fade-out-technical 0.35s ease-in-out ${fadeDelay}s forwards !important; }`;
+      } else if (g.id === 'l') {
+        strokeRule = `.style-card.is-animating .cls-contour-l { animation: draw-l-contour ${duration}s ease-in-out forwards, gal-fade-out-technical 0.35s ease-in-out ${fadeDelay}s forwards !important; }`;
+      } else if (g.id === 'i') {
+        strokeRule = `.style-card.is-animating .cls-contour-i { animation: draw-i-contour ${duration}s ease-in-out forwards, gal-fade-out-technical 0.35s ease-in-out ${fadeDelay}s forwards !important; }`;
+      } else if (g.id === 'y') {
+        strokeRule = `.style-card.is-animating .cls-contour-y { animation: draw-y-contour ${duration}s ease-in-out forwards, gal-fade-out-technical 0.35s ease-in-out ${fadeDelay}s forwards !important; }`;
+      } else if (g.id === 'n') {
+        strokeRule = `.style-card.is-animating .cls-contour-n { animation: draw-n-contour ${duration}s ease-in-out forwards, gal-fade-out-technical 0.35s ease-in-out ${fadeDelay}s forwards !important; }`;
+      }
+
+      speedStyle.textContent = `
+        ${strokeRule}
+        .style-card.is-animating .handles-group,
+        .style-card.is-animating .nodes-group {
+          animation: gal-fade-out-technical 0.35s ease-in-out ${fadeDelay}s forwards !important;
+        }
+        .style-card.is-animating .cls-5 {
+          animation: reveal-fill-final ${fillDuration}s cubic-bezier(0.16, 1, 0.3, 1) ${fadeDelay}s forwards !important;
+        }
+        ${nodeRules}
+      `;
+    }
+
+    function renderAllCards() {
+      const g = GLYPHS[currentGlyph];
+      const isLandscape = g.width > 200;
+
+      for (let i = 1; i <= 6; i++) {
+        const stage = document.getElementById(`stage-opt-${i}`);
+        if (stage) {
+          stage.classList.toggle('is-landscape', isLandscape);
+          stage.innerHTML = buildSvgForGlyph(currentGlyph, i);
+        }
+      }
+      updateDynamicStyles();
+    }
+
+    function replayAll() {
+      for (let i = 1; i <= 6; i++) {
+        const stage = document.getElementById(`stage-opt-${i}`);
+        if (stage) {
+          stage.classList.remove('is-animating');
+          void stage.offsetWidth; // Force Reflow
+          stage.classList.add('is-animating');
+        }
+      }
+    }
+
+    function replayCard(index) {
+      const stage = document.getElementById(`stage-opt-${index}`);
+      if (stage) {
+        stage.classList.remove('is-animating');
+        void stage.offsetWidth; // Force Reflow
+        stage.classList.add('is-animating');
+      }
+    }
+
+    function setGlyph(glyphKey) {
+      currentGlyph = glyphKey;
+      document.querySelectorAll('[data-glyph]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.glyph === glyphKey);
+      });
+      renderAllCards();
+      replayAll();
+    }
+
+    function setGlobalSpeed(spd) {
+      currentSpeed = parseFloat(spd);
+      if (isNaN(currentSpeed) || currentSpeed <= 0) currentSpeed = 1.0;
+
+      document.querySelectorAll('[data-spd]').forEach(btn => {
+        btn.classList.toggle('active', Math.abs(parseFloat(btn.dataset.spd) - currentSpeed) < 0.05);
+      });
+
+      const slider = document.getElementById('global-speed-slider');
+      if (slider) slider.value = currentSpeed;
+      const readout = document.getElementById('global-speed-readout');
+      if (readout) readout.textContent = `${currentSpeed.toFixed(currentSpeed % 1 === 0 ? 1 : 2)}x`;
+
+      updateDynamicStyles();
+      replayAll();
+    }
+
+    function toggleCode(index) {
+      const codeBox = document.getElementById(`code-opt-${index}`);
+      if (codeBox) {
+        codeBox.classList.toggle('show');
+      }
+    }
+
+    document.getElementById('btn-toggle-theme').addEventListener('click', () => {
+      document.body.classList.toggle('dark-canvas');
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
+        e.preventDefault();
+        replayAll();
+      }
+    });
+
+    // Inicialización
+    renderAllCards();
+    replayAll();
+  </script>
+</body>
+</html>

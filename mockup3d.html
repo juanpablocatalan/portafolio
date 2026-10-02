@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mockup 3D — Revista Fronteo (Solo Revistas 3D) — Juan Pablo</title>
+  <meta name="description" content="Visualizador 3D puro de la revista Fronteo cerrada. Arrastra, gira y examina en 360° las portadas, lomos y contraportadas.">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="css/style.css?v=52">
+
+  <style>
+    /* ==========================================================================
+       3D STUDIO CLEAN VIEWPORT — PURE 3D MAGAZINE VIEWER
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body.studio-body {
+      background: #090909;
+      color: #ffffff;
+      font-family: var(--font-primary), -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Studio Bar */
+    .studio-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: rgba(9, 9, 9, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      z-index: 1000;
+    }
+
+    .studio-left-nav {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .studio-back-btn {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #888888;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      transition: color 0.2s ease;
+    }
+
+    .studio-back-btn:hover {
+      color: #ffffff;
+    }
+
+    .studio-title-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* View Mode Switcher (Grid 4 vs Single View) */
+    .studio-tab-group {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.2rem;
+      border-radius: 999px;
+    }
+
+    .studio-tab-btn {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #888888;
+      background: transparent;
+      border: none;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      transition: all 0.2s ease;
+    }
+
+    .studio-tab-btn:hover {
+      color: #ffffff;
+    }
+
+    .studio-tab-btn.active {
+      background: #ffffff;
+      color: #000000;
+      font-weight: 600;
+    }
+
+    /* Main 3D Viewport Stage */
+    .studio-main {
+      flex: 1;
+      padding-top: 60px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+      position: relative;
+    }
+
+    /* Mode: 4-Column Grid (All 4 Magazines at once) */
+    .grid-view-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      height: calc(100vh - 60px);
+      height: calc(100dvh - 60px);
+      width: 100%;
+      background: #090909;
+    }
+
+    .magazine-card-stage {
+      position: relative;
+      height: 100%;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      flex-direction: column;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, #151515 0%, #090909 100%);
+      transition: background 0.3s ease;
+    }
+
+    .magazine-card-stage:last-child {
+      border-right: none;
+    }
+
+    .magazine-card-stage:active {
+      cursor: grabbing;
+    }
+
+    .magazine-card-stage canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    /* Card Label & Fast Angles */
+    .card-top-bar {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .card-title-tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #ffffff;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+    }
+
+    .card-angle-tools {
+      display: flex;
+      gap: 0.25rem;
+      pointer-events: auto;
+    }
+
+    .mini-angle-btn {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: #888888;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+      transition: all 0.15s ease;
+    }
+
+    .mini-angle-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .card-bottom-bar {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .card-subtext {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: #666666;
+      letter-spacing: 0.04em;
+    }
+
+    .drag-pill {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: #00e5ff;
+      background: rgba(0, 229, 255, 0.08);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Mode: Single Focused Large View */
+    .single-view-container {
+      display: none;
+      height: calc(100vh - 60px);
+      height: calc(100dvh - 60px);
+      width: 100%;
+      position: relative;
+      background: radial-gradient(circle at 50% 50%, #171717 0%, #090909 100%);
+    }
+
+    .single-view-container.active {
+      display: block;
+    }
+
+    .single-stage-canvas-wrap {
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+
+    .single-stage-canvas-wrap:active {
+      cursor: grabbing;
+    }
+
+    .single-stage-canvas-wrap canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    /* Floating Center Angle Toolbar for Single View */
+    .single-view-toolbar {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(16, 16, 16, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      z-index: 100;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+    }
+
+    .angle-btn-large {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #aaaaaa;
+      background: transparent;
+      border: none;
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .angle-btn-large:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .angle-btn-large.active {
+      background: #ffffff;
+      color: #000000;
+      font-weight: 600;
+    }
+
+    .single-info-overlay {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .single-vol-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #00e5ff;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .single-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .single-desc {
+      font-size: 0.85rem;
+      color: #888888;
+      max-width: 450px;
+      margin-top: 0.35rem;
+      line-height: 1.4;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .grid-view-container {
+        grid-template-columns: repeat(2, 1fr);
+        height: auto;
+      }
+      .magazine-card-stage {
+        height: 50vh;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .grid-view-container {
+        grid-template-columns: 1fr;
+      }
+      .magazine-card-stage {
+        height: 60vh;
+      }
+      .studio-tab-btn {
+        font-size: 0.62rem;
+        padding: 0.3rem 0.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="studio-body">
+
+  <!-- Top Studio Navigation Bar -->
+  <header class="studio-header">
+    <div class="studio-left-nav">
+      <a href="index.html" class="studio-back-btn">&larr; Index</a>
+      <a href="projects/project-01.html" class="studio-back-btn">&larr; Caso Fronteo</a>
+      <span class="studio-title-badge">MOCKUP 3D CERRADO &bull; FRONTEO</span>
+    </div>
+
+    <!-- View Switcher Tabs -->
+    <nav class="studio-tab-group" aria-label="Selector de Vistas">
+      <button type="button" class="studio-tab-btn active" id="tab-grid" onclick="switchView('grid')">Todas (4 Volúmenes)</button>
+      <button type="button" class="studio-tab-btn" id="tab-vol1" onclick="switchView('vol1')">Vol. 01</button>
+      <button type="button" class="studio-tab-btn" id="tab-vol2" onclick="switchView('vol2')">Vol. 02</button>
+      <button type="button" class="studio-tab-btn" id="tab-vol3" onclick="switchView('vol3')">Vol. 03</button>
+      <button type="button" class="studio-tab-btn" id="tab-vol4" onclick="switchView('vol4')">Vol. 04</button>
+    </nav>
+  </header>
+
+  <!-- Main Viewport -->
+  <main class="studio-main" id="studio-main">
+
+    <!-- ====================================================================
+         MODE 1: 4-COLUMN FULL GRID (ALL MAGAZINES AT ONCE)
+         ==================================================================== -->
+    <div class="grid-view-container" id="grid-view-container">
+
+      <!-- Stage 01 -->
+      <div class="magazine-card-stage" id="stage-card-01">
+        <div class="card-top-bar">
+          <span class="card-title-tag">Vol. 01 &bull; 2000–2010</span>
+          <div class="card-angle-tools">
+            <button type="button" class="mini-angle-btn" data-stage="0" data-angle="portada">Frente</button>
+            <button type="button" class="mini-angle-btn" data-stage="0" data-angle="lomo">Lomo</button>
+            <button type="button" class="mini-angle-btn" data-stage="0" data-angle="contraportada">Dorso</button>
+            <button type="button" class="mini-angle-btn" data-stage="0" data-angle="isometric">3D</button>
+            <button type="button" class="mini-angle-btn" data-stage="0" data-angle="spin">🔄</button>
+          </div>
+        </div>
+        <div class="card-bottom-bar">
+          <span class="card-subtext">Air Max 95 &bull; AirPods Max</span>
+          <span class="drag-pill">Arrastra 360&deg;</span>
+        </div>
+      </div>
+
+      <!-- Stage 02 -->
+      <div class="magazine-card-stage" id="stage-card-02">
+        <div class="card-top-bar">
+          <span class="card-title-tag">Vol. 02 &bull; 2000–2010</span>
+          <div class="card-angle-tools">
+            <button type="button" class="mini-angle-btn" data-stage="1" data-angle="portada">Frente</button>
+            <button type="button" class="mini-angle-btn" data-stage="1" data-angle="lomo">Lomo</button>
+            <button type="button" class="mini-angle-btn" data-stage="1" data-angle="contraportada">Dorso</button>
+            <button type="button" class="mini-angle-btn" data-stage="1" data-angle="isometric">3D</button>
+            <button type="button" class="mini-angle-btn" data-stage="1" data-angle="spin">🔄</button>
+          </div>
+        </div>
+        <div class="card-bottom-bar">
+          <span class="card-subtext">Gold Bling &bull; Nike Shox Blue</span>
+          <span class="drag-pill">Arrastra 360&deg;</span>
+        </div>
+      </div>
+
+      <!-- Stage 03 -->
+      <div class="magazine-card-stage" id="stage-card-03">
+        <div class="card-top-bar">
+          <span class="card-title-tag">Vol. 03 &bull; 2010–2020</span>
+          <div class="card-angle-tools">
+            <button type="button" class="mini-angle-btn" data-stage="2" data-angle="portada">Frente</button>
+            <button type="button" class="mini-angle-btn" data-stage="2" data-angle="lomo">Lomo</button>
+            <button type="button" class="mini-angle-btn" data-stage="2" data-angle="contraportada">Dorso</button>
+            <button type="button" class="mini-angle-btn" data-stage="2" data-angle="isometric">3D</button>
+            <button type="button" class="mini-angle-btn" data-stage="2" data-angle="spin">🔄</button>
+          </div>
+        </div>
+        <div class="card-bottom-bar">
+          <span class="card-subtext">Santos &bull; Spotify Sigue perreando</span>
+          <span class="drag-pill">Arrastra 360&deg;</span>
+        </div>
+      </div>
+
+      <!-- Stage 04 -->
+      <div class="magazine-card-stage" id="stage-card-04">
+        <div class="card-top-bar">
+          <span class="card-title-tag">Vol. 04 &bull; 2020–2030</span>
+          <div class="card-angle-tools">
+            <button type="button" class="mini-angle-btn" data-stage="3" data-angle="portada">Frente</button>
+            <button type="button" class="mini-angle-btn" data-stage="3" data-angle="lomo">Lomo</button>
+            <button type="button" class="mini-angle-btn" data-stage="3" data-angle="contraportada">Dorso</button>
+            <button type="button" class="mini-angle-btn" data-stage="3" data-angle="isometric">3D</button>
+            <button type="button" class="mini-angle-btn" data-stage="3" data-angle="spin">🔄</button>
+          </div>
+        </div>
+        <div class="card-bottom-bar">
+          <span class="card-subtext">Mercedes 190E &bull; Nike Shox Silver</span>
+          <span class="drag-pill">Arrastra 360&deg;</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ====================================================================
+         MODE 2: SINGLE LARGE VIEW (FULLSCREEN FOCUS)
+         ==================================================================== -->
+    <div class="single-view-container" id="single-view-container">
+      <div class="single-info-overlay">
+        <div class="single-vol-tag" id="single-vol-tag">VOL. 01 / 04 &bull; PERIODO 2000–2010</div>
+        <h1 class="single-title" id="single-title">Fronteo Air Max 95</h1>
+        <p class="single-desc" id="single-desc">Haz clic y arrastra en cualquier dirección para rotar libremente en 360°, o usa la barra inferior para fijar la portada, el lomo o la contraportada.</p>
+      </div>
+
+      <div class="single-stage-canvas-wrap" id="single-stage-wrap"></div>
+
+      <!-- Single Angle Preset Toolbar -->
+      <div class="single-view-toolbar" aria-label="Controles de Ángulo y Giro">
+        <button type="button" class="angle-btn-large" data-angle="portada">📕 Portada (Frente)</button>
+        <button type="button" class="angle-btn-large" data-angle="lomo">📖 Lomo</button>
+        <button type="button" class="angle-btn-large" data-angle="contraportada">📗 Contraportada (Dorso)</button>
+        <button type="button" class="angle-btn-large active" data-angle="isometric">📐 Isométrico 3D</button>
+        <button type="button" class="angle-btn-large" data-angle="spin">🔄 Giro Automático</button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="js/three.min.js"></script>
+  <script src="js/mockup-textures.js?v=1"></script>
+  <script>
+    /**
+     * PURE 3D MAGAZINE VIEWER SCRIPT
+     */
+    (function () {
+      'use strict';
+
+      // Texture loader & procedural paper edge generator
+      const textureLoader = new THREE.TextureLoader();
+
+      function createPaperEdgeTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 256;
+        canvas.height = 2048;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#f5f2eb';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        for (let y = 0; y < canvas.height; y += 4) {
+          const alpha = 0.05 + Math.random() * 0.12;
+          ctx.fillStyle = `rgba(50, 45, 40, ${alpha})`;
+          ctx.fillRect(0, y, canvas.width, 1 + (Math.random() > 0.7 ? 1 : 0));
+        }
+        const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        grad.addColorStop(0, 'rgba(0,0,0,0.28)');
+        grad.addColorStop(0.15, 'rgba(0,0,0,0.04)');
+        grad.addColorStop(0.85, 'rgba(0,0,0,0.03)');
+        grad.addColorStop(1, 'rgba(0,0,0,0.22)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        return tex;
+      }
+
+      function createContactShadowTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+        const grad = ctx.createRadialGradient(256, 256, 30, 256, 256, 240);
+        grad.addColorStop(0, 'rgba(0,0,0,0.7)');
+        grad.addColorStop(0.35, 'rgba(0,0,0,0.42)');
+        grad.addColorStop(0.75, 'rgba(0,0,0,0.08)');
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 512, 512);
+        return new THREE.CanvasTexture(canvas);
+      }
+
+      const sharedPaperTex = createPaperEdgeTexture();
+      const sharedShadowTex = createContactShadowTexture();
+
+      function getVolTex(key, defaultFront, defaultSpine, defaultBack) {
+        if (window.MOCKUP_3D_TEXTURES && window.MOCKUP_3D_TEXTURES[key]) {
+          return window.MOCKUP_3D_TEXTURES[key];
+        }
+        return { front: defaultFront, spine: defaultSpine, back: defaultBack };
+      }
+
+      // Magazine Volumes Data (matching exact assets from assets/mockup3d/)
+      const t1 = getVolTex('vol1', 'assets/mockup3d/vol1/portadas-11.jpg', 'assets/mockup3d/vol1/portadas-15.jpg', 'assets/mockup3d/vol1/contrapor_Mesa de trabajo 4 copia 10.jpg');
+      const t2 = getVolTex('vol2', 'assets/mockup3d/vol2/portadas-08.jpg', 'assets/mockup3d/vol2/portadas.jpg', 'assets/mockup3d/vol2/contrapor_Mesa de trabajo 4 copia 7.jpg');
+      const t3 = getVolTex('vol3', 'assets/mockup3d/vol3/portadas-09.jpg', 'assets/mockup3d/vol3/portadas-14.jpg', 'assets/mockup3d/vol3/contrapor_Mesa de trabajo 4 copia 8.jpg');
+      const t4 = getVolTex('vol4', 'assets/mockup3d/vol4/portadas-10.jpg', 'assets/mockup3d/vol4/portadas-13.jpg', 'assets/mockup3d/vol4/contrapor_Mesa de trabajo 4 copia 9.jpg');
+
+      const VOLUMES_DATA = [
+        {
+          vol: 'VOL. 01',
+          period: 'PERIODO 2000–2010',
+          title: 'Fronteo Air Max 95',
+          desc: 'Portada con zapatillas Nike Air Max 95, lomo editorial Fronteo y contraportada AirPods Max.',
+          front: t1.front,
+          spine: t1.spine,
+          back: t1.back
+        },
+        {
+          vol: 'VOL. 02',
+          period: 'PERIODO 2000–2010',
+          title: 'Fronteo Gold Chains & Bling',
+          desc: 'Portada de joyería y cadenas de oro macizo, lomo Vol. 02 y contraportada Nike Shox azul metálico cromado.',
+          front: t2.front,
+          spine: t2.spine,
+          back: t2.back
+        },
+        {
+          vol: 'VOL. 03',
+          period: 'PERIODO 2010–2020',
+          title: 'Fronteo Santos & Medallas de Fe',
+          desc: 'Portada con imaginería religiosa urbana y medallas de oro, lomo Vol. 01 y contraportada Spotify «Sigue perreando».',
+          front: t3.front,
+          spine: t3.spine,
+          back: t3.back
+        },
+        {
+          vol: 'VOL. 04',
+          period: 'PERIODO 2020–2030',
+          title: 'Fronteo Mercedes-Benz 190E',
+          desc: 'Portada con el Mercedes-Benz 190E EVO II dorado, lomo Vol. 04 y contraportada minimalista Nike Shox Silver «Boing».',
+          front: t4.front,
+          spine: t4.spine,
+          back: t4.back
+        }
+      ];
+
+      // 3D Viewer Class
+      class PureMagazine3D {
+        constructor(container, data, options = {}) {
+          this.container = container;
+          this.data = data;
+          this.options = Object.assign({
+            cameraDist: 9.8,
+            width: 3.98,
+            height: 5.2,
+            thickness: 0.22,
+            autoRotate: false
+          }, options);
+
+          this.scene = null;
+          this.camera = null;
+          this.renderer = null;
+          this.magazineGroup = null;
+          this.pivotGroup = null;
+          this.shadowMesh = null;
+
+          this.isDragging = false;
+          this.previousMousePosition = { x: 0, y: 0 };
+          this.dragRotation = { x: 0.15, y: -0.35, z: 0.0 };
+          this.targetRotation = { x: 0.15, y: -0.35, z: 0.0 };
+          this.currentRotation = { x: 0.15, y: -0.35, z: 0.0 };
+          this.autoSpinActive = !!this.options.autoRotate;
+
+          this.init();
+        }
+
+        init() {
+          const rect = this.container.getBoundingClientRect();
+          const w = rect.width || this.container.clientWidth || 400;
+          const h = rect.height || this.container.clientHeight || 500;
+
+          this.scene = new THREE.Scene();
+          this.camera = new THREE.PerspectiveCamera(36, w / h, 0.1, 100);
+          this.camera.position.set(0, 0, this.options.cameraDist);
+
+          this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
+          this.renderer.setSize(w, h);
+          this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+          this.renderer.setClearColor(0x000000, 0);
+
+          this.renderer.outputEncoding = THREE.LinearEncoding;
+          this.renderer.toneMapping = THREE.NoToneMapping;
+
+          this.container.appendChild(this.renderer.domElement);
+
+          this.buildModel();
+          this.bindEvents();
+          this.animate();
+        }
+
+        buildModel() {
+          const W = this.options.width;
+          const H = this.options.height;
+          const T = this.options.thickness;
+
+          this.pivotGroup = new THREE.Group();
+          this.scene.add(this.pivotGroup);
+
+          this.magazineGroup = new THREE.Group();
+          this.pivotGroup.add(this.magazineGroup);
+
+          const frontTex = textureLoader.load(this.data.front);
+          frontTex.encoding = THREE.LinearEncoding;
+
+          const backTex = textureLoader.load(this.data.back);
+          backTex.encoding = THREE.LinearEncoding;
+
+          const spineTex = textureLoader.load(this.data.spine);
+          spineTex.encoding = THREE.LinearEncoding;
+
+          // Pure 1:1 MeshBasicMaterial — 100% exact original JPG image colors without any lighting or gamma bleaching
+          const paperMat = new THREE.MeshBasicMaterial({
+            map: sharedPaperTex
+          });
+
+          const spineMat = new THREE.MeshBasicMaterial({
+            map: spineTex
+          });
+
+          const frontMat = new THREE.MeshBasicMaterial({
+            map: frontTex
+          });
+
+          const backMat = new THREE.MeshBasicMaterial({
+            map: backTex
+          });
+
+          // Box faces: [+X (paper), -X(spine), +Y(paper), -Y(paper), +Z(front), -Z(back)]
+          const materials = [paperMat, spineMat, paperMat, paperMat, frontMat, backMat];
+          const bookGeo = new THREE.BoxGeometry(W, H, T);
+          const bookMesh = new THREE.Mesh(bookGeo, materials);
+          this.magazineGroup.add(bookMesh);
+        }
+
+        updateData(newData) {
+          this.data = newData;
+          if (this.pivotGroup) {
+            this.scene.remove(this.pivotGroup);
+            this.buildModel();
+          }
+        }
+
+        setPresetAngle(preset) {
+          this.autoSpinActive = false;
+          switch (preset) {
+            case 'portada':
+              this.dragRotation = { x: 0.04, y: -0.06, z: 0.0 };
+              break;
+            case 'lomo':
+              this.dragRotation = { x: 0.02, y: Math.PI / 2 + 0.08, z: 0.0 };
+              break;
+            case 'contraportada':
+              this.dragRotation = { x: 0.04, y: Math.PI + 0.06, z: 0.0 };
+              break;
+            case 'isometric':
+              this.dragRotation = { x: 0.28, y: -0.55, z: -0.06 };
+              break;
+            default:
+              this.dragRotation = { x: 0.15, y: -0.35, z: 0.0 };
+              break;
+          }
+        }
+
+        toggleAutoSpin() {
+          this.autoSpinActive = !this.autoSpinActive;
+          return this.autoSpinActive;
+        }
+
+        bindEvents() {
+          const el = this.container;
+
+          const onDown = (e) => {
+            this.isDragging = true;
+            this.autoSpinActive = false;
+            this.previousMousePosition = {
+              x: e.clientX || (e.touches && e.touches[0].clientX) || 0,
+              y: e.clientY || (e.touches && e.touches[0].clientY) || 0
+            };
+          };
+
+          const onMove = (e) => {
+            if (!this.isDragging) return;
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+
+            const deltaX = clientX - this.previousMousePosition.x;
+            const deltaY = clientY - this.previousMousePosition.y;
+
+            this.dragRotation.y += deltaX * 0.009;
+            this.dragRotation.x += deltaY * 0.009;
+
+            this.previousMousePosition = { x: clientX, y: clientY };
+          };
+
+          const onUp = () => {
+            this.isDragging = false;
+          };
+
+          el.addEventListener('mousedown', onDown);
+          window.addEventListener('mousemove', onMove);
+          window.addEventListener('mouseup', onUp);
+
+          el.addEventListener('touchstart', onDown, { passive: true });
+          window.addEventListener('touchmove', onMove, { passive: true });
+          window.addEventListener('touchend', onUp);
+
+          window.addEventListener('resize', () => {
+            if (!this.container || !this.renderer || !this.camera) return;
+            const rect = this.container.getBoundingClientRect();
+            const w = rect.width || this.container.clientWidth;
+            const h = rect.height || this.container.clientHeight;
+            if (w && h) {
+              this.camera.aspect = w / h;
+              this.camera.updateProjectionMatrix();
+              this.renderer.setSize(w, h);
+            }
+          });
+        }
+
+        animate() {
+          requestAnimationFrame(() => this.animate());
+
+          if (this.autoSpinActive) {
+            this.dragRotation.y += 0.012;
+            this.targetRotation.x = 0.15;
+            this.targetRotation.y = this.dragRotation.y;
+          } else {
+            this.targetRotation.x = this.dragRotation.x;
+            this.targetRotation.y = this.dragRotation.y;
+          }
+
+          const lerp = 0.09;
+          this.currentRotation.x += (this.targetRotation.x - this.currentRotation.x) * lerp;
+          this.currentRotation.y += (this.targetRotation.y - this.currentRotation.y) * lerp;
+
+          if (this.magazineGroup) {
+            this.magazineGroup.rotation.x = this.currentRotation.x;
+            this.magazineGroup.rotation.y = this.currentRotation.y;
+          }
+
+          this.renderer.render(this.scene, this.camera);
+        }
+      }
+
+      // Initialize Grid View Stages
+      const gridInstances = [];
+      const stageIds = ['stage-card-01', 'stage-card-02', 'stage-card-03', 'stage-card-04'];
+
+      stageIds.forEach((id, idx) => {
+        const el = document.getElementById(id);
+        if (el) {
+          const inst = new PureMagazine3D(el, VOLUMES_DATA[idx], {
+            cameraDist: 10.2,
+            thickness: 0.22
+          });
+          gridInstances.push(inst);
+        }
+      });
+
+      // Mini Angle Buttons inside Grid Cards
+      document.querySelectorAll('.mini-angle-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const stageIdx = parseInt(btn.dataset.stage, 10);
+          const angle = btn.dataset.angle;
+          if (gridInstances[stageIdx]) {
+            if (angle === 'spin') {
+              gridInstances[stageIdx].toggleAutoSpin();
+            } else {
+              gridInstances[stageIdx].setPresetAngle(angle);
+            }
+          }
+        });
+      });
+
+      // Single View Large Stage
+      let singleInstance = null;
+      const singleWrap = document.getElementById('single-stage-wrap');
+      if (singleWrap) {
+        singleInstance = new PureMagazine3D(singleWrap, VOLUMES_DATA[0], {
+          cameraDist: 9.2,
+          thickness: 0.22
+        });
+      }
+
+      // Large View Toolbar
+      document.querySelectorAll('.angle-btn-large').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const angle = btn.dataset.angle;
+          if (!singleInstance) return;
+          if (angle === 'spin') {
+            const isSpin = singleInstance.toggleAutoSpin();
+            btn.classList.toggle('active', isSpin);
+          } else {
+            document.querySelectorAll('.angle-btn-large').forEach(b => { if (b.dataset.angle !== 'spin') b.classList.remove('active'); });
+            btn.classList.add('active');
+            singleInstance.setPresetAngle(angle);
+          }
+        });
+      });
+
+      // View Switcher Function
+      window.switchView = function (mode) {
+        const gridView = document.getElementById('grid-view-container');
+        const singleView = document.getElementById('single-view-container');
+
+        // Update Nav Tabs
+        document.querySelectorAll('.studio-tab-btn').forEach(b => b.classList.remove('active'));
+
+        if (mode === 'grid') {
+          document.getElementById('tab-grid').classList.add('active');
+          gridView.style.display = 'grid';
+          singleView.classList.remove('active');
+          window.dispatchEvent(new Event('resize'));
+        } else {
+          const idxMap = { 'vol1': 0, 'vol2': 1, 'vol3': 2, 'vol4': 3 };
+          const idx = idxMap[mode] !== undefined ? idxMap[mode] : 0;
+          const data = VOLUMES_DATA[idx];
+
+          document.getElementById(`tab-${mode}`).classList.add('active');
+          gridView.style.display = 'none';
+          singleView.classList.add('active');
+
+          // Update info text
+          document.getElementById('single-vol-tag').textContent = `${data.vol} / 04 • ${data.period}`;
+          document.getElementById('single-title').textContent = data.title;
+          document.getElementById('single-desc').textContent = data.desc;
+
+          if (singleInstance) {
+            singleInstance.updateData(data);
+            singleInstance.setPresetAngle('isometric');
+          }
+
+          window.dispatchEvent(new Event('resize'));
+        }
+      };
+    })();
+  </script>
+</body>
+
+</html>

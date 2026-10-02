@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 592.44 283.46">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        opacity: .25;
+      }
+
+      .cls-3, .cls-4 {
+        fill: #69112a;
+      }
+
+      .cls-4 {
+        opacity: .5;
+      }
+    </style>
+  </defs>
+  <g id="Capa_1-2" data-name="Capa 1">
+    <rect class="cls-1" width="592.44" height="283.46"/>
+    <path class="cls-4" d="M488.22,167.28c8.41-23.41,26.87-42.74,50.8-51.58l-38.29-27.82c-16.82,23.16-26.34,57.21-23.8,82.83-19.67-15.23-32.35-38.77-33.36-64.25l-38.29,27.82c16.83,23.16,46.27,42.73,71.42,48.23-20.57,14-46.87,18.79-71.41,11.87l14.63,45.02c27.22-8.85,54.93-30.8,67.93-53.02,6.96,23.88,3.38,50.38-10.78,71.58h47.33c0-28.63-12.32-61.76-29.43-81,24.87.76,48.96,12.35,64.76,32.37l14.63-45.02c-27.23-8.84-62.55-7.37-86.13,2.96Z"/>
+    <g>
+      <g id="_Repetición_radial_" data-name="&amp;lt;Repetición radial&amp;gt;" class="cls-2">
+        <path class="cls-3" d="M383.98,209.33l14.63-45.02c-36.02-11.7-86.21-5.36-104.63,15.69,32.84-9.17,68.86,2.52,90,29.33Z"/>
+      </g>
+      <g id="_Repetición_radial_-2" data-name="&amp;lt;Repetición radial&amp;gt;" class="cls-2">
+        <path class="cls-3" d="M301.33,257.95h47.33c0-37.87-21.55-83.64-47.25-94.66,18.87,28.4,18.88,66.26-.08,94.66Z"/>
+      </g>
+      <g id="_Repetición_radial_-3" data-name="&amp;lt;Repetición radial&amp;gt;" class="cls-2">
+        <path class="cls-3" d="M229.54,194.37l14.63,45.02c36.01-11.71,72.89-46.34,75.43-74.19-21.18,26.72-57.19,38.43-90.05,29.18Z"/>
+      </g>
+      <g id="_Repetición_radial_-4" data-name="&amp;lt;Repetición radial&amp;gt;" class="cls-2">
+        <path class="cls-3" d="M267.83,106.45l-38.29,27.82c22.26,30.63,66.6,55.01,93.87,48.81-31.96-11.88-54.22-42.51-55.58-76.63Z"/>
+      </g>
+      <g id="_Repetición_radial_-5" data-name="&amp;lt;Repetición radial&amp;gt;" class="cls-2">
+        <path class="cls-3" d="M363.28,115.7l-38.29-27.82c-22.25,30.64-31.73,80.33-17.41,104.36,1.42-34.07,23.68-64.71,55.7-76.54Z"/>
+      </g>
+    </g>
+    <g id="_Repetición_radial_-6" data-name="&amp;lt;Repetición radial&amp;gt;" class="cls-2">
+      <path class="cls-3" d="M168.1,257.95h47.33c0-37.87-21.55-83.64-47.25-94.66,18.87,28.4,18.88,66.26-.08,94.66Z"/>
+    </g>
+    <g id="_Repetición_radial_-7" data-name="&amp;lt;Repetición radial&amp;gt;" class="cls-2">
+      <path class="cls-3" d="M138.04,257.95h-47.33c0-37.87,21.55-83.64,47.25-94.66-18.87,28.4-18.88,66.26.08,94.66Z"/>
+    </g>
+    <g id="_Repetición_radial_-8" data-name="&amp;lt;Repetición radial&amp;gt;" class="cls-2">
+      <path class="cls-3" d="M62.36,257.95h-14.17c0-11.34,6.45-25.05,14.15-28.34-5.65,8.5-5.65,19.84.02,28.34Z"/>
+    </g>
+  </g>
+</svg>

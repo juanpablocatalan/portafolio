@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 47.33 94.66">
+  <defs>
+    <style>
+      .cls-1 {
+        opacity: .25;
+      }
+
+      .cls-2 {
+        fill: #69112a;
+      }
+    </style>
+  </defs>
+  <g id="_Repetición_radial_-6" data-name=" Repetición radial -6" class="cls-1">
+    <path class="cls-2" d="M0,94.66h47.33C47.33,56.79,25.78,11.02.08,0c18.87,28.4,18.88,66.26-.08,94.66Z"/>
+  </g>
+</svg>

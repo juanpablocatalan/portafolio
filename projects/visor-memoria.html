@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0">
+  <title>Memoria de Proyecto — Fronteo</title>
+  <meta name="description" content="Visualizador de la memoria y justificación de proyecto Fronteo por Juan Pablo.">
+
+  <!-- Core Stylesheet -->
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="../assets/happy-face.svg">
+
+  <link rel="stylesheet" href="../css/style.css?v=75">
+
+  <style>
+    @font-face {
+      font-family: 'PPSupplySans';
+      src: url('../fonts/PPSupplySans-Ultralight.otf') format('opentype'),
+        url('../fonts/Copia de PPSupplySans-Ultralight.otf') format('opentype');
+      font-weight: 100 200;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'PPSupplySans';
+      src: url('../fonts/PPSupplySans-Regular.otf') format('opentype');
+      font-weight: 400 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0b0b0d;
+      color: #f0f0f4;
+      font-family: 'PPSupplySans', var(--font-mono), sans-serif;
+    }
+
+    /* Top Viewer Bar */
+    .viewer-header {
+      height: 60px;
+      width: 100%;
+      background-color: rgba(12, 12, 14, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(1rem, 3vw, 2.5rem);
+      z-index: 100;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .viewer-left {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .viewer-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #f0f0f4;
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.8rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      transition: all var(--transition-fast);
+    }
+
+    .viewer-back-btn:hover {
+      background: var(--color-accent, #FFFF00);
+      color: #000000;
+      border-color: var(--color-accent, #FFFF00);
+    }
+
+    .viewer-title {
+      font-family: 'PPSupplySans', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      color: #9999a4;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .viewer-title strong {
+      color: #f0f0f4;
+      font-weight: 600;
+    }
+
+    .viewer-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .viewer-pill {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .viewer-btn {
+      background: transparent;
+      border: none;
+      color: #f0f0f4;
+      padding: 0.45rem 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color var(--transition-fast), color var(--transition-fast);
+    }
+
+    .viewer-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+    }
+
+    .viewer-page-info {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 0 0.85rem;
+      color: #b0b0bc;
+      white-space: nowrap;
+    }
+
+    .viewer-page-info strong {
+      color: #ffffff;
+    }
+
+    /* Main Scroll Stage */
+    .viewer-stage {
+      position: absolute;
+      top: 60px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow-y: auto;
+      overflow-x: auto;
+      background: #111114;
+      padding: 2.5rem 1rem 5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      scroll-behavior: smooth;
+    }
+
+    /* PDF Page Wrapper & Canvas */
+    .pdf-page-container {
+      position: relative;
+      background: #18181c;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+
+    .pdf-page-container canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .pdf-page-loading {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #666675;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* --------------------------------------------------------------------------
+       Floating Controls Dock (Black Edition - Magazine Dock style)
+       -------------------------------------------------------------------------- */
+    .magazine-dock {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 440px;
+      max-width: calc(100vw - 2.5rem);
+      box-sizing: border-box;
+      gap: 0.6rem;
+      background: #000000;
+      border: 1.5px solid rgba(255, 255, 255, 0.22);
+      padding: 0.4rem 0.95rem;
+      border-radius: 100px;
+      z-index: 90;
+      box-shadow: 0 14px 38px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(0, 0, 0, 0.6);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .mag-nav-group {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-shrink: 0;
+    }
+
+    .mag-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 0.26rem 0.78rem;
+      border-radius: 100px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      transition: all var(--transition-fast);
+      user-select: none;
+      -webkit-user-select: none;
+      line-height: 1;
+    }
+
+    .mag-btn:hover {
+      background: #ffffff;
+      color: #000000;
+      border-color: #ffffff;
+    }
+
+    .mag-btn.is-active {
+      background: #ffffff;
+      color: #000000;
+      border-color: #ffffff;
+    }
+
+    .mag-btn:disabled,
+    .mag-btn.is-disabled {
+      opacity: 0.22;
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .mag-btn-icon {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      border-radius: 50%;
+    }
+
+    .mag-btn-icon svg {
+      display: block;
+      width: 13px;
+      height: 13px;
+    }
+
+    .mag-page-indicator {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex: 1;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      padding: 0 0.4rem;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .mag-current-page-num {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    @media (max-width: 640px) {
+      .magazine-dock {
+        width: calc(100vw - 1.5rem);
+        bottom: 1.25rem;
+        padding: 0.35rem 0.65rem;
+        gap: 0.35rem;
+      }
+
+      .mag-page-indicator {
+        font-size: 0.65rem;
+        padding: 0 0.2rem;
+      }
+
+      .mag-btn {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.55rem;
+      }
+
+      .mag-btn-icon {
+        width: 26px;
+        height: 26px;
+      }
+    }
+
+    /* Thumbnails Sidebar Drawer */
+    .thumb-drawer {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      bottom: 0;
+      width: 260px;
+      background: rgba(14, 14, 16, 0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 95;
+      overflow-y: auto;
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .thumb-drawer.is-open {
+      transform: translateX(0);
+    }
+
+    .thumb-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .thumb-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .thumb-item.active {
+      background: rgba(73, 190, 217, 0.1);
+      border-color: var(--accent-color, #49bed9);
+    }
+
+    .thumb-item canvas {
+      width: 100%;
+      height: auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      border-radius: 2px;
+      pointer-events: none;
+    }
+
+    .thumb-num {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #888896;
+    }
+
+    /* Loading Overlay */
+    .viewer-loading-overlay {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #0b0b0d;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      z-index: 150;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .viewer-loading-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-top-color: var(--color-accent, #FFFF00);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-msg {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: #9999a4;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 768px) {
+      .viewer-title {
+        display: none;
+      }
+
+      .viewer-header {
+        padding: 0 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body oncontextmenu="return false;">
+
+  <!-- Header -->
+  <header class="viewer-header">
+    <div class="viewer-left">
+      <a href="fronteo.html" class="viewer-back-btn">
+        <span aria-hidden="true">&larr;</span>
+        <span>Volver a Fronteo</span>
+      </a>
+    </div>
+
+    <div class="viewer-controls">
+      <!-- Zoom controls -->
+      <div class="viewer-pill">
+        <button type="button" class="viewer-btn" id="btn-zoom-out" title="Reducir zoom (&minus;)">−</button>
+        <span class="viewer-page-info" id="zoom-indicator">100%</span>
+        <button type="button" class="viewer-btn" id="btn-zoom-in" title="Aumentar zoom (&plus;)">+</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  <div class="viewer-loading-overlay" id="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-msg" id="loading-msg">Cargando memoria del proyecto...</div>
+  </div>
+
+  <!-- Thumbnails Drawer -->
+  <aside class="thumb-drawer" id="thumb-drawer" aria-label="Miniaturas de páginas"></aside>
+
+  <!-- PDF Continuous Stage -->
+  <main class="viewer-stage" id="viewer-stage"></main>
+
+  <!-- Floating Controls Dock (Black Edition) -->
+  <div class="magazine-dock" id="magazine-dock" role="navigation" aria-label="Controles de navegación del documento">
+    <div class="mag-nav-group">
+      <button type="button" class="mag-btn mag-btn-icon" id="btn-prev-page" aria-label="Página anterior"
+        title="Página anterior (←)">
+        &larr;
+      </button>
+      <button type="button" class="mag-btn mag-btn-icon" id="btn-next-page" aria-label="Página siguiente"
+        title="Página siguiente (→)">
+        &rarr;
+      </button>
+    </div>
+
+    <!-- Page indicator -->
+    <div class="mag-page-indicator">
+      <span id="mag-page-indicator-text"><span class="mag-current-page-num">PORTADA • 01</span> / <span id="total-pages-num">--</span></span>
+    </div>
+
+    <!-- Tools (Thumbnails, Fullscreen) -->
+    <div class="mag-nav-group">
+      <button type="button" class="mag-btn" id="btn-thumb-toggle" title="Ver miniaturas de páginas">
+        <span>Páginas</span>
+      </button>
+      <button type="button" class="mag-btn mag-btn-icon" id="btn-fullscreen" title="Pantalla completa (F)"
+        aria-label="Pantalla completa">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- PDF.js Engine -->
+  <script src="../js/pdf.min.js"></script>
+  <script>
+    // Configure worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '../js/pdf.worker.min.js';
+
+    const PDF_PATH = '../assets/cajaql/memoriaweb.pdf';
+
+    let pdfDoc = null;
+    let pageRendering = {};
+    let pageContainers = [];
+    let scale = 1.0;
+    let baseWidth = 900; // Base layout width for desktop
+    let totalPages = 0;
+    let currentPage = 1;
+
+    const viewerStage = document.getElementById('viewer-stage');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const loadingMsg = document.getElementById('loading-msg');
+    const totalPagesNum = document.getElementById('total-pages-num');
+    const zoomIndicator = document.getElementById('zoom-indicator');
+    const thumbDrawer = document.getElementById('thumb-drawer');
+    const btnThumbToggle = document.getElementById('btn-thumb-toggle');
+
+    // Anti-Save Keyboard Shortcuts (Ctrl+S, Cmd+S, Ctrl+P, Cmd+P)
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'p' || e.key === 'S' || e.key === 'P')) {
+        e.preventDefault();
+        return false;
+      }
+      if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      }
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        scrollToPage(Math.min(totalPages, currentPage + 1));
+      }
+      if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        scrollToPage(Math.max(1, currentPage - 1));
+      }
+    });
+
+    let pageAspectRatio = 0.77; // default ratio until detected
+    let isProgrammaticScroll = false;
+    let scrollFinishTimeout = null;
+
+    async function loadPDF() {
+      try {
+        const loadingTask = pdfjsLib.getDocument({
+          url: PDF_PATH,
+          cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
+          cMapPacked: true,
+        });
+
+        loadingTask.onProgress = function (progressData) {
+          if (progressData.total > 0) {
+            const pct = Math.round((progressData.loaded / progressData.total) * 100);
+            loadingMsg.textContent = `Cargando documento (${pct}%)...`;
+          }
+        };
+
+        pdfDoc = await loadingTask.promise;
+        totalPages = pdfDoc.numPages;
+        updateCurrentPage(1);
+
+        // Detect real aspect ratio from page 1 to prevent layout shifts
+        try {
+          const firstPage = await pdfDoc.getPage(1);
+          const firstVp = firstPage.getViewport({ scale: 1.0 });
+          if (firstVp.width > 0) {
+            pageAspectRatio = firstVp.height / firstVp.width;
+          }
+        } catch (e) {
+          console.warn('Could not detect aspect ratio:', e);
+        }
+
+        loadingOverlay.classList.add('hidden');
+
+        // Build placeholders for all pages with exact aspect ratio
+        buildPagePlaceholders();
+
+        // Setup Intersection Observer for on-demand high-res rendering
+        setupPageObserver();
+
+        // Setup manual scroll listener to detect page change only on manual scroll
+        setupScrollDetection();
+
+        // Render initial visible pages
+        renderVisiblePages();
+
+        // Build thumbnails in background
+        buildThumbnails();
+      } catch (err) {
+        console.error('Error cargando el PDF:', err);
+        loadingMsg.textContent = 'Error al cargar el documento.';
+      }
+    }
+
+    function buildPagePlaceholders() {
+      viewerStage.innerHTML = '';
+      pageContainers = [];
+
+      // Determine width based on viewport
+      const availableWidth = Math.min(window.innerWidth - 60, 1080);
+      baseWidth = availableWidth;
+      const computedHeight = Math.round(baseWidth * scale * pageAspectRatio);
+
+      for (let i = 1; i <= totalPages; i++) {
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'pdf-page-container';
+        pageDiv.id = `page-container-${i}`;
+        pageDiv.dataset.pageNumber = i;
+        pageDiv.style.width = `${Math.round(baseWidth * scale)}px`;
+        pageDiv.style.height = `${computedHeight}px`;
+        pageDiv.style.minHeight = `${computedHeight}px`;
+
+        const loadingPlaceholder = document.createElement('div');
+        loadingPlaceholder.className = 'pdf-page-loading';
+        loadingPlaceholder.textContent = `Página ${i}`;
+        pageDiv.appendChild(loadingPlaceholder);
+
+        viewerStage.appendChild(pageDiv);
+        pageContainers.push(pageDiv);
+      }
+    }
+
+    async function renderPage(pageNumber, container) {
+      if (pageRendering[pageNumber] || container.querySelector('canvas')) return;
+      pageRendering[pageNumber] = true;
+
+      try {
+        const page = await pdfDoc.getPage(pageNumber);
+        const unscaledViewport = page.getViewport({ scale: 1.0 });
+
+        // Compute scale to fit container width
+        const desiredWidth = baseWidth * scale;
+        const pageScale = desiredWidth / unscaledViewport.width;
+        const viewport = page.getViewport({ scale: pageScale });
+
+        // High DPI canvas rendering for sharp text
+        const outputScale = Math.min(window.devicePixelRatio || 1, 2.0);
+
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+
+        canvas.width = Math.floor(viewport.width * outputScale);
+        canvas.height = Math.floor(viewport.height * outputScale);
+        canvas.style.width = `${Math.floor(viewport.width)}px`;
+        canvas.style.height = `${Math.floor(viewport.height)}px`;
+
+        container.style.width = `${Math.floor(viewport.width)}px`;
+        container.style.height = `${Math.floor(viewport.height)}px`;
+        container.style.minHeight = `${Math.floor(viewport.height)}px`;
+
+        // Clear placeholder
+        const loader = container.querySelector('.pdf-page-loading');
+        if (loader) loader.remove();
+
+        container.appendChild(canvas);
+
+        const transform = outputScale !== 1
+          ? [outputScale, 0, 0, outputScale, 0, 0]
+          : null;
+
+        const renderContext = {
+          canvasContext: context,
+          transform: transform,
+          viewport: viewport,
+          intent: 'display'
+        };
+
+        await page.render(renderContext).promise;
+      } catch (e) {
+        console.warn(`Error renderizando página ${pageNumber}:`, e);
+      } finally {
+        pageRendering[pageNumber] = false;
+      }
+    }
+
+    let observer;
+    function setupPageObserver() {
+      if (observer) observer.disconnect();
+
+      // Observer only handles lazy loading canvases when near viewport
+      observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const pageNum = parseInt(entry.target.dataset.pageNumber, 10);
+          if (entry.isIntersecting) {
+            renderPage(pageNum, entry.target);
+          }
+        });
+      }, {
+        root: viewerStage,
+        rootMargin: '600px 0px 600px 0px',
+        threshold: 0
+      });
+
+      pageContainers.forEach(container => observer.observe(container));
+    }
+
+    function setupScrollDetection() {
+      let scrollTimeout = null;
+      viewerStage.addEventListener('scroll', () => {
+        if (isProgrammaticScroll) return;
+
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          if (isProgrammaticScroll) return;
+          detectVisiblePageOnManualScroll();
+        }, 80);
+      }, { passive: true });
+    }
+
+    function detectVisiblePageOnManualScroll() {
+      const stageRect = viewerStage.getBoundingClientRect();
+      const stageCenter = stageRect.top + stageRect.height / 2;
+      let closestPage = currentPage;
+      let minDistance = Infinity;
+
+      pageContainers.forEach((container, idx) => {
+        const rect = container.getBoundingClientRect();
+        const pageCenter = rect.top + rect.height / 2;
+        const dist = Math.abs(stageCenter - pageCenter);
+        if (dist < minDistance) {
+          minDistance = dist;
+          closestPage = idx + 1;
+        }
+      });
+
+      if (closestPage !== currentPage) {
+        updateCurrentPage(closestPage);
+      }
+    }
+
+    function renderVisiblePages() {
+      pageContainers.forEach((container, idx) => {
+        const rect = container.getBoundingClientRect();
+        if (rect.top < window.innerHeight + 400 && rect.bottom > -400) {
+          renderPage(idx + 1, container);
+        }
+      });
+    }
+
+    function updateCurrentPage(num) {
+      currentPage = num;
+
+      // Update active thumbnail
+      document.querySelectorAll('.thumb-item').forEach(th => {
+        if (parseInt(th.dataset.pageNumber, 10) === num) {
+          th.classList.add('active');
+        } else {
+          th.classList.remove('active');
+        }
+      });
+
+      // Update page indicator text with PORTADA / PÁGINA / CONTRAPORTADA format
+      const totalStr = totalPages ? String(totalPages).padStart(2, '0') : '--';
+      const numStr = String(num).padStart(2, '0');
+      let label = '';
+      if (num === 1) {
+        label = `PORTADA &bull; ${numStr}`;
+      } else if (totalPages && num === totalPages) {
+        label = `CONTRAPORTADA &bull; ${numStr}`;
+      } else {
+        label = `PÁGINA &bull; ${numStr}`;
+      }
+
+      const indicatorText = document.getElementById('mag-page-indicator-text');
+      if (indicatorText) {
+        indicatorText.innerHTML = `<span class="mag-current-page-num">${label}</span> / ${totalStr}`;
+      }
+
+      // Update disabled states for nav buttons
+      const btnPrev = document.getElementById('btn-prev-page');
+      const btnNext = document.getElementById('btn-next-page');
+      if (btnPrev) {
+        if (num <= 1) {
+          btnPrev.classList.add('is-disabled');
+          btnPrev.setAttribute('disabled', 'true');
+        } else {
+          btnPrev.classList.remove('is-disabled');
+          btnPrev.removeAttribute('disabled');
+        }
+      }
+      if (btnNext) {
+        if (totalPages && num >= totalPages) {
+          btnNext.classList.add('is-disabled');
+          btnNext.setAttribute('disabled', 'true');
+        } else {
+          btnNext.classList.remove('is-disabled');
+          btnNext.removeAttribute('disabled');
+        }
+      }
+    }
+
+    function scrollToPage(pageNum) {
+      const clampedPage = Math.max(1, Math.min(totalPages, pageNum));
+      const targetEl = document.getElementById(`page-container-${clampedPage}`);
+      if (!targetEl) return;
+
+      isProgrammaticScroll = true;
+      updateCurrentPage(clampedPage);
+
+      // Pre-render destination and adjacent pages
+      renderPage(clampedPage, targetEl);
+      if (clampedPage < totalPages) {
+        const nextEl = document.getElementById(`page-container-${clampedPage + 1}`);
+        if (nextEl) renderPage(clampedPage + 1, nextEl);
+      }
+      if (clampedPage > 1) {
+        const prevEl = document.getElementById(`page-container-${clampedPage - 1}`);
+        if (prevEl) renderPage(clampedPage - 1, prevEl);
+      }
+
+      // Smooth scroll inside viewerStage
+      const stageRect = viewerStage.getBoundingClientRect();
+      const targetRect = targetEl.getBoundingClientRect();
+      const scrollOffset = targetRect.top - stageRect.top + viewerStage.scrollTop - 24;
+
+      viewerStage.scrollTo({
+        top: Math.max(0, scrollOffset),
+        behavior: 'smooth'
+      });
+
+      clearTimeout(scrollFinishTimeout);
+      scrollFinishTimeout = setTimeout(() => {
+        isProgrammaticScroll = false;
+      }, 600);
+    }
+
+    // Zoom Controls
+    function setZoom(newScale) {
+      scale = Math.max(0.5, Math.min(2.5, newScale));
+      zoomIndicator.textContent = `${Math.round(scale * 100)}%`;
+      const computedHeight = Math.round(baseWidth * scale * pageAspectRatio);
+
+      // Clear existing canvases to re-render at new resolution
+      pageContainers.forEach((container, idx) => {
+        const pageNum = idx + 1;
+        const canvas = container.querySelector('canvas');
+        if (canvas) canvas.remove();
+        pageRendering[pageNum] = false;
+        container.style.width = `${Math.round(baseWidth * scale)}px`;
+        container.style.height = `${computedHeight}px`;
+        container.style.minHeight = `${computedHeight}px`;
+      });
+
+      renderVisiblePages();
+    }
+
+    document.getElementById('btn-zoom-in').addEventListener('click', () => setZoom(scale + 0.15));
+    document.getElementById('btn-zoom-out').addEventListener('click', () => setZoom(scale - 0.15));
+
+    // Nav Buttons - Step exactly 1 page
+    document.getElementById('btn-next-page').addEventListener('click', () => {
+      scrollToPage(currentPage + 1);
+    });
+    document.getElementById('btn-prev-page').addEventListener('click', () => {
+      scrollToPage(currentPage - 1);
+    });
+
+    // Thumbnails builder
+    async function buildThumbnails() {
+      for (let i = 1; i <= totalPages; i++) {
+        const thumbItem = document.createElement('div');
+        thumbItem.className = 'thumb-item';
+        if (i === 1) thumbItem.classList.add('active');
+        thumbItem.dataset.pageNumber = i;
+
+        const canvas = document.createElement('canvas');
+        thumbItem.appendChild(canvas);
+
+        const numSpan = document.createElement('span');
+        numSpan.className = 'thumb-num';
+        numSpan.textContent = `Pág. ${i}`;
+        thumbItem.appendChild(numSpan);
+
+        thumbItem.addEventListener('click', () => {
+          scrollToPage(i);
+        });
+
+        thumbDrawer.appendChild(thumbItem);
+
+        // Render low-res thumbnail asynchronously
+        (async (pageIndex, c) => {
+          try {
+            const p = await pdfDoc.getPage(pageIndex);
+            const vp = p.getViewport({ scale: 0.22 });
+            c.width = vp.width;
+            c.height = vp.height;
+            await p.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+          } catch (e) { }
+        })(i, canvas);
+      }
+    }
+
+    // Toggle Thumbnail Drawer
+    btnThumbToggle.addEventListener('click', () => {
+      const isOpen = thumbDrawer.classList.toggle('is-open');
+      btnThumbToggle.classList.toggle('is-active', isOpen);
+    });
+
+    // Fullscreen Toggle
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => { });
+      } else {
+        document.exitFullscreen().catch(() => { });
+      }
+    }
+    document.getElementById('btn-fullscreen').addEventListener('click', toggleFullscreen);
+
+    // Initial load
+    window.addEventListener('DOMContentLoaded', loadPDF);
+  </script>
+</body>
+
+</html>

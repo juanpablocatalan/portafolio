@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Magazine Library — Revista Fronteo (Mockups Cerrados) — Juan Pablo</title>
+  <meta name="description" content="Biblioteca interactiva 3D de la revista Fronteo cerrada. Explora en 360° los 4 volúmenes con sus portadas, lomos y contraportadas reales adaptadas a sus medidas exactas.">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="css/style.css?v=52">
+  <link rel="stylesheet" href="css/magazine3d.css?v=3">
+</head>
+
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="back-link">INICIO</a>
+      <nav class="site-nav" aria-label="Navegación principal">
+        <ul>
+          <li><a href="index.html" class="nav-link">PROYECTOS</a></li>
+          <li><a href="sobremi.html" class="nav-link">SOBRE MÍ</a></li>
+          <li><a href="projects/project-01.html" class="nav-link">FRONTEO CASE</a></li>
+          <li><a href="library-3d.html" class="nav-link active">3D LIBRARY</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content">
+
+    <!-- Hero Header -->
+    <section class="library-hero container">
+      <div class="grid-12">
+        <div class="col-9">
+          <span class="meta-label">3D EDITORIAL ARCHIVE &bull; MOCKUPS CERRADOS EN ALTA DEFINICIÓN</span>
+          <h1 class="library-header-title">Biblioteca 3D &bull; Revista Fronteo</h1>
+          <p class="library-header-desc">
+            Exhibición física tridimensional de los 4 volúmenes de la revista <strong>Fronteo</strong> en formato cerrado. Cada pieza ha sido adaptada con precisión a sus medidas reales ($1188 \times 1553\text{ px}$ de tapa y $45\text{ px}$ de lomo), permitiendo inspeccionar en 360° la <strong>portada</strong>, el <strong>lomo</strong> tipográfico, los <strong>cantos de papel</strong> y la <strong>contraportada</strong> con iluminación y reflejos en tiempo real.
+          </p>
+          
+          <div class="library-instruction-badge">
+            <span class="pulse-dot"></span>
+            <span>Scroll para rotar 360&deg; &bull; Arrastra con el mouse/touch &bull; Usa los botones de ángulo</span>
+          </div>
+
+          <!-- Quick Filter Pills -->
+          <div class="library-quick-pills">
+            <a href="mockup3d.html" class="filter-pill" style="background: #ffffff; color: #000000; border-color: #ffffff; font-weight: 600;">✨ Ver Solo Revistas (Modo Estudio 3D) &rarr;</a>
+            <button type="button" class="filter-pill active" onclick="document.getElementById('vol-01').scrollIntoView({behavior: 'smooth'})">Vol. 01 (Air Max)</button>
+            <button type="button" class="filter-pill" onclick="document.getElementById('vol-02').scrollIntoView({behavior: 'smooth'})">Vol. 02 (Gold Bling)</button>
+            <button type="button" class="filter-pill" onclick="document.getElementById('vol-03').scrollIntoView({behavior: 'smooth'})">Vol. 03 (Santos &amp; Fe)</button>
+            <button type="button" class="filter-pill" onclick="document.getElementById('vol-04').scrollIntoView({behavior: 'smooth'})">Vol. 04 (Mercedes 190E)</button>
+            <button type="button" class="filter-pill" onclick="document.getElementById('grid-overview').scrollIntoView({behavior: 'smooth'})">Estantería Completa</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Case Modules: 3D Exhibits -->
+    <div class="case-modules container">
+
+      <!-- ==================================================================
+           EXHIBIT 01: VOL. 01 — 2000–2010 (AIR MAX)
+           ================================================================== -->
+      <section class="magazine-3d-exhibit" id="vol-01" aria-label="Fronteo Vol. 01 Air Max">
+        <div class="grid-12" style="width: 100%; align-items: center;">
+          
+          <!-- Info Column -->
+          <div class="col-5 exhibit-info-col">
+            <span class="exhibit-vol-tag">VOL. 01 / 04 &mdash; PERIODO 2000–2010</span>
+            <h2 class="exhibit-title">Fronteo 2000–2010</h2>
+            <p class="exhibit-desc">
+              Archivo visual del reggaetón. Edición con portada icónica de zapatillas Nike Air Max 95, titular <em>Ilmato</em> y contraportada publicitaria de AirPods Max.
+            </p>
+
+            <div class="exhibit-specs">
+              <div class="spec-item">
+                <span class="spec-label">Formato Cerrado</span>
+                <span class="spec-val">1188 &times; 1553 px (Ratio A4)</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Grosor de Lomo</span>
+                <span class="spec-val">45 px &bull; Rústica Fresada</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Contraportada</span>
+                <span class="spec-val">AirPods Max Editorial</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Acabado</span>
+                <span class="spec-val">Laminado Brillo + UV</span>
+              </div>
+            </div>
+
+            <div class="exhibit-actions">
+              <a href="projects/project-01.html" class="btn-editorial">
+                <span>Ver Caso Fronteo</span>
+                <span>&rarr;</span>
+              </a>
+              <a href="projects/project-01.html#fronteo-magazine-container" class="btn-editorial btn-editorial-secondary">
+                <span>Abrir Páginas (Flipbook)</span>
+                <span>📑</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- 3D Stage Column -->
+          <div class="col-7 exhibit-stage-col">
+            <div class="stage-wrapper">
+              <!-- Fast Angle Preset Bar -->
+              <div class="stage-angle-toolbar" aria-label="Vistas Rápidas">
+                <button type="button" class="stage-angle-btn" data-angle="portada" title="Ver Portada de Frente">📕 Portada</button>
+                <button type="button" class="stage-angle-btn" data-angle="lomo" title="Inspeccionar el Lomo">📖 Lomo</button>
+                <button type="button" class="stage-angle-btn" data-angle="contraportada" title="Ver Contraportada">📗 Contraportada</button>
+                <button type="button" class="stage-angle-btn active" data-angle="isometric" title="Perspectiva 3D">📐 3D</button>
+                <button type="button" class="stage-angle-btn" data-angle="spin" title="Activar Giro 360°">🔄 Auto 360°</button>
+              </div>
+
+              <!-- 3D Canvas Stage -->
+              <div class="magazine-3d-stage" id="stage-mag-01">
+                <div class="stage-material-badge">Nike Air Max &bull; AirPods Max</div>
+                <div class="stage-drag-hint">Arrastra 360&deg; &bull; Orbit 3D</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           EXHIBIT 02: VOL. 02 — 2000–2010 (GOLD CHAINS)
+           ================================================================== -->
+      <section class="magazine-3d-exhibit" id="vol-02" aria-label="Fronteo Vol. 02 Gold Chains">
+        <div class="grid-12" style="width: 100%; align-items: center;">
+          
+          <!-- 3D Stage Column (Alternating Left) -->
+          <div class="col-7 exhibit-stage-col">
+            <div class="stage-wrapper">
+              <!-- Fast Angle Preset Bar -->
+              <div class="stage-angle-toolbar" aria-label="Vistas Rápidas">
+                <button type="button" class="stage-angle-btn" data-angle="portada">📕 Portada</button>
+                <button type="button" class="stage-angle-btn" data-angle="lomo">📖 Lomo</button>
+                <button type="button" class="stage-angle-btn" data-angle="contraportada">📗 Contraportada</button>
+                <button type="button" class="stage-angle-btn active" data-angle="isometric">📐 3D</button>
+                <button type="button" class="stage-angle-btn" data-angle="spin">🔄 Auto 360°</button>
+              </div>
+
+              <!-- 3D Canvas Stage -->
+              <div class="magazine-3d-stage" id="stage-mag-02">
+                <div class="stage-material-badge">Gold Bling &bull; Nike Shox Blue</div>
+                <div class="stage-drag-hint">Arrastra 360&deg; &bull; Orbit 3D</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info Column -->
+          <div class="col-5 exhibit-info-col">
+            <span class="exhibit-vol-tag">VOL. 02 / 04 &mdash; PERIODO 2000–2010</span>
+            <h2 class="exhibit-title">Fronteo Bling &amp; Oro</h2>
+            <p class="exhibit-desc">
+              Edición visual enfocada en la estética del exceso y la joyería pesada en el reggaetón de los años 2000. Contraportada metálica de zapatillas Nike Shox en azul eléctrico.
+            </p>
+
+            <div class="exhibit-specs">
+              <div class="spec-item">
+                <span class="spec-label">Formato</span>
+                <span class="spec-val">1188 &times; 1553 px</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Lomo</span>
+                <span class="spec-val">Vol. 02 &bull; 45 px</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Contraportada</span>
+                <span class="spec-val">Nike Shox Blue Metallic</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Acabado</span>
+                <span class="spec-val">Barniz Brillante</span>
+              </div>
+            </div>
+
+            <div class="exhibit-actions">
+              <a href="projects/project-01.html" class="btn-editorial">
+                <span>Ver Caso Fronteo</span>
+                <span>&rarr;</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           EXHIBIT 03: VOL. 03 — 2010–2020 (SANTOS & FE)
+           ================================================================== -->
+      <section class="magazine-3d-exhibit" id="vol-03" aria-label="Fronteo Vol. 03 Santos">
+        <div class="grid-12" style="width: 100%; align-items: center;">
+          
+          <!-- Info Column -->
+          <div class="col-5 exhibit-info-col">
+            <span class="exhibit-vol-tag">VOL. 03 / 04 &mdash; PERIODO 2010–2020</span>
+            <h2 class="exhibit-title">Fronteo 2010–2020</h2>
+            <p class="exhibit-desc">
+              Exploración de la imaginería religiosa, medallas devocionales y contrastes culturales en la era del trap latino y reggaetón moderno. Contraportada Spotify <em>«Sigue perreando»</em>.
+            </p>
+
+            <div class="exhibit-specs">
+              <div class="spec-item">
+                <span class="spec-label">Formato</span>
+                <span class="spec-val">1188 &times; 1553 px</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Lomo</span>
+                <span class="spec-val">Vol. 03 &bull; 45 px</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Contraportada</span>
+                <span class="spec-val">Spotify «Sigue perreando»</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Técnica</span>
+                <span class="spec-val">Offset Color Directo</span>
+              </div>
+            </div>
+
+            <div class="exhibit-actions">
+              <a href="projects/project-01.html" class="btn-editorial">
+                <span>Ver Caso Fronteo</span>
+                <span>&rarr;</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- 3D Stage Column -->
+          <div class="col-7 exhibit-stage-col">
+            <div class="stage-wrapper">
+              <!-- Fast Angle Preset Bar -->
+              <div class="stage-angle-toolbar" aria-label="Vistas Rápidas">
+                <button type="button" class="stage-angle-btn" data-angle="portada">📕 Portada</button>
+                <button type="button" class="stage-angle-btn" data-angle="lomo">📖 Lomo</button>
+                <button type="button" class="stage-angle-btn" data-angle="contraportada">📗 Contraportada</button>
+                <button type="button" class="stage-angle-btn active" data-angle="isometric">📐 3D</button>
+                <button type="button" class="stage-angle-btn" data-angle="spin">🔄 Auto 360°</button>
+              </div>
+
+              <!-- 3D Canvas Stage -->
+              <div class="magazine-3d-stage" id="stage-mag-03">
+                <div class="stage-material-badge">Santos de Oro &bull; Spotify</div>
+                <div class="stage-drag-hint">Arrastra 360&deg; &bull; Orbit 3D</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           EXHIBIT 04: VOL. 04 — 2020–2030 (MERCEDES 190E)
+           ================================================================== -->
+      <section class="magazine-3d-exhibit" id="vol-04" aria-label="Fronteo Vol. 04 Mercedes">
+        <div class="grid-12" style="width: 100%; align-items: center;">
+          
+          <!-- 3D Stage Column (Alternating Left) -->
+          <div class="col-7 exhibit-stage-col">
+            <div class="stage-wrapper">
+              <!-- Fast Angle Preset Bar -->
+              <div class="stage-angle-toolbar" aria-label="Vistas Rápidas">
+                <button type="button" class="stage-angle-btn" data-angle="portada">📕 Portada</button>
+                <button type="button" class="stage-angle-btn" data-angle="lomo">📖 Lomo</button>
+                <button type="button" class="stage-angle-btn" data-angle="contraportada">📗 Contraportada</button>
+                <button type="button" class="stage-angle-btn active" data-angle="isometric">📐 3D</button>
+                <button type="button" class="stage-angle-btn" data-angle="spin">🔄 Auto 360°</button>
+              </div>
+
+              <!-- 3D Canvas Stage -->
+              <div class="magazine-3d-stage" id="stage-mag-04">
+                <div class="stage-material-badge">Mercedes 190E &bull; Nike Shox Silver</div>
+                <div class="stage-drag-hint">Arrastra 360&deg; &bull; Orbit 3D</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info Column -->
+          <div class="col-5 exhibit-info-col">
+            <span class="exhibit-vol-tag">VOL. 04 / 04 &mdash; PERIODO 2020–2030</span>
+            <h2 class="exhibit-title">Fronteo 2020–2030</h2>
+            <p class="exhibit-desc">
+              Visión futurista de la cultura urbana contemporánea con el Mercedes-Benz 190E EVO II dorado en portada, lomo Vol. 04 y contraportada minimalista Nike Shox Silver <em>«Boing.»</em>.
+            </p>
+
+            <div class="exhibit-specs">
+              <div class="spec-item">
+                <span class="spec-label">Formato</span>
+                <span class="spec-val">1188 &times; 1553 px</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Lomo</span>
+                <span class="spec-val">Vol. 04 &bull; 45 px</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Contraportada</span>
+                <span class="spec-val">Nike Shox Silver «Boing.»</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Acabado</span>
+                <span class="spec-val">Satinado Premium</span>
+              </div>
+            </div>
+
+            <div class="exhibit-actions">
+              <a href="projects/project-01.html" class="btn-editorial">
+                <span>Ver Caso Fronteo</span>
+                <span>&rarr;</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==================================================================
+           SECTION: COMPARATIVE 3D GRID / SHELF
+           ================================================================== -->
+      <section class="library-grid-section" id="grid-overview">
+        <div class="grid-section-heading">
+          <span class="meta-label">CATÁLOGO COMPARATIVO &bull; ESTANTERÍA 3D</span>
+          <h2 style="font-size: var(--text-xl); font-weight: 700; margin-top: 0.25rem;">Vista en Malla &bull; Todos los Volúmenes Cerrados</h2>
+        </div>
+
+        <div class="grid-3d-row" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+          
+          <!-- Card 1 -->
+          <div class="grid-3d-card">
+            <div class="grid-card-stage" data-front="assets/mockup3d/vol1/portadas-11.jpg" data-spine="assets/mockup3d/vol1/portadas-15.jpg" data-back="assets/mockup3d/vol1/contrapor_Mesa de trabajo 4 copia 10.jpg" data-title="FRONTEO 2000–2010" data-vol="VOL. 01"></div>
+            <div class="grid-card-info">
+              <span class="grid-card-meta">VOL. 01 &bull; 2000–2010</span>
+              <h3 class="grid-card-title">Fronteo Nike Air Max</h3>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="grid-3d-card">
+            <div class="grid-card-stage" data-front="assets/mockup3d/vol2/portadas-08.jpg" data-spine="assets/mockup3d/vol2/portadas.jpg" data-back="assets/mockup3d/vol2/contrapor_Mesa de trabajo 4 copia 7.jpg" data-title="FRONTEO BLING" data-vol="VOL. 02"></div>
+            <div class="grid-card-info">
+              <span class="grid-card-meta">VOL. 02 &bull; 2000–2010</span>
+              <h3 class="grid-card-title">Fronteo Gold Chains</h3>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="grid-3d-card">
+            <div class="grid-card-stage" data-front="assets/mockup3d/vol3/portadas-09.jpg" data-spine="assets/mockup3d/vol3/portadas-14.jpg" data-back="assets/mockup3d/vol3/contrapor_Mesa de trabajo 4 copia 8.jpg" data-title="FRONTEO 2010–2020" data-vol="VOL. 03"></div>
+            <div class="grid-card-info">
+              <span class="grid-card-meta">VOL. 03 &bull; 2010–2020</span>
+              <h3 class="grid-card-title">Fronteo Santos &amp; Fe</h3>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="grid-3d-card">
+            <div class="grid-card-stage" data-front="assets/mockup3d/vol4/portadas-10.jpg" data-spine="assets/mockup3d/vol4/portadas-13.jpg" data-back="assets/mockup3d/vol4/contrapor_Mesa de trabajo 4 copia 9.jpg" data-title="FRONTEO 2020–2030" data-vol="VOL. 04"></div>
+            <div class="grid-card-info">
+              <span class="grid-card-meta">VOL. 04 &bull; 2020–2030</span>
+              <h3 class="grid-card-title">Fronteo Mercedes 190E</h3>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Floating Navigation Dock -->
+    <div class="library-floating-dock" aria-label="Navegación rápida de volúmenes">
+      <button type="button" class="dock-item" onclick="document.getElementById('vol-01').scrollIntoView({behavior: 'smooth'})">Vol. 01</button>
+      <button type="button" class="dock-item" onclick="document.getElementById('vol-02').scrollIntoView({behavior: 'smooth'})">Vol. 02</button>
+      <button type="button" class="dock-item" onclick="document.getElementById('vol-03').scrollIntoView({behavior: 'smooth'})">Vol. 03</button>
+      <button type="button" class="dock-item" onclick="document.getElementById('vol-04').scrollIntoView({behavior: 'smooth'})">Vol. 04</button>
+      <button type="button" class="dock-item" onclick="document.getElementById('grid-overview').scrollIntoView({behavior: 'smooth'})">Estantería</button>
+      <button type="button" class="dock-item" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">&uarr; Top</button>
+    </div>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">JUAN PABLO</span>
+      <ul class="footer-nav" aria-label="Enlaces de contacto y redes">
+        <li><a href="mailto:juan-pablo.catalan@uc.cl" class="footer-link">EMAIL</a></li>
+        <li><a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer" class="footer-link">LINKED IN</a></li>
+        <li><a href="https://www.instagram.com/jp.catalan/" target="_blank" rel="noopener noreferrer" class="footer-link">INSTAGRAM</a></li>
+      </ul>
+      <span class="footer-copy">&copy; 2026</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/three.min.js"></script>
+  <script src="js/mockup-textures.js?v=1"></script>
+  <script src="js/magazine3d-library.js?v=5"></script>
+</body>
+
+</html>

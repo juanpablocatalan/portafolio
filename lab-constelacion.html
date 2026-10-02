@@ -1,0 +1,2418 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laboratorio de Constelación — Control Total de Líneas y Palabras</title>
+  <meta name="description" content="Laboratorio interactivo para controlar la posición exacta, anclaje y curvatura de las líneas de la constelación.">
+
+  <!-- Adobe Fonts: TT Commons Pro -->
+  <link rel="stylesheet" href="https://use.typekit.net/dbk8jrt.css">
+
+  <!-- Google Fonts: Castoro Serif y Plus Jakarta Sans / Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Castoro:ital,wght@0,400;1,400&family=Castoro+Titling&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* Declaraciones Tipográficas */
+    @font-face {
+      font-family: 'TT Commons Pro';
+      src: local('TT Commons Pro Light'), local('TT Commons Light'), local('TTCommonsPro-Light'),
+        url("https://use.typekit.net/af/d95e54/00000000000000007760a902/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n3&v=3") format("woff2");
+      font-weight: 300;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'TT Commons Pro';
+      src: local('TT Commons Pro Medium'), local('TT Commons Medium'), local('TTCommonsPro-Medium'),
+        url("https://use.typekit.net/af/9c1c8e/00000000000000007760a903/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n5&v=3") format("woff2");
+      font-weight: 500;
+      font-style: normal;
+    }
+
+    :root {
+      --color-burdeo: #69112a;
+      --color-rosado: #f9cee1;
+      --color-fucsia: #e61466;
+      --color-naranja: #f28e0e;
+      --color-verde: #cfda8c;
+      --bg-dark: #0a080d;
+      --panel-bg: rgba(18, 14, 24, 0.90);
+      --panel-border: rgba(255, 255, 255, 0.12);
+      --accent-cyan: #00f0ff;
+      --accent-pink: #f9cee1;
+      --accent-yellow: #ffeb3b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: #FFFFFF;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Bar */
+    .lab-header {
+      background: rgba(10, 8, 13, 0.95);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .lab-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .lab-badge {
+      background: var(--color-fucsia);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .lab-title {
+      font-size: 14.5px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #FFFFFF;
+    }
+
+    .mode-switch-group {
+      display: flex;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .mode-btn {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .mode-btn:hover {
+      color: #FFFFFF;
+    }
+
+    .mode-btn.active {
+      background: var(--accent-cyan);
+      color: #000000;
+      font-weight: 700;
+    }
+
+    .lab-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--panel-border);
+      background: rgba(255, 255, 255, 0.06);
+      color: #FFFFFF;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #e61466, #ff4081);
+      border-color: rgba(255, 255, 255, 0.3);
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(230, 20, 102, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #f02575, #ff5c95);
+      box-shadow: 0 6px 20px rgba(230, 20, 102, 0.5);
+    }
+
+    .btn-cyan {
+      background: rgba(0, 240, 255, 0.12);
+      border-color: rgba(0, 240, 255, 0.4);
+      color: var(--accent-cyan);
+    }
+
+    .btn-cyan:hover {
+      background: rgba(0, 240, 255, 0.2);
+      border-color: var(--accent-cyan);
+    }
+
+    .btn.active {
+      background: var(--accent-cyan);
+      color: #000000;
+      border-color: var(--accent-cyan);
+    }
+
+    /* Main Workspace Layout */
+    .lab-workspace {
+      display: flex;
+      flex: 1;
+      position: relative;
+      min-height: calc(100vh - 60px);
+    }
+
+    /* Canvas Stage */
+    .stage-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #0f0812;
+      overflow: hidden;
+      min-height: 816px;
+      height: 816px;
+    }
+
+    .stage-gl-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+    }
+
+    .stage-center-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: clamp(70px, 9.8vw, 123px);
+      height: clamp(70px, 9.8vw, 123px);
+      object-fit: contain;
+      user-select: none;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* SVG Interactive Layer */
+    .stage-svg-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      mix-blend-mode: color-dodge;
+      filter: brightness(1.2) contrast(1.15);
+      box-sizing: border-box;
+      padding: clamp(15px, 3vw, 40px);
+    }
+
+    .constellation-svg {
+      width: 100%;
+      max-width: 1150px;
+      height: 100%;
+      max-height: 750px;
+      display: block;
+      overflow: visible;
+    }
+
+    /* SVG Lines & Paths */
+    .constellation-lines line,
+    .constellation-lines path {
+      stroke: #FFFFFF !important;
+      stroke-width: var(--line-width, 2px);
+      stroke-linecap: round;
+      stroke-dasharray: 0 var(--line-gap, 7px);
+      opacity: var(--line-opacity, 0.85);
+      fill: none;
+      transition: stroke-width 0.15s ease;
+      cursor: pointer;
+    }
+
+    .constellation-lines line:hover,
+    .constellation-lines path:hover {
+      stroke-width: calc(var(--line-width, 2px) + 2px);
+      opacity: 1;
+    }
+
+    .constellation-lines .is-line-selected {
+      stroke: var(--accent-cyan) !important;
+      stroke-width: calc(var(--line-width, 2px) + 2.5px);
+      opacity: 1;
+    }
+
+    /* Handles de Extremos de Líneas (Puntos A, B y Curvatura) */
+    .line-hitbox {
+      stroke: transparent !important;
+      stroke-width: 28px !important;
+      stroke-linecap: round;
+      fill: none !important;
+      cursor: pointer;
+      pointer-events: stroke;
+      transition: stroke 0.15s ease;
+    }
+
+    .line-hitbox:hover {
+      stroke: rgba(0, 240, 255, 0.18) !important;
+    }
+
+    .line-handle-group {
+      cursor: grab;
+      pointer-events: all;
+    }
+
+    .line-handle-group:active,
+    .line-handle-group.is-dragging {
+      cursor: grabbing;
+    }
+
+    .line-handle-hit {
+      fill: transparent;
+      stroke: transparent;
+      cursor: grab;
+    }
+
+    .line-handle-hit:hover + .line-handle-circle,
+    .line-handle-circle:hover {
+      r: 8.5;
+      fill: #FFFFFF;
+      stroke: var(--accent-cyan);
+      filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.9));
+    }
+
+    .line-handle-circle {
+      fill: var(--accent-cyan);
+      stroke: #000000;
+      stroke-width: 2.2;
+      transition: r 0.15s ease, fill 0.15s ease, filter 0.15s ease;
+      filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.7));
+    }
+
+    .mini-handle-group {
+      cursor: grab;
+      pointer-events: all;
+    }
+
+    .mini-handle-hit {
+      fill: transparent;
+      stroke: transparent;
+      cursor: grab;
+    }
+
+    .mini-handle-circle {
+      fill: rgba(0, 240, 255, 0.45);
+      stroke: rgba(255, 255, 255, 0.7);
+      stroke-width: 1.5;
+      transition: all 0.15s ease;
+    }
+
+    .mini-handle-group:hover .mini-handle-circle {
+      fill: var(--accent-cyan);
+      stroke: #FFFFFF;
+      stroke-width: 2;
+      r: 6.5;
+      filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.8));
+    }
+
+    .curve-handle-group {
+      cursor: grab;
+      pointer-events: all;
+    }
+
+    .curve-handle-group:active {
+      cursor: grabbing;
+    }
+
+    .curve-handle-hit {
+      fill: transparent;
+      stroke: transparent;
+      cursor: grab;
+    }
+
+    .curve-handle-circle {
+      fill: var(--accent-yellow);
+      stroke: #000000;
+      stroke-width: 2;
+      transition: r 0.15s ease, fill 0.15s ease, filter 0.15s ease;
+      filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.7));
+    }
+
+    .curve-handle-group:hover .curve-handle-circle {
+      r: 8;
+      fill: #FFFFFF;
+      stroke: var(--accent-yellow);
+      filter: drop-shadow(0 0 8px rgba(255, 235, 59, 0.9));
+    }
+
+    .handle-guide-line {
+      stroke: rgba(255, 235, 59, 0.6) !important;
+      stroke-width: 1.2;
+      stroke-dasharray: 3 3;
+      fill: none;
+      pointer-events: none;
+    }
+
+    .handle-tag-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      fill: var(--accent-cyan);
+      pointer-events: none;
+      user-select: none;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+    }
+
+    /* SVG Text Nodes */
+    .node-sans {
+      font-family: 'TT Commons Pro', 'tt-commons-pro', 'TT Commons', 'Plus Jakarta Sans', sans-serif;
+      font-weight: 300;
+      font-size: 26px;
+      letter-spacing: -0.015em;
+      fill: #FFFFFF !important;
+    }
+
+    .node-serif {
+      font-family: 'Castoro', 'Castoro Titling', 'Georgia', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 32px;
+      letter-spacing: -0.01em;
+      fill: #FFFFFF !important;
+    }
+
+    .constellation-text-node {
+      user-select: none;
+      transition: transform 0.05s ease;
+    }
+
+    .constellation-text-node.is-draggable {
+      cursor: grab;
+    }
+
+    .constellation-text-node.is-dragging {
+      cursor: grabbing;
+    }
+
+    .constellation-text-node.is-selected text {
+      fill: var(--accent-cyan) !important;
+    }
+
+    .node-handle {
+      fill: transparent;
+      stroke: rgba(0, 240, 255, 0.4);
+      stroke-width: 1.5;
+      stroke-dasharray: 3 3;
+      opacity: 0;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .constellation-text-node:hover .node-handle,
+    .constellation-text-node.is-selected .node-handle {
+      opacity: 1;
+    }
+
+    .constellation-text-node.is-selected .node-handle {
+      stroke: var(--accent-cyan);
+      fill: rgba(0, 240, 255, 0.15);
+      stroke-dasharray: none;
+    }
+
+    /* Center Icon Handle in SVG */
+    .center-node-group {
+      cursor: pointer;
+    }
+
+    .center-node-handle {
+      fill: transparent;
+      stroke: rgba(0, 240, 255, 0.4);
+      stroke-width: 1.5;
+      stroke-dasharray: 4 4;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .center-node-group:hover .center-node-handle,
+    .center-node-group.is-selected .center-node-handle {
+      opacity: 1;
+    }
+
+    .center-node-group.is-selected .center-node-handle {
+      stroke: var(--accent-cyan);
+      fill: rgba(0, 240, 255, 0.15);
+    }
+
+    /* Debug Visible Margin Overlay */
+    .debug-margins-layer {
+      pointer-events: none;
+      display: none;
+    }
+
+    .debug-margins-layer.is-visible {
+      display: block;
+    }
+
+    .debug-margins-layer .margin-icon-path {
+      stroke: var(--accent-cyan) !important;
+      stroke-width: var(--mask-stroke, 12px);
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      fill: rgba(0, 240, 255, 0.15) !important;
+      opacity: 0.6;
+    }
+
+    .debug-margins-layer text {
+      stroke: var(--accent-cyan) !important;
+      stroke-width: var(--mask-stroke, 12px);
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      fill: rgba(0, 240, 255, 0.15) !important;
+      opacity: 0.6;
+    }
+
+    /* Floating Tool Dock */
+    .control-dock {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--panel-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 50;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+      flex-wrap: wrap;
+      max-width: 95vw;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .control-label {
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: rgba(255, 255, 255, 0.65);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .control-slider {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 75px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 2px;
+      outline: none;
+    }
+
+    .control-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+    }
+
+    .control-val {
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-cyan);
+      min-width: 38px;
+    }
+
+    .dock-divider {
+      width: 1px;
+      height: 22px;
+      background: var(--panel-border);
+    }
+
+    /* Contextual Selection HUD */
+    .selection-hud {
+      position: absolute;
+      top: 75px;
+      right: 20px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      padding: 14px;
+      z-index: 60;
+      min-width: 250px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .hud-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-pink);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hud-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 11.5px;
+    }
+
+    .hud-btn-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    /* Instructions Tip Bar */
+    .instructions-bar {
+      position: absolute;
+      top: 75px;
+      left: 20px;
+      background: rgba(18, 14, 24, 0.88);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 11.5px;
+      color: rgba(255, 255, 255, 0.85);
+      z-index: 40;
+      max-width: 340px;
+      line-height: 1.55;
+    }
+
+    .instructions-bar strong {
+      color: var(--accent-cyan);
+    }
+
+    /* Toast Notification */
+    .toast-msg {
+      position: fixed;
+      bottom: 85px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #00f0ff;
+      color: #000000;
+      font-weight: 700;
+      font-size: 12.5px;
+      padding: 9px 20px;
+      border-radius: 30px;
+      box-shadow: 0 8px 24px rgba(0, 240, 255, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Code Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .modal-overlay.is-open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #140f1a;
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 720px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      background: #0d0912;
+      color: #b0e0ff;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .modal-footer {
+      padding: 14px 20px;
+      border-top: 1px solid var(--panel-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Navigation & Mode Switcher -->
+  <header class="lab-header">
+    <div class="lab-brand">
+      <span class="lab-badge">LAB</span>
+      <h1 class="lab-title">Editor de Constelación — Control de Líneas</h1>
+    </div>
+
+    <!-- Mode Selector: Líneas vs Palabras -->
+    <div class="mode-switch-group">
+      <button class="mode-btn active" id="btn-mode-lines" title="Modo Líneas: arrastra extremos y añade curvas a las líneas">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <circle cx="5" cy="12" r="3"></circle>
+          <circle cx="19" cy="12" r="3"></circle>
+        </svg>
+        Control de Líneas
+      </button>
+
+      <button class="mode-btn" id="btn-mode-words" title="Modo Palabras: mover palabras de lugar">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 7V4h16v3M9 20h6M12 4v16"></path>
+        </svg>
+        Mover Palabras
+      </button>
+    </div>
+
+    <div class="lab-actions">
+      <button class="btn btn-cyan" id="btn-add-line" title="Añadir una nueva línea">
+        + Nueva Línea
+      </button>
+
+      <button class="btn" id="btn-toggle-handles" title="Ocultar o mostrar los puntos/manillas de los extremos de las líneas (Tecla H)">
+        👁️ Manillas Visibles
+      </button>
+
+      <button class="btn" id="btn-toggle-lock-words" title="Bloquear posición de palabras">
+        🔒 Palabras Bloqueadas
+      </button>
+
+      <button class="btn" id="btn-toggle-mask" title="Mostrar/Ocultar el borde protector">
+        Ver Borde Protector
+      </button>
+
+      <button class="btn" id="btn-undo" title="Deshacer último cambio (Ctrl+Z)">
+        Deshacer
+      </button>
+
+      <button class="btn" id="btn-reset" title="Restaurar a la posición oficial">
+        Reset
+      </button>
+
+      <button class="btn btn-primary" id="btn-copy-config" title="Copiar configuración para pegar en el chat">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+        </svg>
+        Copiar Configuración para el Chat
+      </button>
+
+      <button class="btn" id="btn-view-code">
+        Ver Código
+      </button>
+    </div>
+  </header>
+
+  <!-- Interactive Workspace Stage -->
+  <main class="lab-workspace">
+
+    <!-- Instructions Box -->
+    <div class="instructions-bar" id="instructions-box">
+      <div style="font-weight: 700; margin-bottom: 3px;">🎯 <strong>Control de Líneas Activo:</strong></div>
+      <div>• <strong>Haz clic en cualquier línea</strong> para ver sus <strong>manillas de posición</strong>.</div>
+      <div>• <strong>Arrastra las manillas circulares cian</strong> de los extremos para apuntar la línea a donde quieras.</div>
+      <div>• <strong>Arrastra la manilla amarilla central</strong> para curvar la línea si deseas un arco.</div>
+      <div>• Haz clic en <strong>"+ Nueva Línea"</strong> y conecta dos puntos cualquiera.</div>
+    </div>
+
+    <!-- Selection / Properties Inspector -->
+    <div class="selection-hud" id="selection-hud" style="display: none;">
+      <div class="hud-title">
+        <span id="hud-title-text">Inspector de Elemento</span>
+        <button class="btn" style="padding: 2px 6px; font-size: 10px;" id="hud-btn-close">✕</button>
+      </div>
+
+      <!-- Line Selector Dropdown -->
+      <div style="margin-bottom: 12px;">
+        <label class="control-label" style="display: block; margin-bottom: 4px;">Seleccionar Línea:</label>
+        <select id="hud-line-select" style="width: 100%; background: #1b1524; color: #fff; border: 1px solid var(--panel-border); border-radius: 6px; padding: 6px 8px; font-size: 11.5px; font-family: 'Plus Jakarta Sans', sans-serif; outline: none; cursor: pointer;">
+        </select>
+      </div>
+
+      <div id="hud-line-content" style="display: none;">
+        <!-- Extremo A -->
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 8px; margin-bottom: 8px;">
+          <div class="hud-row" style="margin-bottom: 4px;">
+            <span style="color: var(--accent-cyan); font-weight: 600;">🔵 Extremo 1 (<span id="hud-node-a-name">A</span>):</span>
+            <span id="hud-pos-a" style="font-family: monospace; font-size: 11px;">(0, 0)</span>
+          </div>
+          <div style="display: flex; gap: 4px; align-items: center; justify-content: flex-end;">
+            <span style="font-size: 10px; color: rgba(255,255,255,0.5);">Ajustar:</span>
+            <button class="btn" style="padding: 2px 5px; font-size: 10px;" onclick="nudgeEndpoint('A', -5, 0)">← 5px</button>
+            <button class="btn" style="padding: 2px 5px; font-size: 10px;" onclick="nudgeEndpoint('A', 5, 0)">5px →</button>
+            <button class="btn" style="padding: 2px 5px; font-size: 10px;" onclick="nudgeEndpoint('A', 0, -5)">↑ 5px</button>
+            <button class="btn" style="padding: 2px 5px; font-size: 10px;" onclick="nudgeEndpoint('A', 0, 5)">↓ 5px</button>
+            <button class="btn" style="padding: 2px 5px; font-size: 10px;" onclick="resetEndpoint('A')">Centrar</button>
+          </div>
+        </div>
+
+        <!-- Extremo B -->
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 8px; margin-bottom: 8px;">
+          <div class="hud-row" style="margin-bottom: 4px;">
+            <span style="color: var(--accent-cyan); font-weight: 600;">🔵 Extremo 2 (<span id="hud-node-b-name">B</span>):</span>
+            <span id="hud-pos-b" style="font-family: monospace; font-size: 11px;">(0, 0)</span>
+          </div>
+          <div style="display: flex; gap: 4px; align-items: center; justify-content: flex-end;">
+            <span style="font-size: 10px; color: rgba(255,255,255,0.5);">Ajustar:</span>
+            <button class="btn" style="padding: 2px 5px; font-size: 10px;" onclick="nudgeEndpoint('B', -5, 0)">← 5px</button>
+            <button class="btn" style="padding: 2px 5px; font-size: 10px;" onclick="nudgeEndpoint('B', 5, 0)">5px →</button>
+            <button class="btn" style="padding: 2px 5px; font-size: 10px;" onclick="nudgeEndpoint('B', 0, -5)">↑ 5px</button>
+            <button class="btn" style="padding: 2px 5px; font-size: 10px;" onclick="nudgeEndpoint('B', 0, 5)">↓ 5px</button>
+            <button class="btn" style="padding: 2px 5px; font-size: 10px;" onclick="resetEndpoint('B')">Centrar</button>
+          </div>
+        </div>
+
+        <!-- Curvatura -->
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 8px; margin-bottom: 10px;">
+          <div class="hud-row" style="margin-bottom: 4px;">
+            <span style="color: var(--accent-yellow); font-weight: 600;">🟡 Curvatura:</span>
+            <strong id="hud-line-curve" style="color: var(--accent-yellow); font-family: monospace;">0px</strong>
+          </div>
+          <div style="display: flex; gap: 4px; align-items: center; justify-content: flex-end;">
+            <button class="btn" style="padding: 2px 6px; font-size: 10px;" onclick="nudgeCurve(-10)">-10px</button>
+            <button class="btn" style="padding: 2px 6px; font-size: 10px;" onclick="nudgeCurve(-2)">-2px</button>
+            <button class="btn" style="padding: 2px 6px; font-size: 10px;" onclick="nudgeCurve(2)">+2px</button>
+            <button class="btn" style="padding: 2px 6px; font-size: 10px;" onclick="nudgeCurve(10)">+10px</button>
+            <button class="btn" style="padding: 2px 6px; font-size: 10px;" id="hud-btn-straighten">Enderezar</button>
+          </div>
+        </div>
+
+        <div class="hud-btn-group">
+          <button class="btn" id="hud-btn-toggle-handles-mini" style="font-size: 11px;">👁️ Ocultar Puntos</button>
+          <button class="btn" id="hud-btn-reset-endpoints" style="font-size: 11px;">Centrar Extremos</button>
+          <button class="btn" id="hud-btn-delete-line" style="font-size: 11px; color: #ff6b8b; grid-column: span 2;">Eliminar Línea</button>
+        </div>
+      </div>
+
+      <div id="hud-word-content" style="display: none;">
+        <div class="hud-row">
+          <span>Posición X:</span>
+          <strong id="hud-pos-x" style="color: var(--accent-cyan); font-family: monospace;">0</strong>
+        </div>
+        <div class="hud-row">
+          <span>Posición Y:</span>
+          <strong id="hud-pos-y" style="color: var(--accent-cyan); font-family: monospace;">0</strong>
+        </div>
+        <div class="hud-row">
+          <span>Tipografía:</span>
+          <strong id="hud-font-type" style="color: var(--accent-pink);">Sans Light</strong>
+        </div>
+        <div class="hud-btn-group">
+          <button class="btn" id="hud-btn-toggle-font" style="font-size: 11px;">Cambiar Fuente</button>
+          <button class="btn" id="hud-btn-connect-center" style="font-size: 11px;">Unir a Centro</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stage Canvas -->
+    <div class="stage-container" id="stage-container">
+      <canvas id="mesh-gl-canvas" class="stage-gl-canvas"></canvas>
+
+      <!-- Center Logo / Isotipo -->
+      <img src="assets/catalanycia/Isotipo fucsia.svg" alt="Isotipo Catalán y Cía." class="stage-center-icon"
+        id="center-icon-img">
+
+      <!-- SVG Constellation Layer -->
+      <div class="stage-svg-layer">
+        <svg class="constellation-svg" id="constellation-svg" viewBox="0 0 1000 700"
+          preserveAspectRatio="xMidYMid meet">
+          <!-- Dynamic Mask Definition -->
+          <defs>
+            <mask id="constellation-text-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="700">
+              <rect x="0" y="0" width="1000" height="700" fill="#FFFFFF" />
+              <!-- Icon mask cutout -->
+              <g id="mask-icon-group" transform="translate(500, 350) scale(1.1) translate(-43.715, -43.975)"
+                fill="#000000" stroke="#000000" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+                <path
+                  d="M42.89,41.06c4.35-12.11,13.9-22.1,26.27-26.67L49.36,0c-8.7,11.98-13.62,29.58-12.31,42.83-10.17-7.88-16.73-20.05-17.25-33.23L0,24c8.7,11.98,23.93,22.1,36.93,24.94C26.3,56.17,12.7,58.65,0,55.07l7.56,23.28c14.08-4.58,28.41-15.93,35.13-27.42,3.6,12.35,1.75,26.05-5.57,37.02h24.48c0-14.8-6.37-31.94-15.22-41.89,12.86.39,25.32,6.39,33.49,16.74l7.56-23.28c-14.08-4.57-32.35-3.81-44.54,1.53Z" />
+              </g>
+              <!-- Text mask cutouts -->
+              <g id="mask-nodes-group" fill="#000000" stroke="#000000" stroke-width="12" stroke-linejoin="round"
+                stroke-linecap="round"></g>
+            </mask>
+          </defs>
+
+          <!-- 1. Visible Debug Margins Layer (Toggleable) -->
+          <g class="debug-margins-layer" id="debug-margins-group">
+            <g id="debug-icon-margin" class="margin-icon-path"
+              transform="translate(500, 350) scale(1.1) translate(-43.715, -43.975)">
+              <path
+                d="M42.89,41.06c4.35-12.11,13.9-22.1,26.27-26.67L49.36,0c-8.7,11.98-13.62,29.58-12.31,42.83-10.17-7.88-16.73-20.05-17.25-33.23L0,24c8.7,11.98,23.93,22.1,36.93,24.94C26.3,56.17,12.7,58.65,0,55.07l7.56,23.28c14.08-4.58,28.41-15.93,35.13-27.42,3.6,12.35,1.75,26.05-5.57,37.02h24.48c0-14.8-6.37-31.94-15.22-41.89,12.86.39,25.32,6.39,33.49,16.74l7.56-23.28c-14.08-4.57-32.35-3.81-44.54,1.53Z" />
+            </g>
+            <g id="debug-text-margins"></g>
+          </g>
+
+          <!-- 2. SVG Dotted Lines Layer (Masked with transparent contour) -->
+          <g class="constellation-lines" id="constellation-lines-group" mask="url(#constellation-text-mask)"></g>
+
+          <!-- 3. Invisible Wide Hitboxes for easy line clicking -->
+          <g id="line-hitboxes-layer"></g>
+
+          <!-- 4. Central Isotipo Click Target -->
+          <g class="center-node-group" id="center-node-target">
+            <circle class="center-node-handle" cx="500" cy="350" r="55" />
+          </g>
+
+          <!-- 5. SVG Interactive Text Nodes Layer -->
+          <g class="constellation-nodes" id="constellation-nodes-group"></g>
+
+          <!-- 6. Temporary Line Drawing Preview -->
+          <line id="temp-line-preview" stroke="#00f0ff" stroke-width="2" stroke-dasharray="4 4" style="display: none;" />
+
+          <!-- 7. Interactive Line Handles Layer (ON TOP OF EVERYTHING) -->
+          <g id="line-handles-layer"></g>
+        </svg>
+      </div>
+
+      <!-- Floating Parameter Controls Dock -->
+      <div class="control-dock">
+        <div class="control-group">
+          <span class="control-label">Puntos:</span>
+          <input type="range" class="control-slider" id="slider-dot-size" min="0.25" max="4.00" value="2.50" step="0.25">
+          <span class="control-val" id="val-dot-size">2.5px</span>
+        </div>
+
+        <div class="dock-divider"></div>
+
+        <div class="control-group">
+          <span class="control-label">Separación:</span>
+          <input type="range" class="control-slider" id="slider-dot-gap" min="4" max="14" value="11" step="1">
+          <span class="control-val" id="val-dot-gap">11px</span>
+        </div>
+
+        <div class="dock-divider"></div>
+
+        <div class="control-group">
+          <span class="control-label">Margen:</span>
+          <input type="range" class="control-slider" id="slider-mask-stroke" min="4" max="28" value="12" step="2">
+          <span class="control-val" id="val-mask-stroke">12px</span>
+        </div>
+
+        <div class="dock-divider"></div>
+
+        <div class="control-group">
+          <span class="control-label">Opacidad:</span>
+          <input type="range" class="control-slider" id="slider-line-opacity" min="0.3" max="1.0" value="0.80"
+            step="0.05">
+          <span class="control-val" id="val-line-opacity">80%</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast Notification Feedback -->
+  <div class="toast-msg" id="toast-msg">¡Configuración copiada!</div>
+
+  <!-- Output Code Modal -->
+  <div class="modal-overlay" id="code-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size: 14px; font-weight: 700;">Configuración de Constelación</h3>
+        <button class="btn" id="btn-modal-close" style="padding: 4px 8px;">✕</button>
+      </div>
+      <div class="modal-body" id="modal-code-content"></div>
+      <div class="modal-footer">
+        <button class="btn" id="btn-modal-copy-json">Copiar Resumen</button>
+        <button class="btn btn-primary" id="btn-modal-copy-svg">Copiar SVG Completo</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================
+    // 1. Estado Oficial de Nodos y Líneas Avanzadas
+    // =========================================================
+    const INITIAL_NODES = [
+      { id: 'accesible', label: 'accesible', x: 300, y: 85, type: 'sans' },
+      { id: 'profesionalismo', label: 'profesionalismo', x: 490, y: 185, type: 'serif' },
+      { id: 'flexible', label: 'flexible', x: 910, y: 140, type: 'sans' },
+      { id: 'seria', label: 'seria', x: 120, y: 305, type: 'sans' },
+      { id: 'cercana', label: 'cercana', x: 315, y: 385, type: 'sans' },
+      { id: 'estratégica', label: 'estratégica', x: 745, y: 290, type: 'sans' },
+      { id: 'ecuánime', label: 'ecuánime', x: 185, y: 490, type: 'sans' },
+      { id: 'protección', label: 'protección', x: 785, y: 475, type: 'serif' },
+      { id: 'confianza', label: 'confianza', x: 410, y: 630, type: 'serif' },
+      { id: 'humana', label: 'humana', x: 875, y: 630, type: 'sans' }
+    ];
+
+    const INITIAL_LINES = [
+      { id: 'l_1', from: 'accesible', to: 'flexible', offA: { x: 22, y: -7 }, offB: { x: 1, y: -8 }, curve: 0 },
+      { id: 'l_2', from: 'accesible', to: 'seria', offA: { x: -6, y: -3 }, offB: { x: 12, y: -19 }, curve: 0 },
+      { id: 'l_3', from: 'accesible', to: 'cercana', offA: { x: 0, y: 0 }, offB: { x: 0, y: 0 }, curve: 0 },
+      { id: 'l_4', from: 'profesionalismo', to: 'seria', offA: { x: 0, y: 0 }, offB: { x: 0, y: 0 }, curve: 0 },
+      { id: 'l_5', from: 'profesionalismo', to: 'estratégica', offA: { x: 0, y: 0 }, offB: { x: 0, y: 0 }, curve: 0 },
+      { id: 'l_6', from: 'profesionalismo', to: 'center', offA: { x: 0, y: 0 }, offB: { x: -52, y: -40 }, curve: 0 },
+      { id: 'l_7', from: 'seria', to: 'ecuánime', offA: { x: 0, y: 0 }, offB: { x: 0, y: 0 }, curve: 0 },
+      { id: 'l_8', from: 'ecuánime', to: 'confianza', offA: { x: 0, y: 0 }, offB: { x: -6, y: -12 }, curve: 0 },
+      { id: 'l_9', from: 'cercana', to: 'confianza', offA: { x: 0, y: 0 }, offB: { x: 0, y: 0 }, curve: 0 },
+      { id: 'l_10', from: 'flexible', to: 'humana', offA: { x: 2, y: -9 }, offB: { x: 0, y: 0 }, curve: 0 },
+      { id: 'l_11', from: 'estratégica', to: 'protección', offA: { x: 0, y: 0 }, offB: { x: 0, y: 0 }, curve: 0 },
+      { id: 'l_12', from: 'center', to: 'protección', offA: { x: 67, y: 0 }, offB: { x: 0, y: 0 }, curve: 0 },
+      { id: 'l_13', from: 'protección', to: 'humana', offA: { x: 0, y: 0 }, offB: { x: 0, y: 0 }, curve: 0 },
+      { id: 'l_14', from: 'confianza', to: 'center', offA: { x: 0, y: 0 }, offB: { x: 17, y: 68 }, curve: 0 }
+    ];
+
+    const CENTER_POS = { x: 500, y: 350 };
+
+    let state = {
+      mode: 'lines', // 'lines' | 'words'
+      lockWords: true,
+      showHandles: 'active', // 'active' (solo línea seleccionada) | 'none' (100% ocultas) | 'all' (todas)
+      nodes: JSON.parse(JSON.stringify(INITIAL_NODES)),
+      lines: JSON.parse(JSON.stringify(INITIAL_LINES)),
+      selectedLineId: 'l_1',
+      selectedNodeId: null,
+      maskStroke: 12,
+      dotSize: 2.5,
+      dotGap: 11,
+      lineOpacity: 0.8,
+      showDebugMask: false,
+      isAddingLine: false,
+      addLineStartNode: null
+    };
+
+    let historyStack = [];
+
+    function saveHistory() {
+      historyStack.push({
+        nodes: JSON.parse(JSON.stringify(state.nodes)),
+        lines: JSON.parse(JSON.stringify(state.lines))
+      });
+      if (historyStack.length > 30) historyStack.shift();
+    }
+
+    function undo() {
+      if (historyStack.length === 0) return;
+      const prev = historyStack.pop();
+      state.nodes = prev.nodes;
+      state.lines = prev.lines;
+      renderConstellation();
+      updateInspector();
+      showToast('Deshecho');
+    }
+
+    // =========================================================
+    // 2. Cálculos Geométricos de Líneas y Curvas
+    // =========================================================
+    function getNodeBasePos(id) {
+      if (id === 'center') return { x: CENTER_POS.x, y: CENTER_POS.y };
+      const n = state.nodes.find(item => item.id === id);
+      return n ? { x: n.x, y: n.y } : { x: 500, y: 350 };
+    }
+
+    function getLineEndpoints(line) {
+      const baseA = getNodeBasePos(line.from);
+      const baseB = getNodeBasePos(line.to);
+      const offA = line.offA || { x: 0, y: 0 };
+      const offB = line.offB || { x: 0, y: 0 };
+
+      const x1 = Math.round(baseA.x + offA.x);
+      const y1 = Math.round(baseA.y + offA.y);
+      const x2 = Math.round(baseB.x + offB.x);
+      const y2 = Math.round(baseB.y + offB.y);
+
+      // Punto medio con curvatura
+      const midX = (x1 + x2) / 2;
+      const midY = (y1 + y2) / 2;
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const len = Math.hypot(dx, dy) || 1;
+      // Vector perpendicular normalizado
+      const nx = -dy / len;
+      const ny = dx / len;
+      const ctrlX = Math.round(midX + nx * (line.curve || 0));
+      const ctrlY = Math.round(midY + ny * (line.curve || 0));
+
+      return { x1, y1, x2, y2, midX, midY, ctrlX, ctrlY, nx, ny, isCurved: Math.abs(line.curve || 0) > 1.5 };
+    }
+
+    // =========================================================
+    // 3. Renderizado Reactivo del SVG
+    // =========================================================
+    const svgEl = document.getElementById('constellation-svg');
+    const nodesGroup = document.getElementById('constellation-nodes-group');
+    const linesGroup = document.getElementById('constellation-lines-group');
+    const lineHitboxesGroup = document.getElementById('line-hitboxes-layer');
+    const lineHandlesLayer = document.getElementById('line-handles-layer');
+    const maskNodesGroup = document.getElementById('mask-nodes-group');
+    const maskIconGroup = document.getElementById('mask-icon-group');
+    const debugMarginsGroup = document.getElementById('debug-margins-group');
+    const debugTextMargins = document.getElementById('debug-text-margins');
+    const centerNodeTarget = document.getElementById('center-node-target');
+
+    function renderConstellation() {
+      // Variables CSS
+      document.documentElement.style.setProperty('--line-width', `${state.dotSize}px`);
+      document.documentElement.style.setProperty('--line-gap', `${state.dotGap}px`);
+      document.documentElement.style.setProperty('--line-opacity', `${state.lineOpacity}`);
+      document.documentElement.style.setProperty('--mask-stroke', `${state.maskStroke}px`);
+
+      if (maskNodesGroup) maskNodesGroup.setAttribute('stroke-width', state.maskStroke);
+      if (maskIconGroup) maskIconGroup.setAttribute('stroke-width', state.maskStroke);
+
+      // 1. Renderizar Líneas Punteadas Visuales
+      linesGroup.innerHTML = '';
+      state.lines.forEach((line) => {
+        const pts = getLineEndpoints(line);
+        let lineEl;
+
+        if (pts.isCurved) {
+          lineEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          lineEl.setAttribute('d', `M${pts.x1},${pts.y1} Q${pts.ctrlX},${pts.ctrlY} ${pts.x2},${pts.y2}`);
+        } else {
+          lineEl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          lineEl.setAttribute('x1', pts.x1);
+          lineEl.setAttribute('y1', pts.y1);
+          lineEl.setAttribute('x2', pts.x2);
+          lineEl.setAttribute('y2', pts.y2);
+        }
+
+        lineEl.setAttribute('data-id', line.id);
+        if (state.selectedLineId === line.id) {
+          lineEl.classList.add('is-line-selected');
+        }
+
+        linesGroup.appendChild(lineEl);
+      });
+
+      // 2. Renderizar Hitboxes Invisibles para Clic Instantáneo
+      lineHitboxesGroup.innerHTML = '';
+      state.lines.forEach((line) => {
+        const pts = getLineEndpoints(line);
+        let hitEl;
+
+        if (pts.isCurved) {
+          hitEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          hitEl.setAttribute('d', `M${pts.x1},${pts.y1} Q${pts.ctrlX},${pts.ctrlY} ${pts.x2},${pts.y2}`);
+        } else {
+          hitEl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          hitEl.setAttribute('x1', pts.x1);
+          hitEl.setAttribute('y1', pts.y1);
+          hitEl.setAttribute('x2', pts.x2);
+          hitEl.setAttribute('y2', pts.y2);
+        }
+
+        hitEl.setAttribute('class', 'line-hitbox');
+        hitEl.setAttribute('data-id', line.id);
+
+        hitEl.addEventListener('mousedown', (e) => {
+          e.stopPropagation();
+          state.selectedLineId = line.id;
+          state.selectedNodeId = null;
+          renderConstellation();
+          updateInspector();
+        });
+
+        lineHitboxesGroup.appendChild(hitEl);
+      });
+
+      // 3. Renderizar Manillas de Control de Líneas (EN CAPA SUPERIOR)
+      lineHandlesLayer.innerHTML = '';
+      if (state.mode === 'lines' && state.showHandles !== 'none') {
+        // A) Si showHandles === 'all', renderizar mini-manillas en líneas no seleccionadas
+        if (state.showHandles === 'all') {
+          state.lines.forEach(line => {
+            if (line.id !== state.selectedLineId) {
+              const pts = getLineEndpoints(line);
+              const miniA = createMiniHandle(pts.x1, pts.y1, line, 'A');
+              const miniB = createMiniHandle(pts.x2, pts.y2, line, 'B');
+              lineHandlesLayer.appendChild(miniA);
+              lineHandlesLayer.appendChild(miniB);
+            }
+          });
+        }
+
+        // B) Renderizar manillas destacadas de la línea seleccionada (en 'active' o 'all')
+        const selLine = state.lines.find(l => l.id === state.selectedLineId);
+        if (selLine) {
+          const pts = getLineEndpoints(selLine);
+
+          // Línea guía al punto de curvatura
+          if (pts.isCurved) {
+            const guide = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            guide.setAttribute('d', `M${pts.x1},${pts.y1} L${pts.ctrlX},${pts.ctrlY} L${pts.x2},${pts.y2}`);
+            guide.setAttribute('class', 'handle-guide-line');
+            lineHandlesLayer.appendChild(guide);
+          }
+
+          // Manilla A (Inicio)
+          const handleA = createLineHandle(pts.x1, pts.y1, selLine, 'A', selLine.from);
+          // Manilla B (Fin)
+          const handleB = createLineHandle(pts.x2, pts.y2, selLine, 'B', selLine.to);
+          // Manilla Curvatura (Centro)
+          const handleCurve = createCurveHandle(pts.ctrlX, pts.ctrlY, selLine, pts);
+
+          lineHandlesLayer.appendChild(handleA);
+          lineHandlesLayer.appendChild(handleB);
+          lineHandlesLayer.appendChild(handleCurve);
+        }
+      }
+
+      // 4. Renderizar Máscara Protectora de Textos y Capa Debug
+      maskNodesGroup.innerHTML = '';
+      debugTextMargins.innerHTML = '';
+
+      state.nodes.forEach(node => {
+        // En la máscara
+        const maskText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        maskText.setAttribute('x', node.x);
+        maskText.setAttribute('y', node.y);
+        maskText.setAttribute('text-anchor', 'middle');
+        maskText.setAttribute('class', node.type === 'serif' ? 'node-serif' : 'node-sans');
+        maskText.textContent = node.label;
+        maskNodesGroup.appendChild(maskText);
+
+        // En el debug cian
+        const debugText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        debugText.setAttribute('x', node.x);
+        debugText.setAttribute('y', node.y);
+        debugText.setAttribute('text-anchor', 'middle');
+        debugText.setAttribute('class', node.type === 'serif' ? 'node-serif' : 'node-sans');
+        debugText.textContent = node.label;
+        debugTextMargins.appendChild(debugText);
+      });
+
+      // 5. Renderizar Nodos de Texto Interactivos
+      nodesGroup.innerHTML = '';
+      state.nodes.forEach(node => {
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', 'constellation-text-node');
+        g.setAttribute('data-id', node.id);
+        if (!state.lockWords || state.mode === 'words') g.classList.add('is-draggable');
+        if (state.selectedNodeId === node.id) g.classList.add('is-selected');
+
+        const handle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        handle.setAttribute('class', 'node-handle');
+        handle.setAttribute('cx', node.x);
+        handle.setAttribute('cy', node.y - 8);
+        handle.setAttribute('r', '28');
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', node.x);
+        text.setAttribute('y', node.y);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('class', node.type === 'serif' ? 'node-serif' : 'node-sans');
+        text.textContent = node.label;
+
+        g.appendChild(handle);
+        g.appendChild(text);
+
+        attachNodeEvents(g, node);
+        nodesGroup.appendChild(g);
+      });
+
+      // Estado del Centro
+      if (centerNodeTarget) {
+        if (state.selectedNodeId === 'center') {
+          centerNodeTarget.classList.add('is-selected');
+        } else {
+          centerNodeTarget.classList.remove('is-selected');
+        }
+      }
+    }
+
+    // =========================================================
+    // 4. Drag & Drop Robusto y Preciso de Manillas
+    // =========================================================
+    let activeDrag = null;
+
+    function getSvgCoordinates(evt) {
+      const pt = svgEl.createSVGPoint();
+      if (evt.touches && evt.touches.length > 0) {
+        pt.x = evt.touches[0].clientX;
+        pt.y = evt.touches[0].clientY;
+      } else {
+        pt.x = evt.clientX;
+        pt.y = evt.clientY;
+      }
+      const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+      return {
+        x: Math.round(svgP.x),
+        y: Math.round(svgP.y)
+      };
+    }
+
+    function createLineHandle(x, y, line, endKey, nodeName) {
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('class', 'line-handle-group');
+
+      // Invisible generous hit area
+      const hit = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      hit.setAttribute('class', 'line-handle-hit');
+      hit.setAttribute('cx', x);
+      hit.setAttribute('cy', y);
+      hit.setAttribute('r', '18');
+
+      // Visible glowing handle circle
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('class', 'line-handle-circle');
+      c.setAttribute('cx', x);
+      c.setAttribute('cy', y);
+      c.setAttribute('r', '7.5');
+
+      // Inner white dot
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', x);
+      dot.setAttribute('cy', y);
+      dot.setAttribute('r', '2.5');
+      dot.setAttribute('fill', '#000000');
+      dot.setAttribute('pointer-events', 'none');
+
+      g.appendChild(hit);
+      g.appendChild(c);
+      g.appendChild(dot);
+
+      function startDrag(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        saveHistory();
+        state.selectedLineId = line.id;
+        state.selectedNodeId = null;
+
+        const startSvg = getSvgCoordinates(e);
+        const currentOff = endKey === 'A' ? (line.offA || { x: 0, y: 0 }) : (line.offB || { x: 0, y: 0 });
+
+        activeDrag = {
+          type: endKey === 'A' ? 'line-endA' : 'line-endB',
+          line: line,
+          startSvg: startSvg,
+          initialOff: { x: currentOff.x || 0, y: currentOff.y || 0 }
+        };
+
+        g.classList.add('is-dragging');
+        renderConstellation();
+        updateInspector();
+      }
+
+      g.addEventListener('mousedown', (e) => {
+        if (e.button === 0) startDrag(e);
+      });
+      g.addEventListener('touchstart', startDrag, { passive: false });
+
+      return g;
+    }
+
+    function createMiniHandle(x, y, line, endKey) {
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('class', 'mini-handle-group');
+
+      const hit = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      hit.setAttribute('class', 'mini-handle-hit');
+      hit.setAttribute('cx', x);
+      hit.setAttribute('cy', y);
+      hit.setAttribute('r', '14');
+
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('class', 'mini-handle-circle');
+      c.setAttribute('cx', x);
+      c.setAttribute('cy', y);
+      c.setAttribute('r', '4.5');
+
+      g.appendChild(hit);
+      g.appendChild(c);
+
+      function startDrag(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        saveHistory();
+        state.selectedLineId = line.id;
+        state.selectedNodeId = null;
+
+        const startSvg = getSvgCoordinates(e);
+        const currentOff = endKey === 'A' ? (line.offA || { x: 0, y: 0 }) : (line.offB || { x: 0, y: 0 });
+
+        activeDrag = {
+          type: endKey === 'A' ? 'line-endA' : 'line-endB',
+          line: line,
+          startSvg: startSvg,
+          initialOff: { x: currentOff.x || 0, y: currentOff.y || 0 }
+        };
+
+        renderConstellation();
+        updateInspector();
+      }
+
+      g.addEventListener('mousedown', (e) => {
+        if (e.button === 0) startDrag(e);
+      });
+      g.addEventListener('touchstart', startDrag, { passive: false });
+
+      return g;
+    }
+
+    function createCurveHandle(x, y, line, pts) {
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('class', 'curve-handle-group');
+
+      const hit = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      hit.setAttribute('class', 'curve-handle-hit');
+      hit.setAttribute('cx', x);
+      hit.setAttribute('cy', y);
+      hit.setAttribute('r', '18');
+
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('class', 'curve-handle-circle');
+      c.setAttribute('cx', x);
+      c.setAttribute('cy', y);
+      c.setAttribute('r', '6.5');
+
+      g.appendChild(hit);
+      g.appendChild(c);
+
+      function startDrag(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        saveHistory();
+        state.selectedLineId = line.id;
+        state.selectedNodeId = null;
+
+        const startSvg = getSvgCoordinates(e);
+        activeDrag = {
+          type: 'line-curve',
+          line: line,
+          startSvg: startSvg,
+          initialCurve: line.curve || 0,
+          nx: pts.nx,
+          ny: pts.ny
+        };
+
+        renderConstellation();
+        updateInspector();
+      }
+
+      g.addEventListener('mousedown', (e) => {
+        if (e.button === 0) startDrag(e);
+      });
+      g.addEventListener('touchstart', startDrag, { passive: false });
+
+      return g;
+    }
+
+    function attachNodeEvents(groupEl, node) {
+      function startDrag(e) {
+        if (state.isAddingLine) {
+          handleAddingLineNodeClick(node.id);
+          e.stopPropagation();
+          return;
+        }
+
+        if (state.mode === 'words' || !state.lockWords) {
+          e.preventDefault();
+          e.stopPropagation();
+          saveHistory();
+          state.selectedNodeId = node.id;
+          state.selectedLineId = null;
+
+          const startSvg = getSvgCoordinates(e);
+          activeDrag = {
+            type: 'node',
+            node: node,
+            startSvg: startSvg,
+            initialX: node.x,
+            initialY: node.y
+          };
+          groupEl.classList.add('is-dragging');
+          renderConstellation();
+          updateInspector();
+        }
+      }
+
+      groupEl.addEventListener('mousedown', (e) => {
+        if (e.button === 0) startDrag(e);
+      });
+      groupEl.addEventListener('touchstart', startDrag, { passive: false });
+
+      groupEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (state.isAddingLine) return;
+        state.selectedNodeId = node.id;
+        state.selectedLineId = null;
+        renderConstellation();
+        updateInspector();
+      });
+    }
+
+    // Global Drag Move & Up Listeners
+    function onPointerMove(e) {
+      if (!activeDrag) return;
+      e.preventDefault();
+
+      const curSvg = getSvgCoordinates(e);
+      const dx = curSvg.x - activeDrag.startSvg.x;
+      const dy = curSvg.y - activeDrag.startSvg.y;
+
+      if (activeDrag.type === 'line-endA') {
+        activeDrag.line.offA = {
+          x: Math.round(activeDrag.initialOff.x + dx),
+          y: Math.round(activeDrag.initialOff.y + dy)
+        };
+        renderConstellation();
+        updateInspector();
+      } else if (activeDrag.type === 'line-endB') {
+        activeDrag.line.offB = {
+          x: Math.round(activeDrag.initialOff.x + dx),
+          y: Math.round(activeDrag.initialOff.y + dy)
+        };
+        renderConstellation();
+        updateInspector();
+      } else if (activeDrag.type === 'line-curve') {
+        const deltaNormal = dx * activeDrag.nx + dy * activeDrag.ny;
+        activeDrag.line.curve = Math.round(activeDrag.initialCurve + deltaNormal);
+        renderConstellation();
+        updateInspector();
+      } else if (activeDrag.type === 'node') {
+        activeDrag.node.x = Math.max(30, Math.min(970, Math.round(activeDrag.initialX + dx)));
+        activeDrag.node.y = Math.max(30, Math.min(670, Math.round(activeDrag.initialY + dy)));
+        renderConstellation();
+        updateInspector();
+      }
+    }
+
+    function onPointerUp() {
+      if (activeDrag) {
+        activeDrag = null;
+        document.querySelectorAll('.is-dragging').forEach(el => el.classList.remove('is-dragging'));
+        renderConstellation();
+        updateInspector();
+      }
+    }
+
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('mouseup', onPointerUp);
+    window.addEventListener('touchmove', onPointerMove, { passive: false });
+    window.addEventListener('touchend', onPointerUp);
+
+    // =========================================================
+    // 5. Herramienta "+ Nueva Línea" & Deselección
+    // =========================================================
+    svgEl.addEventListener('click', (e) => {
+      if (e.target === svgEl) {
+        state.selectedLineId = null;
+        state.selectedNodeId = null;
+        if (state.isAddingLine) {
+          state.isAddingLine = false;
+          state.addLineStartNode = null;
+          document.getElementById('btn-add-line').classList.remove('active');
+          showToast('Modo añadir línea cancelado');
+        }
+        renderConstellation();
+        updateInspector();
+      }
+    });
+
+    if (centerNodeTarget) {
+      centerNodeTarget.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (state.isAddingLine) {
+          handleAddingLineNodeClick('center');
+        } else {
+          state.selectedNodeId = 'center';
+          state.selectedLineId = null;
+          renderConstellation();
+          updateInspector();
+        }
+      });
+    }
+
+    const btnAddLine = document.getElementById('btn-add-line');
+    if (btnAddLine) {
+      btnAddLine.addEventListener('click', () => {
+        state.isAddingLine = !state.isAddingLine;
+        state.addLineStartNode = null;
+        btnAddLine.classList.toggle('active', state.isAddingLine);
+        if (state.isAddingLine) {
+          showToast('Haz clic en el primer nodo para iniciar la línea');
+        } else {
+          showToast('Modo añadir línea cancelado');
+        }
+      });
+    }
+
+    function handleAddingLineNodeClick(nodeId) {
+      if (!state.addLineStartNode) {
+        state.addLineStartNode = nodeId;
+        showToast(`Inicio: ${nodeId}. Haz clic en el segundo nodo para conectar.`);
+      } else if (state.addLineStartNode === nodeId) {
+        state.addLineStartNode = null;
+        showToast('Selección desmarcada');
+      } else {
+        saveHistory();
+        const newLine = {
+          id: `l_${Date.now()}`,
+          from: state.addLineStartNode,
+          to: nodeId,
+          offA: { x: 0, y: 0 },
+          offB: { x: 0, y: 0 },
+          curve: 0
+        };
+        state.lines.push(newLine);
+        state.selectedLineId = newLine.id;
+        state.isAddingLine = false;
+        state.addLineStartNode = null;
+        if (btnAddLine) btnAddLine.classList.remove('active');
+        renderConstellation();
+        updateInspector();
+        showToast(`✨ Línea creada: ${newLine.from} ↔ ${newLine.to}`);
+      }
+    }
+
+    // =========================================================
+    // 6. Panel de Inspección (HUD) & Acciones
+    // =========================================================
+    const hudEl = document.getElementById('selection-hud');
+    const hudTitleText = document.getElementById('hud-title-text');
+    const hudLineSelect = document.getElementById('hud-line-select');
+    const hudLineContent = document.getElementById('hud-line-content');
+    const hudWordContent = document.getElementById('hud-word-content');
+
+    const hudNodeAName = document.getElementById('hud-node-a-name');
+    const hudNodeBName = document.getElementById('hud-node-b-name');
+    const hudPosA = document.getElementById('hud-pos-a');
+    const hudPosB = document.getElementById('hud-pos-b');
+    const hudLineCurve = document.getElementById('hud-line-curve');
+
+    const hudBtnStraighten = document.getElementById('hud-btn-straighten');
+    const hudBtnResetEndpoints = document.getElementById('hud-btn-reset-endpoints');
+    const hudBtnToggleHandlesMini = document.getElementById('hud-btn-toggle-handles-mini');
+    const hudBtnDeleteLine = document.getElementById('hud-btn-delete-line');
+
+    const hudPosX = document.getElementById('hud-pos-x');
+    const hudPosY = document.getElementById('hud-pos-y');
+    const hudFontType = document.getElementById('hud-font-type');
+    const hudBtnToggleFont = document.getElementById('hud-btn-toggle-font');
+    const hudBtnConnectCenter = document.getElementById('hud-btn-connect-center');
+    const hudBtnClose = document.getElementById('hud-btn-close');
+
+    function populateLineDropdown() {
+      if (!hudLineSelect) return;
+      hudLineSelect.innerHTML = '';
+      state.lines.forEach((line, idx) => {
+        const opt = document.createElement('option');
+        opt.value = line.id;
+        opt.textContent = `${idx + 1}. ${line.from} ↔ ${line.to}`;
+        if (state.selectedLineId === line.id) opt.selected = true;
+        hudLineSelect.appendChild(opt);
+      });
+    }
+
+    if (hudLineSelect) {
+      hudLineSelect.addEventListener('change', (e) => {
+        state.selectedLineId = e.target.value;
+        state.selectedNodeId = null;
+        renderConstellation();
+        updateInspector();
+      });
+    }
+
+    function updateInspector() {
+      populateLineDropdown();
+
+      if (!state.selectedLineId && !state.selectedNodeId) {
+        if (hudEl) hudEl.style.display = 'none';
+        return;
+      }
+
+      if (hudEl) hudEl.style.display = 'block';
+
+      if (hudBtnToggleHandlesMini) {
+        hudBtnToggleHandlesMini.textContent = state.showHandles === 'none' ? '👁️ Ver Puntos' : '👁️ Ocultar Puntos';
+      }
+
+      // Inspección de Línea
+      if (state.selectedLineId) {
+        const line = state.lines.find(l => l.id === state.selectedLineId);
+        if (!line) return;
+
+        if (hudTitleText) hudTitleText.textContent = `Línea: ${line.from} ↔ ${line.to}`;
+        if (hudLineContent) hudLineContent.style.display = 'block';
+        if (hudWordContent) hudWordContent.style.display = 'none';
+
+        const pts = getLineEndpoints(line);
+        if (hudNodeAName) hudNodeAName.textContent = line.from;
+        if (hudNodeBName) hudNodeBName.textContent = line.to;
+
+        const offAStr = line.offA ? ` (${line.offA.x >= 0 ? '+' : ''}${line.offA.x}, ${line.offA.y >= 0 ? '+' : ''}${line.offA.y})` : '';
+        const offBStr = line.offB ? ` (${line.offB.x >= 0 ? '+' : ''}${line.offB.x}, ${line.offB.y >= 0 ? '+' : ''}${line.offB.y})` : '';
+
+        if (hudPosA) hudPosA.textContent = `X: ${pts.x1}, Y: ${pts.y1}${offAStr}`;
+        if (hudPosB) hudPosB.textContent = `X: ${pts.x2}, Y: ${pts.y2}${offBStr}`;
+        if (hudLineCurve) hudLineCurve.textContent = `${Math.round(line.curve || 0)}px`;
+      }
+      // Inspección de Palabra / Nodo
+      else if (state.selectedNodeId) {
+        if (hudTitleText) hudTitleText.textContent = state.selectedNodeId === 'center' ? 'Isotipo Central' : `Palabra: "${state.selectedNodeId}"`;
+        if (hudLineContent) hudLineContent.style.display = 'none';
+        if (hudWordContent) hudWordContent.style.display = 'block';
+
+        if (state.selectedNodeId === 'center') {
+          if (hudPosX) hudPosX.textContent = '500';
+          if (hudPosY) hudPosY.textContent = '350';
+          if (hudFontType) hudFontType.textContent = 'Logo SVG';
+          if (hudBtnToggleFont) hudBtnToggleFont.style.display = 'none';
+          if (hudBtnConnectCenter) hudBtnConnectCenter.style.display = 'none';
+        } else {
+          const node = state.nodes.find(n => n.id === state.selectedNodeId);
+          if (!node) return;
+
+          if (hudPosX) hudPosX.textContent = node.x;
+          if (hudPosY) hudPosY.textContent = node.y;
+          if (hudFontType) hudFontType.textContent = node.type === 'serif' ? 'Castoro Italic' : 'TT Commons Light';
+          if (hudBtnToggleFont) hudBtnToggleFont.style.display = 'inline-block';
+          if (hudBtnConnectCenter) hudBtnConnectCenter.style.display = 'inline-block';
+        }
+      }
+    }
+
+    // Funciones de Ajuste Fino desde el HUD
+    window.nudgeEndpoint = function(endKey, dx, dy) {
+      if (!state.selectedLineId) return;
+      saveHistory();
+      const line = state.lines.find(l => l.id === state.selectedLineId);
+      if (!line) return;
+
+      if (endKey === 'A') {
+        line.offA = line.offA || { x: 0, y: 0 };
+        line.offA.x += dx;
+        line.offA.y += dy;
+      } else {
+        line.offB = line.offB || { x: 0, y: 0 };
+        line.offB.x += dx;
+        line.offB.y += dy;
+      }
+      renderConstellation();
+      updateInspector();
+    };
+
+    window.resetEndpoint = function(endKey) {
+      if (!state.selectedLineId) return;
+      saveHistory();
+      const line = state.lines.find(l => l.id === state.selectedLineId);
+      if (!line) return;
+
+      if (endKey === 'A') line.offA = { x: 0, y: 0 };
+      if (endKey === 'B') line.offB = { x: 0, y: 0 };
+      renderConstellation();
+      updateInspector();
+      showToast(`Extremo ${endKey} centrado`);
+    };
+
+    window.nudgeCurve = function(dCurve) {
+      if (!state.selectedLineId) return;
+      saveHistory();
+      const line = state.lines.find(l => l.id === state.selectedLineId);
+      if (!line) return;
+
+      line.curve = (line.curve || 0) + dCurve;
+      renderConstellation();
+      updateInspector();
+    };
+
+    if (hudBtnStraighten) {
+      hudBtnStraighten.addEventListener('click', () => {
+        if (!state.selectedLineId) return;
+        saveHistory();
+        const line = state.lines.find(l => l.id === state.selectedLineId);
+        if (line) {
+          line.curve = 0;
+          renderConstellation();
+          updateInspector();
+          showToast('Línea enderezada');
+        }
+      });
+    }
+
+    if (hudBtnResetEndpoints) {
+      hudBtnResetEndpoints.addEventListener('click', () => {
+        if (!state.selectedLineId) return;
+        saveHistory();
+        const line = state.lines.find(l => l.id === state.selectedLineId);
+        if (line) {
+          line.offA = { x: 0, y: 0 };
+          line.offB = { x: 0, y: 0 };
+          renderConstellation();
+          updateInspector();
+          showToast('Extremos centrados a las palabras');
+        }
+      });
+    }
+
+    if (hudBtnToggleHandlesMini) {
+      hudBtnToggleHandlesMini.addEventListener('click', () => {
+        cycleHandleMode();
+      });
+    }
+
+    if (hudBtnDeleteLine) {
+      hudBtnDeleteLine.addEventListener('click', () => {
+        if (!state.selectedLineId) return;
+        saveHistory();
+        state.lines = state.lines.filter(l => l.id !== state.selectedLineId);
+        state.selectedLineId = state.lines.length > 0 ? state.lines[0].id : null;
+        renderConstellation();
+        updateInspector();
+        showToast('Línea eliminada');
+      });
+    }
+
+    if (hudBtnToggleFont) {
+      hudBtnToggleFont.addEventListener('click', () => {
+        if (!state.selectedNodeId || state.selectedNodeId === 'center') return;
+        saveHistory();
+        const node = state.nodes.find(n => n.id === state.selectedNodeId);
+        if (node) {
+          node.type = node.type === 'serif' ? 'sans' : 'serif';
+          renderConstellation();
+          updateInspector();
+          showToast(`Tipografía cambiada a ${node.type === 'serif' ? 'Castoro Italic' : 'TT Commons Light'}`);
+        }
+      });
+    }
+
+    if (hudBtnConnectCenter) {
+      hudBtnConnectCenter.addEventListener('click', () => {
+        if (!state.selectedNodeId || state.selectedNodeId === 'center') return;
+        saveHistory();
+        const existing = state.lines.find(l =>
+          (l.from === state.selectedNodeId && l.to === 'center') ||
+          (l.from === 'center' && l.to === state.selectedNodeId)
+        );
+
+        if (existing) {
+          state.lines = state.lines.filter(l => l.id !== existing.id);
+          showToast(`Línea con el centro eliminada`);
+        } else {
+          const newLine = {
+            id: `l_${Date.now()}`,
+            from: state.selectedNodeId,
+            to: 'center',
+            offA: { x: 0, y: 0 },
+            offB: { x: 0, y: 0 },
+            curve: 0
+          };
+          state.lines.push(newLine);
+          state.selectedLineId = newLine.id;
+          showToast(`Línea conectada con el centro`);
+        }
+        renderConstellation();
+        updateInspector();
+      });
+    }
+
+    if (hudBtnClose) {
+      hudBtnClose.addEventListener('click', () => {
+        state.selectedLineId = null;
+        state.selectedNodeId = null;
+        renderConstellation();
+        updateInspector();
+      });
+    }
+
+    // =========================================================
+    // 7. Modos de Edición, Bloqueo, Visibilidad de Manillas & Sliders
+    // =========================================================
+    const btnToggleHandles = document.getElementById('btn-toggle-handles');
+
+    function cycleHandleMode() {
+      if (state.showHandles === 'active') {
+        state.showHandles = 'none';
+        if (btnToggleHandles) {
+          btnToggleHandles.textContent = '👁️ Manillas Ocultas';
+          btnToggleHandles.classList.remove('active');
+        }
+        showToast('Puntos de extremos ocultos (vista limpia)');
+      } else if (state.showHandles === 'none') {
+        state.showHandles = 'active';
+        if (btnToggleHandles) {
+          btnToggleHandles.textContent = '👁️ Manillas Visibles';
+          btnToggleHandles.classList.add('active');
+        }
+        showToast('Mostrando manillas de la línea activa');
+      } else {
+        state.showHandles = 'active';
+        if (btnToggleHandles) {
+          btnToggleHandles.textContent = '👁️ Manillas Visibles';
+          btnToggleHandles.classList.add('active');
+        }
+        showToast('Mostrando manillas de la línea activa');
+      }
+      renderConstellation();
+    }
+
+    if (btnToggleHandles) {
+      btnToggleHandles.addEventListener('click', cycleHandleMode);
+    }
+
+    const btnModeLines = document.getElementById('btn-mode-lines');
+    const btnModeWords = document.getElementById('btn-mode-words');
+    const instructionsBox = document.getElementById('instructions-box');
+    const btnToggleLockWords = document.getElementById('btn-toggle-lock-words');
+
+    if (btnModeLines) {
+      btnModeLines.addEventListener('click', () => {
+        state.mode = 'lines';
+        btnModeLines.classList.add('active');
+        if (btnModeWords) btnModeWords.classList.remove('active');
+        if (instructionsBox) {
+          instructionsBox.innerHTML = `
+            <div style="font-weight: 700; margin-bottom: 3px;">🎯 <strong>Control de Líneas Activo:</strong></div>
+            <div>• <strong>Arrastra directamente cualquier manilla cian</strong> en los extremos de las líneas.</div>
+            <div>• <strong>Arrastra la manilla amarilla central</strong> para curvar la línea en arco.</div>
+            <div>• Usa el botón <strong>"👁️ Manillas Visibles"</strong> o la tecla <strong>H</strong> para ocultar/mostrar los puntos.</div>
+          `;
+        }
+        renderConstellation();
+      });
+    }
+
+    if (btnModeWords) {
+      btnModeWords.addEventListener('click', () => {
+        state.mode = 'words';
+        btnModeWords.classList.add('active');
+        if (btnModeLines) btnModeLines.classList.remove('active');
+        state.lockWords = false;
+        if (btnToggleLockWords) {
+          btnToggleLockWords.textContent = '🔓 Palabras Desbloqueadas';
+          btnToggleLockWords.classList.add('active');
+        }
+        if (instructionsBox) {
+          instructionsBox.innerHTML = `
+            <div style="font-weight: 700; margin-bottom: 3px;">✍️ <strong>Modo Mover Palabras Activo:</strong></div>
+            <div>• <strong>Arrastra cualquier palabra</strong> para moverla a su nueva posición en el lienzo.</div>
+            <div>• Haz clic en una palabra para cambiar su tipografía en el inspector.</div>
+          `;
+        }
+        renderConstellation();
+      });
+    }
+
+    if (btnToggleLockWords) {
+      btnToggleLockWords.addEventListener('click', () => {
+        state.lockWords = !state.lockWords;
+        btnToggleLockWords.textContent = state.lockWords ? '🔒 Palabras Bloqueadas' : '🔓 Palabras Desbloqueadas';
+        btnToggleLockWords.classList.toggle('active', !state.lockWords);
+        showToast(state.lockWords ? 'Palabras bloqueadas (solo líneas)' : 'Palabras desbloqueadas para arrastre');
+        renderConstellation();
+      });
+    }
+
+    // Sliders de Parámetros Inferiores
+    const sliderDotSize = document.getElementById('slider-dot-size');
+    const valDotSize = document.getElementById('val-dot-size');
+    if (sliderDotSize && valDotSize) {
+      sliderDotSize.addEventListener('input', (e) => {
+        state.dotSize = parseFloat(e.target.value);
+        valDotSize.textContent = `${state.dotSize % 1 === 0 ? state.dotSize : state.dotSize.toFixed(2)}px`;
+        renderConstellation();
+      });
+    }
+
+    const sliderDotGap = document.getElementById('slider-dot-gap');
+    const valDotGap = document.getElementById('val-dot-gap');
+    if (sliderDotGap && valDotGap) {
+      sliderDotGap.addEventListener('input', (e) => {
+        state.dotGap = parseInt(e.target.value);
+        valDotGap.textContent = `${state.dotGap}px`;
+        renderConstellation();
+      });
+    }
+
+    const sliderMaskStroke = document.getElementById('slider-mask-stroke');
+    const valMaskStroke = document.getElementById('val-mask-stroke');
+    if (sliderMaskStroke && valMaskStroke) {
+      sliderMaskStroke.addEventListener('input', (e) => {
+        state.maskStroke = parseInt(e.target.value);
+        valMaskStroke.textContent = `${state.maskStroke}px`;
+        renderConstellation();
+      });
+    }
+
+    const sliderLineOpacity = document.getElementById('slider-line-opacity');
+    const valLineOpacity = document.getElementById('val-line-opacity');
+    if (sliderLineOpacity && valLineOpacity) {
+      sliderLineOpacity.addEventListener('input', (e) => {
+        state.lineOpacity = parseFloat(e.target.value);
+        valLineOpacity.textContent = `${Math.round(state.lineOpacity * 100)}%`;
+        renderConstellation();
+      });
+    }
+
+    const btnToggleMask = document.getElementById('btn-toggle-mask');
+    if (btnToggleMask) {
+      btnToggleMask.addEventListener('click', () => {
+        state.showDebugMask = !state.showDebugMask;
+        if (debugMarginsGroup) debugMarginsGroup.classList.toggle('is-visible', state.showDebugMask);
+        btnToggleMask.classList.toggle('active', state.showDebugMask);
+        showToast(state.showDebugMask ? 'Borde protector visible' : 'Borde protector oculto (100% transparente)');
+      });
+    }
+
+    const btnUndo = document.getElementById('btn-undo');
+    if (btnUndo) btnUndo.addEventListener('click', undo);
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        undo();
+      }
+      if (e.key.toLowerCase() === 'h' && !e.metaKey && !e.ctrlKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT') {
+        cycleHandleMode();
+      }
+    });
+
+    const btnReset = document.getElementById('btn-reset');
+    if (btnReset) {
+      btnReset.addEventListener('click', () => {
+        if (confirm('¿Restaurar la constelación a la configuración inicial?')) {
+          saveHistory();
+          state.nodes = JSON.parse(JSON.stringify(INITIAL_NODES));
+          state.lines = JSON.parse(JSON.stringify(INITIAL_LINES));
+          state.selectedLineId = 'l_1';
+          state.selectedNodeId = null;
+          renderConstellation();
+          updateInspector();
+          showToast('Constelación restaurada');
+        }
+      });
+    }
+
+    // =========================================================
+    // 8. Generación de Código & Exportación
+    // =========================================================
+    function generateConfigSummary() {
+      let linesList = state.lines.map(l => {
+        const pts = getLineEndpoints(l);
+        let curveInfo = pts.isCurved ? ` (Curva: ${Math.round(l.curve)}px)` : '';
+        let offsetInfo = (l.offA && (l.offA.x || l.offA.y) || l.offB && (l.offB.x || l.offB.y)) ? ` [Puntos: (${pts.x1},${pts.y1}) → (${pts.x2},${pts.y2})]` : '';
+        return `  • ${l.from} ↔ ${l.to}${curveInfo}${offsetInfo}`;
+      }).join('\n');
+
+      let nodesList = state.nodes.map(n =>
+        `  • "${n.label}" (X: ${n.x}, Y: ${n.y}) — ${n.type === 'serif' ? 'Castoro Italic' : 'TT Commons Light'}`
+      ).join('\n');
+
+      return `=== CONFIGURACIÓN EXACTA DE LÍNEAS Y CONSTELACIÓN ===
+
+PALABRAS:
+${nodesList}
+
+LÍNEAS DE CONEXIÓN:
+${linesList}
+
+PARÁMETROS:
+  • Grosor de Puntos: ${state.dotSize}px
+  • Separación entre Puntos: ${state.dotGap}px
+  • Margen Protector Transparente: ${state.maskStroke}px
+  • Opacidad de Líneas: ${Math.round(state.lineOpacity * 100)}%`;
+    }
+
+    function generateSvgCode() {
+      let linesSvg = state.lines.map(l => {
+        const pts = getLineEndpoints(l);
+        if (pts.isCurved) {
+          return `              <!-- ${l.from} a ${l.to} (Curva) -->\n              <path d="M${pts.x1},${pts.y1} Q${pts.ctrlX},${pts.ctrlY} ${pts.x2},${pts.y2}" />`;
+        } else {
+          return `              <!-- ${l.from} a ${l.to} -->\n              <line x1="${pts.x1}" y1="${pts.y1}" x2="${pts.x2}" y2="${pts.y2}" />`;
+        }
+      }).join('\n');
+
+      let maskTexts = state.nodes.map(n =>
+        `                  <text x="${n.x}" y="${n.y}" class="${n.type === 'serif' ? 'node-serif' : 'node-sans'}" text-anchor="middle">${n.label}</text>`
+      ).join('\n');
+
+      let visibleTexts = state.nodes.map(n =>
+        `              <!-- ${n.label} -->\n              <text x="${n.x}" y="${n.y}" class="${n.type === 'serif' ? 'node-serif' : 'node-sans'}" text-anchor="middle" fill="#FFFFFF">${n.label}</text>`
+      ).join('\n');
+
+      return `<!-- Constelación de Atributos de Marca (Red Conceptual) -->
+<div class="mesh-constellation-container" id="mesh-constellation-layer">
+  <svg class="mesh-constellation-svg" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <mask id="constellation-text-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="700">
+        <rect x="0" y="0" width="1000" height="700" fill="#FFFFFF" />
+        
+        <!-- Margen protector del Isotipo Central -->
+        <g class="constellation-mask-icon" transform="translate(500, 350) scale(1.1) translate(-43.715, -43.975)" fill="#000000" stroke="#000000" stroke-width="${state.maskStroke}" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M42.89,41.06c4.35-12.11,13.9-22.1,26.27-26.67L49.36,0c-8.7,11.98-13.62,29.58-12.31,42.83-10.17-7.88-16.73-20.05-17.25-33.23L0,24c8.7,11.98,23.93,22.1,36.93,24.94C26.3,56.17,12.7,58.65,0,55.07l7.56,23.28c14.08-4.58,28.41-15.93,35.13-27.42,3.6,12.35,1.75,26.05-5.57,37.02h24.48c0-14.8-6.37-31.94-15.22-41.89,12.86.39,25.32,6.39,33.49,16.74l7.56-23.28c-14.08-4.57-32.35-3.81-44.54,1.53Z" />
+        </g>
+
+        <!-- Margen protector de las Palabras -->
+        <g class="constellation-mask-nodes" fill="#000000" stroke="#000000" stroke-width="${state.maskStroke}" stroke-linejoin="round" stroke-linecap="round">
+${maskTexts}
+        </g>
+      </mask>
+    </defs>
+
+    <!-- Líneas Punteadas de Conexión en Blanco Superexposición -->
+    <g class="constellation-lines" mask="url(#constellation-text-mask)" stroke="#FFFFFF" stroke-linecap="round" stroke-width="${state.dotSize}" stroke-dasharray="0 ${state.dotGap}" opacity="${state.lineOpacity}">
+${linesSvg}
+    </g>
+
+    <!-- Textos de Atributos -->
+    <g class="constellation-nodes" fill="#FFFFFF">
+${visibleTexts}
+    </g>
+  </svg>
+</div>`;
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+
+    document.getElementById('btn-copy-config').addEventListener('click', () => {
+      const text = generateConfigSummary();
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('✨ ¡Configuración copiada! Pégamela en el chat.');
+      });
+    });
+
+    const codeModal = document.getElementById('code-modal');
+    const modalContent = document.getElementById('modal-code-content');
+
+    document.getElementById('btn-view-code').addEventListener('click', () => {
+      modalContent.textContent = generateConfigSummary();
+      codeModal.classList.add('is-open');
+    });
+
+    document.getElementById('btn-modal-close').addEventListener('click', () => {
+      codeModal.classList.remove('is-open');
+    });
+
+    document.getElementById('btn-modal-copy-json').addEventListener('click', () => {
+      navigator.clipboard.writeText(generateConfigSummary()).then(() => {
+        showToast('¡Resumen copiado!');
+      });
+    });
+
+    document.getElementById('btn-modal-copy-svg').addEventListener('click', () => {
+      navigator.clipboard.writeText(generateSvgCode()).then(() => {
+        showToast('¡Código SVG copiado!');
+      });
+    });
+
+    // =========================================================
+    // 9. Shader WebGL del Degradado Multicromático Oficial
+    // =========================================================
+    function initMeshGradient() {
+      const canvas = document.getElementById('mesh-gl-canvas');
+      if (!canvas) return;
+      const gl = canvas.getContext('webgl');
+      if (!gl) return;
+
+      const vsSource = `
+        attribute vec2 a_pos;
+        varying vec2 v_uv;
+        void main() {
+          v_uv = (a_pos + 1.0) * 0.5;
+          gl_Position = vec4(a_pos, 0.0, 1.0);
+        }
+      `;
+
+      const fsSource = `
+        precision highp float;
+        varying vec2 v_uv;
+        uniform vec2 u_res;
+        uniform vec2 u_points[5];
+        uniform vec3 u_colors[5];
+        uniform float u_radius[5];
+        uniform float u_falloff;
+        uniform float u_grain;
+        uniform vec3 u_bgcolor;
+        uniform float u_time;
+
+        float hash(vec2 p) {
+          return fract(sin(dot(p + u_time * 0.001, vec2(12.9898, 78.233))) * 43758.5453);
+        }
+
+        void main() {
+          vec2 st = gl_FragCoord.xy / u_res;
+          float aspect = u_res.x / u_res.y;
+          vec3 totalColor = vec3(0.0);
+          float totalWeight = 0.00001;
+
+          for (int i = 0; i < 5; i++) {
+            vec2 diff = (st - u_points[i]);
+            diff.x *= aspect;
+            float dist = length(diff) / max(u_radius[i], 0.05);
+            float weight = 1.0 / (pow(dist, u_falloff) + 0.0001);
+            totalColor += u_colors[i] * weight;
+            totalWeight += weight;
+          }
+
+          vec3 color = totalColor / totalWeight;
+          color = mix(u_bgcolor, color, 0.98);
+
+          if (u_grain > 0.0) {
+            float noise = (hash(st * 4.0) - 0.5) * (u_grain * 0.12);
+            color += noise;
+          }
+
+          gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
+        }
+      `;
+
+      function hexToRgb(hex) {
+        let c = hex.replace('#', '');
+        if (c.length === 3) c = c.split('').map(x => x + x).join('');
+        const n = parseInt(c, 16);
+        return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+      }
+
+      function createShader(type, src) {
+        const s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        return s;
+      }
+
+      const prog = gl.createProgram();
+      gl.attachShader(prog, createShader(gl.VERTEX_SHADER, vsSource));
+      gl.attachShader(prog, createShader(gl.FRAGMENT_SHADER, fsSource));
+      gl.linkProgram(prog);
+      gl.useProgram(prog);
+
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
+
+      const pos = gl.getAttribLocation(prog, 'a_pos');
+      gl.enableVertexAttribArray(pos);
+      gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+
+      const uRes = gl.getUniformLocation(prog, 'u_res');
+      const uPoints = gl.getUniformLocation(prog, 'u_points');
+      const uColors = gl.getUniformLocation(prog, 'u_colors');
+      const uRadius = gl.getUniformLocation(prog, 'u_radius');
+      const uFalloff = gl.getUniformLocation(prog, 'u_falloff');
+      const uGrain = gl.getUniformLocation(prog, 'u_grain');
+      const uBg = gl.getUniformLocation(prog, 'u_bgcolor');
+      const uTime = gl.getUniformLocation(prog, 'u_time');
+
+      const config = {
+        backgroundColor: "#0f0812",
+        falloff: 1.6,
+        grainNoise: 0.22,
+        animationSpeed: 0.6,
+        points: [
+          { id: 0, color: "#f9cee1", x: 0.20, y: 0.22, radius: 1.15, animOffset: 0.0 },
+          { id: 1, color: "#cfda8c", x: 0.80, y: 0.20, radius: 1.20, animOffset: 1.3 },
+          { id: 2, color: "#f9cee1", x: 0.50, y: 0.50, radius: 1.05, animOffset: 2.6 },
+          { id: 3, color: "#f28e0e", x: 0.18, y: 0.78, radius: 1.25, animOffset: 3.9 },
+          { id: 4, color: "#f9cee1", x: 0.82, y: 0.78, radius: 1.15, animOffset: 5.2 }
+        ]
+      };
+
+      let width = 0, height = 0;
+      function resizeMesh() {
+        const rect = canvas.parentElement ? canvas.parentElement.getBoundingClientRect() : canvas.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = Math.max(1, Math.floor((rect.width || window.innerWidth) * dpr));
+        height = Math.max(1, Math.floor((rect.height || 816) * dpr));
+        if (canvas.width !== width || canvas.height !== height) {
+          canvas.width = width;
+          canvas.height = height;
+          gl.viewport(0, 0, width, height);
+        }
+      }
+      window.addEventListener('resize', resizeMesh);
+      resizeMesh();
+
+      let animTime = 0;
+      let lastTime = performance.now();
+
+      function renderMesh(now) {
+        const delta = (now - lastTime) * 0.001;
+        lastTime = now;
+
+        animTime += delta * config.animationSpeed * 1000;
+        const t = animTime * 0.0011;
+
+        const currentPoints = config.points.map((p, i) => {
+          const bX = p.x;
+          const bY = p.y;
+          const freqX = 0.75 + i * 0.18;
+          const freqY = 0.65 + i * 0.20;
+          const phase = p.animOffset;
+
+          const ox = Math.sin(t * freqX + phase) * 0.065 + Math.cos(t * 0.55 + phase) * 0.02;
+          const oy = Math.cos(t * freqY + phase) * 0.055 + Math.sin(t * 0.60 + phase) * 0.02;
+
+          const px = Math.max(0.06, Math.min(0.94, bX + ox));
+          const py = Math.max(0.06, Math.min(0.94, bY + oy));
+          const r = p.radius * (1.0 + Math.sin(t * 1.2 + phase) * 0.06);
+
+          return { ...p, curX: px, curY: py, curR: r };
+        });
+
+        // Repulsión suave anti-cruces
+        const minDist = 0.18;
+        for (let iter = 0; iter < 2; iter++) {
+          for (let i = 0; i < currentPoints.length; i++) {
+            for (let j = i + 1; j < currentPoints.length; j++) {
+              const p1 = currentPoints[i];
+              const p2 = currentPoints[j];
+              const dx = p2.curX - p1.curX;
+              const dy = p2.curY - p1.curY;
+              const dist = Math.hypot(dx, dy);
+
+              if (dist < minDist && dist > 0.0001) {
+                const overlap = (minDist - dist) * 0.5;
+                const nx = dx / dist;
+                const ny = dy / dist;
+                p1.curX = Math.max(0.06, Math.min(0.94, p1.curX - nx * overlap));
+                p1.curY = Math.max(0.06, Math.min(0.94, p1.curY - ny * overlap));
+                p2.curX = Math.max(0.06, Math.min(0.94, p2.curX + nx * overlap));
+                p2.curY = Math.max(0.06, Math.min(0.94, p2.curY + ny * overlap));
+              }
+            }
+          }
+        }
+
+        const ptsArr = [];
+        const colArr = [];
+        const radArr = [];
+
+        currentPoints.forEach(p => {
+          ptsArr.push(p.curX, 1.0 - p.curY);
+          const rgb = hexToRgb(p.color);
+          colArr.push(rgb[0], rgb[1], rgb[2]);
+          radArr.push(p.curR);
+        });
+
+        gl.uniform2f(uRes, width, height);
+        gl.uniform1f(uFalloff, config.falloff);
+        gl.uniform1f(uGrain, config.grainNoise);
+        gl.uniform1f(uTime, now * 0.001);
+
+        const bgRgb = hexToRgb(config.backgroundColor);
+        gl.uniform3f(uBg, bgRgb[0], bgRgb[1], bgRgb[2]);
+
+        gl.uniform2fv(uPoints, new Float32Array(ptsArr));
+        gl.uniform3fv(uColors, new Float32Array(colArr));
+        gl.uniform1fv(uRadius, new Float32Array(radArr));
+
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        requestAnimationFrame(renderMesh);
+      }
+      requestAnimationFrame(renderMesh);
+    }
+
+    // Inicializar al cargar
+    window.addEventListener('DOMContentLoaded', () => {
+      renderConstellation();
+      updateInspector();
+      initMeshGradient();
+    });
+  </script>
+</body>
+
+</html>

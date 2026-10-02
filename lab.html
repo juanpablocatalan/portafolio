@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Effects Lab — Despixelado y Decodificación — Juan Pablo</title>
+  <meta name="description" content="Efectos de aparición por despixelado y decodificación matricial para el menú de Contacto.">
+  <link rel="stylesheet" href="css/style.css?v=9">
+  <style>
+    .lab-container {
+      padding-top: calc(var(--space-2xl) + 2rem);
+      padding-bottom: var(--space-3xl);
+      min-height: 100vh;
+    }
+
+    .lab-header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      padding-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .lab-title {
+      font-family: var(--font-mono);
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .lab-subtitle {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--color-muted);
+      max-width: 650px;
+      line-height: 1.6;
+    }
+
+    .lab-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      background: #FFFF00;
+      color: #000000;
+      padding: 0.35rem 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .contact-showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    .contact-card {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 1.5rem;
+      background: #0E0E0E;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 280px;
+      position: relative;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .contact-card:hover {
+      border-color: #FFFF00;
+      background-color: #121212;
+    }
+
+    .contact-card-title {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #FFF;
+      margin-bottom: 0.35rem;
+    }
+
+    .contact-card-desc {
+      font-size: 11.5px;
+      color: var(--color-muted);
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-interactive-box {
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      background: #000;
+      padding: 1.25rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      position: relative;
+      min-height: 125px;
+    }
+
+    .test-trigger-btn {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #FFF;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 0.3rem 0.65rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .test-trigger-btn:hover,
+    .test-trigger-btn.is-active {
+      background-color: #FFFF00;
+      color: #000;
+      border-color: #FFFF00;
+    }
+
+    .test-sublist {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.18rem;
+      margin-top: 0.6rem;
+      width: 100%;
+    }
+
+    .test-subitem {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #999;
+      padding: 0.15rem 0.4rem;
+      text-decoration: none;
+      display: block;
+      min-height: 1.4em;
+      transition: background-color 0.1s, color 0.1s;
+    }
+
+    .test-subitem:hover {
+      background-color: #FFFF00;
+      color: #000;
+    }
+
+    .back-home-bar {
+      margin-bottom: 2rem;
+    }
+    .back-home-bar a {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .back-home-bar a:hover {
+      color: #FFFF00;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container lab-container">
+    
+    <div class="back-home-bar">
+      <a href="index.html">&larr; Volver al Inicio</a>
+    </div>
+
+    <header class="lab-header">
+      <div>
+        <h1 class="lab-title">Laboratorio: Efectos de Despixelado &amp; Decodificación</h1>
+        <p class="lab-subtitle">
+          Haz clic en cada botón <strong>[ CONTACTO &darr; ]</strong> para ver cómo las letras aparecen despixelándose y descifrándose en tiempo real con diferentes ritmos y tipos de glifos.
+        </p>
+      </div>
+      <span class="lab-badge">Efectos de Despixelado</span>
+    </header>
+
+    <div class="contact-showcase-grid">
+
+      <!-- 1. Despixelado con Bloques ASCII (█ ▓ ▒ ░) -->
+      <div class="contact-card">
+        <div>
+          <div class="contact-card-title">01 / Despixelado con Bloques (█ ▓ ▒ ░)</div>
+          <div class="contact-card-desc">Aparece primero como píxeles sólidos y tramas densas que se van resolviendo en letras nítidas.</div>
+        </div>
+        <div class="contact-interactive-box">
+          <button class="test-trigger-btn" onclick="toggleBlocksDecoder(this)">CONTACTO &darr;</button>
+          <div class="test-sublist" id="blocks-box">
+            <span class="test-subitem" id="block-email"></span>
+            <span class="test-subitem" id="block-linkedin"></span>
+            <span class="test-subitem" id="block-instagram"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Decodificador Matricial Rápido (Matrix Glyphs) -->
+      <div class="contact-card">
+        <div>
+          <div class="contact-card-title">02 / Matrix Decoder Ultra-Rápido</div>
+          <div class="contact-card-desc">Ráfaga de símbolos técnicos y números que se ordenan en 150ms como terminal criptográfica.</div>
+        </div>
+        <div class="contact-interactive-box">
+          <button class="test-trigger-btn" onclick="toggleMatrixDecoder(this)">CONTACTO &darr;</button>
+          <div class="test-sublist" id="matrix-box">
+            <span class="test-subitem" id="matrix-email"></span>
+            <span class="test-subitem" id="matrix-linkedin"></span>
+            <span class="test-subitem" id="matrix-instagram"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Despixelado en Cascada (Línea por Línea) -->
+      <div class="contact-card">
+        <div>
+          <div class="contact-card-title">03 / Despixelado Secuencial (Cascada)</div>
+          <div class="contact-card-desc">Se despixela primero EMAIL, inmediatamente después LINKED IN y por último INSTAGRAM con ritmo fluido.</div>
+        </div>
+        <div class="contact-interactive-box">
+          <button class="test-trigger-btn" onclick="toggleStaggeredDecoder(this)">CONTACTO &darr;</button>
+          <div class="test-sublist" id="stagger-dec-box">
+            <span class="test-subitem" id="stagger-email"></span>
+            <span class="test-subitem" id="stagger-linkedin"></span>
+            <span class="test-subitem" id="stagger-instagram"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Despixelado Monospace Binario (0 1 X #) -->
+      <div class="contact-card">
+        <div>
+          <div class="contact-card-title">04 / Binario &amp; Hexadecimal (0101X)</div>
+          <div class="contact-card-desc">Flujo de datos binarios y código hexadecimal que decanta en los nombres finales.</div>
+        </div>
+        <div class="contact-interactive-box">
+          <button class="test-trigger-btn" onclick="toggleBinaryDecoder(this)">CONTACTO &darr;</button>
+          <div class="test-sublist" id="binary-box">
+            <span class="test-subitem" id="binary-email"></span>
+            <span class="test-subitem" id="binary-linkedin"></span>
+            <span class="test-subitem" id="binary-instagram"></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const itemsData = [
+      { emailId: 'block-email', linkId: 'block-linkedin', instId: 'block-instagram' },
+      { emailId: 'matrix-email', linkId: 'matrix-linkedin', instId: 'matrix-instagram' },
+      { emailId: 'stagger-email', linkId: 'stagger-linkedin', instId: 'stagger-instagram' },
+      { emailId: 'binary-email', linkId: 'binary-linkedin', instId: 'binary-instagram' }
+    ];
+
+    // Helper to decode a single element
+    function decodeElement(el, targetText, glyphSet, speed = 25, staggerDelay = 0, callback = null) {
+      setTimeout(() => {
+        let iteration = 0;
+        const totalIterations = targetText.length * 2;
+        const interval = setInterval(() => {
+          el.innerText = targetText
+            .split('')
+            .map((letter, index) => {
+              if (index < iteration / 2) {
+                return targetText[index];
+              }
+              return glyphSet[Math.floor(Math.random() * glyphSet.length)];
+            })
+            .join('');
+
+          iteration++;
+          if (iteration >= totalIterations) {
+            clearInterval(interval);
+            el.innerText = targetText;
+            if (callback) callback();
+          }
+        }, speed);
+      }, staggerDelay);
+    }
+
+    // 1. Blocks Decoder (█ ▓ ▒ ░)
+    const blockGlyphs = '█▓▒░■□▪▫▲▼';
+    let blockActive = false;
+    function toggleBlocksDecoder(btn) {
+      blockActive = !blockActive;
+      btn.classList.toggle('is-active', blockActive);
+      const email = document.getElementById('block-email');
+      const link = document.getElementById('block-linkedin');
+      const inst = document.getElementById('block-instagram');
+
+      if (!blockActive) {
+        email.innerText = ''; link.innerText = ''; inst.innerText = '';
+        return;
+      }
+
+      decodeElement(email, 'EMAIL', blockGlyphs, 30, 0);
+      decodeElement(link, 'LINKED IN', blockGlyphs, 30, 60);
+      decodeElement(inst, 'INSTAGRAM', blockGlyphs, 30, 120);
+    }
+
+    // 2. Matrix Glyphs
+    const matrixGlyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()<>{}[]';
+    let matrixActive = false;
+    function toggleMatrixDecoder(btn) {
+      matrixActive = !matrixActive;
+      btn.classList.toggle('is-active', matrixActive);
+      const email = document.getElementById('matrix-email');
+      const link = document.getElementById('matrix-linkedin');
+      const inst = document.getElementById('matrix-instagram');
+
+      if (!matrixActive) {
+        email.innerText = ''; link.innerText = ''; inst.innerText = '';
+        return;
+      }
+
+      decodeElement(email, 'EMAIL', matrixGlyphs, 20, 0);
+      decodeElement(link, 'LINKED IN', matrixGlyphs, 20, 40);
+      decodeElement(inst, 'INSTAGRAM', matrixGlyphs, 20, 80);
+    }
+
+    // 3. Staggered Cascading Decoder
+    let staggerActive = false;
+    function toggleStaggeredDecoder(btn) {
+      staggerActive = !staggerActive;
+      btn.classList.toggle('is-active', staggerActive);
+      const email = document.getElementById('stagger-email');
+      const link = document.getElementById('stagger-linkedin');
+      const inst = document.getElementById('stagger-instagram');
+
+      if (!staggerActive) {
+        email.innerText = ''; link.innerText = ''; inst.innerText = '';
+        return;
+      }
+
+      decodeElement(email, 'EMAIL', blockGlyphs + matrixGlyphs, 25, 0, () => {
+        decodeElement(link, 'LINKED IN', blockGlyphs + matrixGlyphs, 25, 0, () => {
+          decodeElement(inst, 'INSTAGRAM', blockGlyphs + matrixGlyphs, 25, 0);
+        });
+      });
+    }
+
+    // 4. Binary Hex Decoder
+    const binaryGlyphs = '01010110X#%$&_';
+    let binaryActive = false;
+    function toggleBinaryDecoder(btn) {
+      binaryActive = !binaryActive;
+      btn.classList.toggle('is-active', binaryActive);
+      const email = document.getElementById('binary-email');
+      const link = document.getElementById('binary-linkedin');
+      const inst = document.getElementById('binary-instagram');
+
+      if (!binaryActive) {
+        email.innerText = ''; link.innerText = ''; inst.innerText = '';
+        return;
+      }
+
+      decodeElement(email, 'EMAIL', binaryGlyphs, 25, 0);
+      decodeElement(link, 'LINKED IN', binaryGlyphs, 25, 50);
+      decodeElement(inst, 'INSTAGRAM', binaryGlyphs, 25, 100);
+    }
+  </script>
+
+</body>
+</html>

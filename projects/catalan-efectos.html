@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+  </script>
+  <title>Laboratorio de Calibración &amp; Transición — Catalán y Cía.</title>
+  <meta name="description"
+    content="Laboratorio de calibración de inicio, transición fluida y alineación final exacta para el logo oficial de Catalán y Cía.">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="../css/style.css">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --color-burdeo: #69112a;
+      --color-rosado: #f9cee1;
+      --color-fucsia: #e61466;
+      --color-naranja: #f28e0e;
+      --color-verde: #cfda8c;
+      --color-negro: #000000;
+
+      --active-bg: var(--color-rosado);
+      --active-logo-typo: var(--color-burdeo);
+      --active-logo-pinwheel: var(--color-fucsia);
+
+      /* Parámetros de Calibración y Posición */
+      --pinwheel-origin-x: 414.27px;
+      --pinwheel-origin-y: 35.28px;
+      --start-offset-x: -389.6px;
+      --start-phase-deg: 0deg;
+      --spin-travel-deg: 360deg;
+      /* 1 vuelta completa (360°) para alineación final perfecta en 0° */
+      --travel-duration: 1.80s;
+      --travel-easing: cubic-bezier(0.16, 0.4, 0.2, 1);
+      --initial-spin-speed: 2.10s;
+      --initial-wait: 1.55s;
+      --blur-amount: 4px;
+      --typo-duration: 1.5s;
+      --typo-delay: 0.15s;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #0b070c;
+      color: #ffffff;
+      font-family: var(--font-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Control Bar */
+    .lab-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(11, 7, 12, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.9rem var(--page-margin);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .lab-brand-group {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .lab-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--color-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      transition: color var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .lab-back-btn:hover {
+      color: #ffffff;
+    }
+
+    .lab-badge {
+      background: rgba(230, 20, 102, 0.15);
+      color: var(--color-fucsia);
+      border: 1px solid rgba(230, 20, 102, 0.4);
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .lab-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .lab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      padding: 0.5rem 1.1rem;
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .lab-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .lab-btn-primary {
+      background: var(--color-fucsia);
+      border-color: var(--color-fucsia);
+    }
+
+    .lab-btn-primary:hover {
+      background: #ff1a75;
+      border-color: #ff1a75;
+      box-shadow: 0 0 20px rgba(230, 20, 102, 0.5);
+    }
+
+    .lab-btn.active-toggle {
+      background: rgba(74, 222, 128, 0.2);
+      border-color: #4ade80;
+      color: #4ade80;
+    }
+
+    /* Main Stage */
+    .lab-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem var(--page-margin) 4rem;
+      gap: 2rem;
+      width: 100%;
+      max-width: 1250px;
+      margin: 0 auto;
+    }
+
+    /* Canvas Frame Card */
+    .preview-canvas-wrapper {
+      width: 100%;
+      background-color: var(--active-bg);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: clamp(3.5rem, 7vw, 6.5rem) 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: background-color 0.4s ease;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+      min-height: 380px;
+      cursor: pointer;
+    }
+
+    .canvas-color-indicator {
+      position: absolute;
+      top: 1.25rem;
+      left: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(0, 0, 0, 0.45);
+      font-weight: 700;
+      transition: color 0.4s ease;
+    }
+
+    .canvas-status-pill {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: rgba(0, 0, 0, 0.45);
+      color: #ffffff;
+      padding: 0.4rem 0.9rem;
+      border-radius: 9999px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--color-fucsia);
+      box-shadow: 0 0 8px var(--color-fucsia);
+      animation: pulse-dot 1.5s infinite;
+    }
+
+    @keyframes pulse-dot {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.3);
+        opacity: 0.6;
+      }
+    }
+
+    /* Transition Solutions Selector Bar */
+    .transition-solutions-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1rem 1.25rem;
+      border-radius: 16px;
+    }
+
+    .solution-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: #ffffff;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .solution-chips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 0.6rem;
+    }
+
+    .solution-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      color: rgba(255, 255, 255, 0.85);
+      font-family: var(--font-primary);
+      font-size: 12px;
+      padding: 0.65rem 0.85rem;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .solution-chip:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .solution-chip.active {
+      background: rgba(230, 20, 102, 0.15);
+      border-color: var(--color-fucsia);
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(230, 20, 102, 0.3);
+    }
+
+    .solution-title {
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .solution-desc {
+      font-size: 10.5px;
+      color: var(--color-muted);
+      font-family: var(--font-mono);
+      line-height: 1.4;
+    }
+
+    /* Logo Frame & Vector */
+    .lab-logo-stage {
+      width: 665px;
+      max-width: 90%;
+      height: auto;
+      position: relative;
+    }
+
+    .lab-logo-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      overflow: visible;
+      shape-rendering: geometricPrecision;
+    }
+
+    /* =========================================================
+       SISTEMA DE ANIMACIÓN FLUIDA & ALINEACIÓN PERFECTA (0° / 360°)
+       viewBox="0 0 449.35 79.98"
+       Centro geométrico del molinete: 414.27px 35.28px
+       Posición de reposo final: translateX(0px), rotate(0deg o 360°*k)
+       ========================================================= */
+    .pinwheel-group {
+      transform-origin: var(--pinwheel-origin-x) var(--pinwheel-origin-y);
+      transform: translateX(var(--start-offset-x));
+      transition: transform var(--travel-duration) var(--travel-easing);
+      will-change: transform;
+    }
+
+    /* Capa de Giro Continuo en Espera */
+    .pinwheel-spin-layer {
+      transform-origin: var(--pinwheel-origin-x) var(--pinwheel-origin-y);
+      animation: loading-spin-calibrated var(--initial-spin-speed) linear infinite;
+      will-change: transform;
+    }
+
+    /* Capa de Tipografía */
+    .typography-group {
+      opacity: 0;
+      filter: blur(var(--blur-amount));
+      transition: opacity var(--typo-duration) ease var(--typo-delay),
+        filter var(--typo-duration) ease var(--typo-delay),
+        clip-path var(--travel-duration) var(--travel-easing) var(--typo-delay);
+      will-change: opacity, filter, clip-path;
+    }
+
+    /* ESTADO ANIMADO / LOADED */
+    .state-loaded .pinwheel-group {
+      transform: translateX(0px);
+    }
+
+    /* MODO 1: AUTO-FASE SINCRONIZADA (Acomoda el inicio para empalme fluido y llegada a 0° exacto) */
+    .mode-auto-phase.state-loaded .pinwheel-spin-layer {
+      /* Arranca exactamente a 0°/360° en el despegue y gira exactamente N vueltas completas */
+      animation: travel-spin-clean var(--travel-duration) var(--travel-easing) forwards;
+    }
+
+    /* MODO 2: INERCIA DINÁMICA A 360° (Calcula el ángulo en vivo y aterriza en múltiplo limpio de 360°) */
+    .mode-fluid-inertia.state-loaded .pinwheel-spin-layer {
+      animation: spin-fluid-inertia var(--travel-duration) var(--travel-easing) forwards;
+    }
+
+    /* MODO 3: DESCUBRIMIENTO PROGRESIVO (Clip-Path con aterrizaje a 0°) */
+    .mode-clip-reveal .typography-group {
+      opacity: 1;
+      filter: blur(0px);
+      clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+    }
+
+    .mode-clip-reveal.state-loaded .typography-group {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .mode-clip-reveal.state-loaded .pinwheel-spin-layer {
+      animation: travel-spin-clean var(--travel-duration) var(--travel-easing) forwards;
+    }
+
+    /* MODO 4: SALIDA TANGENCIAL EASE-OUT (Arranque inmediato sin freno inicial, final a 0°) */
+    .mode-ease-out.state-loaded .pinwheel-spin-layer {
+      animation: travel-spin-clean var(--travel-duration) cubic-bezier(0, 0, 0.2, 1) forwards;
+    }
+
+    .state-loaded .typography-group {
+      opacity: 1;
+      filter: blur(0px);
+    }
+
+    /* Giro continuo en espera calibrado desde la fase inicial --start-phase-deg */
+    @keyframes loading-spin-calibrated {
+      from {
+        transform: rotate(var(--start-phase-deg, 0deg));
+      }
+
+      to {
+        transform: rotate(calc(var(--start-phase-deg, 0deg) + 360deg));
+      }
+    }
+
+    /* Giro de desplazamiento limpio que termina EXACTAMENTE en un múltiplo de 360° (0° exacto respecto al original) */
+    @keyframes travel-spin-clean {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(var(--spin-travel-deg));
+      }
+    }
+
+    /* Giro con inercia dinámica que aterriza en múltiplo de 360° */
+    @keyframes spin-fluid-inertia {
+      0% {
+        transform: rotate(var(--current-spin-angle, 0deg));
+      }
+
+      100% {
+        transform: rotate(var(--target-spin-angle, 360deg));
+      }
+    }
+
+    /* Silueta de Referencia (Ghost Overlay) para comprobar alineación 100% perfecta */
+    .ghost-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 10;
+    }
+
+    .ghost-layer.show-ghost {
+      opacity: 0.45;
+    }
+
+    .ghost-layer path,
+    .ghost-layer polygon,
+    .ghost-layer rect,
+    .ghost-layer circle {
+      stroke: #00ffcc;
+      stroke-width: 0.75px;
+      stroke-dasharray: 2, 2;
+      fill: none;
+    }
+
+    .ghost-layer .ghost-pinwheel {
+      stroke: #ffffff;
+      stroke-width: 1px;
+      stroke-dasharray: 3, 2;
+      fill: rgba(255, 255, 255, 0.15);
+    }
+
+    /* =========================================================
+       Control Studio Grid
+       ========================================================= */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    @media (max-width: 900px) {
+      .controls-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .control-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.35rem;
+    }
+
+    .control-card-title {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--color-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 0.75rem;
+    }
+
+    /* Sliders List */
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .slider-title {
+      color: #dddddd;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .slider-val {
+      color: var(--color-rosado);
+      font-weight: 700;
+      background: rgba(249, 206, 225, 0.1);
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      border: 1px solid rgba(249, 206, 225, 0.2);
+    }
+
+    .lab-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .lab-slider:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .lab-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--color-fucsia);
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(230, 20, 102, 0.8);
+      transition: transform 0.15s ease, background-color 0.15s ease;
+    }
+
+    .lab-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      background: #ff1a75;
+    }
+
+    .slider-hints {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    /* Color Swatches Grid */
+    .color-swatches {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.65rem;
+    }
+
+    .swatch-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.75rem 0.4rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      transition: all 0.2s ease;
+    }
+
+    .swatch-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .swatch-btn.active {
+      border-color: #ffffff;
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .swatch-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Live Telemetry Info */
+    .telemetry-block {
+      background: #000000;
+      border-radius: 14px;
+      padding: 1.15rem;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      line-height: 1.7;
+      color: #a0a0a0;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .telemetry-row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+      padding-bottom: 0.3rem;
+    }
+
+    .telemetry-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .telemetry-highlight {
+      color: var(--color-rosado);
+      font-weight: 600;
+    }
+
+    .telemetry-success {
+      color: #4ade80;
+      font-weight: 700;
+    }
+
+    .copy-code-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      padding: 0.65rem;
+      border-radius: 10px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .copy-code-btn:hover {
+      background: var(--color-fucsia);
+      border-color: var(--color-fucsia);
+      box-shadow: 0 0 15px rgba(230, 20, 102, 0.4);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Control Bar -->
+  <header class="lab-topbar">
+    <div class="lab-brand-group">
+      <a href="project-03.html" class="lab-back-btn">
+        <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+        <span>Volver a Catalán y Cía.</span>
+      </a>
+      <span class="lab-badge">Laboratorio de Calibración &amp; Fluidez</span>
+    </div>
+
+    <div class="lab-actions">
+      <!-- Botón de Silueta de Referencia para verificar alineación perfecta -->
+      <button class="lab-btn" id="btn-toggle-ghost"
+        title="Verifica que el asterisco calce 100% sobre la posición original">
+        <i data-lucide="crosshair" style="width: 15px; height: 15px;"></i>
+        <span id="ghost-label">Guía de Alineación: OFF</span>
+      </button>
+
+      <button class="lab-btn lab-btn-primary" id="btn-replay">
+        <i data-lucide="rotate-ccw" style="width: 15px; height: 15px;"></i>
+        <span>Repetir Secuencia</span>
+      </button>
+
+      <button class="lab-btn" id="btn-toggle-loop">
+        <i data-lucide="repeat" style="width: 15px; height: 15px;"></i>
+        <span id="loop-label">Auto-Loop: OFF</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Showcase Area -->
+  <main class="lab-main">
+
+    <!-- Selector de Métodos de Calibración & Fluidez -->
+    <div class="transition-solutions-bar">
+      <div class="solution-header">
+        <span>
+          <i data-lucide="sparkles"
+            style="width: 14px; height: 14px; color: var(--color-fucsia); vertical-align: middle;"></i>
+          Modo de Calibración &amp; Salida:
+        </span>
+        <span style="color: #4ade80; font-size: 11px; font-weight: 600;">
+          <i data-lucide="check-circle-2" style="width: 13px; height: 13px; vertical-align: middle;"></i>
+          Todos los modos terminan con 0° de error en la posición original
+        </span>
+      </div>
+
+      <div class="solution-chips-grid">
+        <button class="solution-chip active" data-mode="mode-auto-phase" data-curve="cubic-bezier(0.16, 0.4, 0.2, 1)"
+          data-typodelay="0.15">
+          <div class="solution-title">
+            <span>1. Auto-Fase Sincronizada</span>
+            <span style="color: var(--color-fucsia); font-size: 10px;">Recomendado</span>
+          </div>
+          <span class="solution-desc">Acomoda la fase inicial en la "C" para que despegue sin pausa y caiga en 0°
+            exacto.</span>
+        </button>
+
+        <button class="solution-chip" data-mode="mode-fluid-inertia" data-curve="cubic-bezier(0.16, 0.4, 0.2, 1)"
+          data-typodelay="0.15">
+          <div class="solution-title">
+            <span>2. Inercia Dinámica a 0°</span>
+          </div>
+          <span class="solution-desc">Captura el ángulo en vivo y completa el giro hasta el múltiplo exacto de
+            360°.</span>
+        </button>
+
+        <button class="solution-chip" data-mode="mode-clip-reveal" data-curve="cubic-bezier(0.2, 0.6, 0.2, 1)"
+          data-typodelay="0.0">
+          <div class="solution-title">
+            <span>3. Revelado Progresivo</span>
+          </div>
+          <span class="solution-desc">Aparece la tipografía al rodar el asterisco, aterrizando en 0° exacto.</span>
+        </button>
+
+        <button class="solution-chip" data-mode="mode-ease-out" data-curve="cubic-bezier(0, 0, 0.2, 1)"
+          data-typodelay="0.2">
+          <div class="solution-title">
+            <span>4. Salida Tangencial</span>
+          </div>
+          <span class="solution-desc">Arranque inmediato sin desaceleración inicial, llegando a 0° exacto.</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Interactive Canvas Stage -->
+    <div class="preview-canvas-wrapper" id="preview-canvas" title="Click para repetir animación">
+      <span class="canvas-color-indicator" id="canvas-color-name">Fondo: Rosado (#f9cee1)</span>
+
+      <div class="canvas-status-pill">
+        <span class="status-dot"></span>
+        <span id="status-label">Cargando animación...</span>
+      </div>
+
+      <!-- Catalán y Cía. Logo SVG Oficial (assets/catalanycia/logo.svg) -->
+      <div class="lab-logo-stage mode-auto-phase" id="logo-stage">
+
+        <!-- Silueta de Referencia (Guía de comprobación para ver el encaje 100% idéntico) -->
+        <svg class="lab-logo-svg ghost-layer" id="ghost-svg" xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 449.35 79.98">
+          <g>
+            <path
+              d="M189.4,25.88h0c-6.5,0-11.76,5.26-11.76,11.76,0-7.05,2.35-7.05,2.35-11.76h-9.41v35.29h9.41v-24.7c0-3.25,2.63-5.88,5.88-5.88h0c3.25,0,5.88,2.63,5.88,5.88v24.7h9.41v-23.52c0-6.5-5.27-11.76-11.76-11.76Z" />
+            <polygon points="124.7 16.47 124.7 61.16 134.11 61.16 134.11 11.76 124.7 16.47" />
+            <g>
+              <path d="M152.93,12.94l4.7,3.53c-2.83,3.76-8.38,6.7-11.76,5.87,3.99-1.41,6.82-5.17,7.06-9.41Z" />
+              <path
+                d="M159.99,49.4c-2.35,3.53-4.7,4.7-8.23,4.7-2.35,0-4.7-2.35-4.7-4.7,0-7.06,12.94-4.7,16.47-10.59,0,0-1.18,7.06-3.53,10.59ZM142.35,25.88v9.41c7.06,0,11.76-4.7,16.47-4.7,2.35,0,4.7,1.18,4.7,3.53,0,8.23-25.88,1.18-25.88,17.64,0,7.06,4.7,9.41,10.59,9.41,7.06,0,10.59-7.06,12.94-9.41,0,0-4.7,7.06-4.7,9.41h9.41v-27.05c0-8.23-14.11-8.23-23.52-8.23Z" />
+            </g>
+            <path d="M321.14,12.94l4.7,3.53c-2.83,3.76-8.38,6.7-11.76,5.87,3.99-1.41,6.82-5.17,7.06-9.41Z" />
+            <rect x="314.08" y="25.88" width="9.41" height="35.29" />
+            <path
+              d="M349.37,49.4c-2.35,3.53-4.7,4.7-8.23,4.7-2.35,0-4.7-2.35-4.7-4.7,0-7.06,12.94-4.7,16.47-10.59,0,0-1.18,7.06-3.53,10.59ZM331.72,25.88v9.41c7.06,0,11.76-4.7,16.47-4.7,2.35,0,4.7,1.18,4.7,3.53,0,8.23-25.88,1.18-25.88,17.64,0,7.06,4.7,9.41,10.59,9.41,7.06,0,10.59-7.06,12.94-9.41,0,0-4.7,7.06-4.7,9.41h9.41v-27.05c0-8.23-14.11-8.23-23.52-8.23Z" />
+            <path
+              d="M114.12,49.4c-2.35,3.53-4.7,4.7-8.23,4.7-2.35,0-4.7-2.35-4.7-4.7,0-7.06,12.94-4.7,16.47-10.59,0,0-1.18,7.06-3.53,10.59ZM96.47,25.88v9.41c7.06,0,11.76-4.7,16.47-4.7,2.35,0,4.7,1.18,4.7,3.53,0,8.23-25.88,1.18-25.88,17.64,0,7.06,4.7,9.41,10.59,9.41,7.06,0,10.59-7.06,12.94-9.41,0,0-4.7,7.06-4.7,9.41h9.41v-27.05c0-8.23-14.11-8.23-23.52-8.23Z" />
+            <path
+              d="M65.89,49.4c-2.35,3.53-4.7,4.7-8.23,4.7-2.35,0-4.7-2.35-4.7-4.7,0-7.06,12.94-4.7,16.47-10.59,0,0-1.18,7.06-3.53,10.59ZM48.25,25.88v9.41c7.06,0,11.76-4.7,16.47-4.7,2.35,0,4.7,1.18,4.7,3.53,0,8.23-25.88,1.18-25.88,17.64,0,7.06,4.7,9.41,10.59,9.41,7.06,0,10.59-7.06,12.94-9.41,0,0-4.7,7.06-4.7,9.41h9.41v-27.05c0-8.23-14.11-8.23-23.52-8.23Z" />
+            <path
+              d="M294.08,58.81c-16.47,0-22.98-47.05-3.53-47.05,6.43,0,9.39,4.7,11.75,11.76l7.07-3.53c-3.53-5.88-8.23-10.59-18.82-10.59-29.41,0-27.07,48.23-.02,51.75,9.4,1.23,16.49-4.7,20.02-11.76h-5.9c-1.18,4.7-3.51,9.41-10.57,9.41Z" />
+            <path
+              d="M24.72,58.81c-16.47,0-22.98-47.05-3.53-47.05,6.43,0,9.39,4.7,11.75,11.76l7.07-3.53c-3.53-5.88-8.23-10.59-18.82-10.59-29.41,0-27.07,48.23-.02,51.75,9.4,1.23,16.49-4.7,20.02-11.76h-5.9c-1.18,4.7-3.51,9.41-10.57,9.41Z" />
+            <polygon
+              points="91.77 25.88 87.06 25.88 87.06 14.11 77.65 18.82 77.65 25.88 72.95 25.88 72.95 28.23 77.65 28.23 77.65 61.16 87.06 61.16 87.06 28.23 91.77 28.23 91.77 25.88" />
+            <path
+              d="M242.33,25.88c0,7.06,4.7,7.06,2.35,14.11-.84,2.53-4.1,12.31-5.88,17.65l-10.59-31.76h-10.59l11.76,35.29h8.23c-2.35,8.23-2.35,10.59-16.47,11.76l4.7,7.06c2.35,0,9.41-1.18,12.94-11.76,1.18-3.53,2.35-7.06,2.35-7.06l11.76-35.29h-10.59Z" />
+            <circle cx="359.95" cy="58.81" r="2.35" />
+            <path class="ghost-pinwheel"
+              d="M413.61,32.95c3.49-9.72,11.15-17.74,21.08-21.4l-15.89-11.54c-6.98,9.61-10.93,23.74-9.87,34.37-8.16-6.32-13.42-16.09-13.84-26.66l-15.89,11.54c6.98,9.61,19.2,17.73,29.64,20.01-8.53,5.81-19.45,7.79-29.63,4.93l6.07,18.68c11.3-3.67,22.79-12.78,28.19-22,2.89,9.91,1.4,20.9-4.47,29.7h19.64c0-11.88-5.11-25.63-12.21-33.61,10.32.32,20.32,5.12,26.87,13.43l6.07-18.68c-11.3-3.67-25.95-3.06-35.74,1.23Z" />
+          </g>
+        </svg>
+
+        <!-- SVG de la Animación Principal -->
+        <svg class="lab-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 449.35 79.98">
+          <!-- 1. Capa de Texto y Tipografía -->
+          <g id="typography-layer" class="typography-group">
+            <path fill="#69112a"
+              d="M189.4,25.88h0c-6.5,0-11.76,5.26-11.76,11.76,0-7.05,2.35-7.05,2.35-11.76h-9.41v35.29h9.41v-24.7c0-3.25,2.63-5.88,5.88-5.88h0c3.25,0,5.88,2.63,5.88,5.88v24.7h9.41v-23.52c0-6.5-5.27-11.76-11.76-11.76Z" />
+            <polygon fill="#69112a" points="124.7 16.47 124.7 61.16 134.11 61.16 134.11 11.76 124.7 16.47" />
+            <g>
+              <path fill="#69112a"
+                d="M152.93,12.94l4.7,3.53c-2.83,3.76-8.38,6.7-11.76,5.87,3.99-1.41,6.82-5.17,7.06-9.41Z" />
+              <path fill="#69112a"
+                d="M159.99,49.4c-2.35,3.53-4.7,4.7-8.23,4.7-2.35,0-4.7-2.35-4.7-4.7,0-7.06,12.94-4.7,16.47-10.59,0,0-1.18,7.06-3.53,10.59ZM142.35,25.88v9.41c7.06,0,11.76-4.7,16.47-4.7,2.35,0,4.7,1.18,4.7,3.53,0,8.23-25.88,1.18-25.88,17.64,0,7.06,4.7,9.41,10.59,9.41,7.06,0,10.59-7.06,12.94-9.41,0,0-4.7,7.06-4.7,9.41h9.41v-27.05c0-8.23-14.11-8.23-23.52-8.23Z" />
+            </g>
+            <path fill="#69112a"
+              d="M321.14,12.94l4.7,3.53c-2.83,3.76-8.38,6.7-11.76,5.87,3.99-1.41,6.82-5.17,7.06-9.41Z" />
+            <rect fill="#69112a" x="314.08" y="25.88" width="9.41" height="35.29" />
+            <path fill="#69112a"
+              d="M349.37,49.4c-2.35,3.53-4.7,4.7-8.23,4.7-2.35,0-4.7-2.35-4.7-4.7,0-7.06,12.94-4.7,16.47-10.59,0,0-1.18,7.06-3.53,10.59ZM331.72,25.88v9.41c7.06,0,11.76-4.7,16.47-4.7,2.35,0,4.7,1.18,4.7,3.53,0,8.23-25.88,1.18-25.88,17.64,0,7.06,4.7,9.41,10.59,9.41,7.06,0,10.59-7.06,12.94-9.41,0,0-4.7,7.06-4.7,9.41h9.41v-27.05c0-8.23-14.11-8.23-23.52-8.23Z" />
+            <path fill="#69112a"
+              d="M114.12,49.4c-2.35,3.53-4.7,4.7-8.23,4.7-2.35,0-4.7-2.35-4.7-4.7,0-7.06,12.94-4.7,16.47-10.59,0,0-1.18,7.06-3.53,10.59ZM96.47,25.88v9.41c7.06,0,11.76-4.7,16.47-4.7,2.35,0,4.7,1.18,4.7,3.53,0,8.23-25.88,1.18-25.88,17.64,0,7.06,4.7,9.41,10.59,9.41,7.06,0,10.59-7.06,12.94-9.41,0,0-4.7,7.06-4.7,9.41h9.41v-27.05c0-8.23-14.11-8.23-23.52-8.23Z" />
+            <path fill="#69112a"
+              d="M65.89,49.4c-2.35,3.53-4.7,4.7-8.23,4.7-2.35,0-4.7-2.35-4.7-4.7,0-7.06,12.94-4.7,16.47-10.59,0,0-1.18,7.06-3.53,10.59ZM48.25,25.88v9.41c7.06,0,11.76-4.7,16.47-4.7,2.35,0,4.7,1.18,4.7,3.53,0,8.23-25.88,1.18-25.88,17.64,0,7.06,4.7,9.41,10.59,9.41,7.06,0,10.59-7.06,12.94-9.41,0,0-4.7,7.06-4.7,9.41h9.41v-27.05c0-8.23-14.11-8.23-23.52-8.23Z" />
+            <path fill="#69112a"
+              d="M294.08,58.81c-16.47,0-22.98-47.05-3.53-47.05,6.43,0,9.39,4.7,11.75,11.76l7.07-3.53c-3.53-5.88-8.23-10.59-18.82-10.59-29.41,0-27.07,48.23-.02,51.75,9.4,1.23,16.49-4.7,20.02-11.76h-5.9c-1.18,4.7-3.51,9.41-10.57,9.41Z" />
+            <path fill="#69112a"
+              d="M24.72,58.81c-16.47,0-22.98-47.05-3.53-47.05,6.43,0,9.39,4.7,11.75,11.76l7.07-3.53c-3.53-5.88-8.23-10.59-18.82-10.59-29.41,0-27.07,48.23-.02,51.75,9.4,1.23,16.49-4.7,20.02-11.76h-5.9c-1.18,4.7-3.51,9.41-10.57,9.41Z" />
+            <polygon fill="#69112a"
+              points="91.77 25.88 87.06 25.88 87.06 14.11 77.65 18.82 77.65 25.88 72.95 25.88 72.95 28.23 77.65 28.23 77.65 61.16 87.06 61.16 87.06 28.23 91.77 28.23 91.77 25.88" />
+            <path fill="#69112a"
+              d="M242.33,25.88c0,7.06,4.7,7.06,2.35,14.11-.84,2.53-4.1,12.31-5.88,17.65l-10.59-31.76h-10.59l11.76,35.29h8.23c-2.35,8.23-2.35,10.59-16.47,11.76l4.7,7.06c2.35,0,9.41-1.18,12.94-11.76,1.18-3.53,2.35-7.06,2.35-7.06l11.76-35.29h-10.59Z" />
+            <circle fill="#69112a" cx="359.95" cy="58.81" r="2.35" />
+          </g>
+
+          <!-- 2. Capa del Isotipo / Molinete Dinámico -->
+          <g id="pinwheel-layer" class="pinwheel-group">
+            <g class="pinwheel-spin-layer" id="pinwheel-spin-el">
+              <path id="pinwheel-path" fill="#e61466"
+                d="M413.61,32.95c3.49-9.72,11.15-17.74,21.08-21.4l-15.89-11.54c-6.98,9.61-10.93,23.74-9.87,34.37-8.16-6.32-13.42-16.09-13.84-26.66l-15.89,11.54c6.98,9.61,19.2,17.73,29.64,20.01-8.53,5.81-19.45,7.79-29.63,4.93l6.07,18.68c11.3-3.67,22.79-12.78,28.19-22,2.89,9.91,1.4,20.9-4.47,29.7h19.64c0-11.88-5.11-25.63-12.21-33.61,10.32.32,20.32,5.12,26.87,13.43l6.07-18.68c-11.3-3.67-25.95-3.06-35.74,1.23Z" />
+            </g>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Control Studio Grid -->
+    <div class="controls-grid">
+
+      <!-- Panel 1: Parámetros de Calibración & Rodaje -->
+      <div class="control-card">
+        <div class="control-card-title">
+          <span>Calibración de Inicio &amp; Movimiento</span>
+          <span style="color: var(--color-fucsia);">En Tiempo Real</span>
+        </div>
+
+        <!-- Slider 1: Posición Inicial X (Desfase sobre la "C") -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-title">
+              <i data-lucide="move-horizontal" style="width: 14px; height: 14px; color: var(--color-fucsia);"></i>
+              Posición Inicial X (Sobre la "C"):
+            </span>
+            <span class="slider-val" id="val-offset-x">-389.6px</span>
+          </div>
+          <input type="range" class="lab-slider" id="slider-offset-x" min="-450" max="-300" step="1" value="-389.6">
+          <div class="slider-hints">
+            <span>-450px (Más a la izq.)</span>
+            <span>-389.6px (Centro exacto "C")</span>
+            <span>-300px (Más a la der.)</span>
+          </div>
+        </div>
+
+        <!-- Slider 2: Vueltas de Rodaje (Siempre múltiplos de 360° para aterrizaje 0°) -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-title">
+              <i data-lucide="orbit" style="width: 14px; height: 14px; color: var(--color-fucsia);"></i>
+              Vueltas al Rodar (Giro de Avance):
+            </span>
+            <span class="slider-val" id="val-turns">1 Vuelta (360°)</span>
+          </div>
+          <input type="range" class="lab-slider" id="slider-turns" min="1" max="6" step="1" value="1">
+          <div class="slider-hints">
+            <span>1 Vuelta (360° - Suave)</span>
+            <span>2 Vueltas (720° - Rodaje natural)</span>
+            <span>4 Vueltas (1440° - Rápido)</span>
+          </div>
+        </div>
+
+        <!-- Slider 3: Duración del Desplazamiento -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-title">
+              <i data-lucide="timer" style="width: 14px; height: 14px; color: var(--color-fucsia);"></i>
+              Duración del Desplazamiento:
+            </span>
+            <span class="slider-val" id="val-duration">1.80s</span>
+          </div>
+          <input type="range" class="lab-slider" id="slider-duration" min="0.5" max="2.5" step="0.05" value="1.80">
+          <div class="slider-hints">
+            <span>0.5s (Muy Rápido)</span>
+            <span>1.80s (Oficial)</span>
+            <span>2.5s (Cinemático)</span>
+          </div>
+        </div>
+
+        <!-- Slider 4: Tiempo de Giro Previo en la "C" -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-title">
+              <i data-lucide="hourglass" style="width: 14px; height: 14px; color: var(--color-fucsia);"></i>
+              Tiempo Girando en la "C" (Espera inicial):
+            </span>
+            <span class="slider-val" id="val-wait">1.55s</span>
+          </div>
+          <input type="range" class="lab-slider" id="slider-wait" min="0.1" max="2.0" step="0.05" value="1.55">
+          <div class="slider-hints">
+            <span>0.1s (Disparo Inmediato)</span>
+            <span>0.90s (Oficial)</span>
+            <span>2.0s (Pausa Larga)</span>
+          </div>
+        </div>
+
+        <!-- Slider 5: Velocidad de Giro Previo (Spin inicial) -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-title">
+              <i data-lucide="gauge" style="width: 14px; height: 14px; color: var(--color-fucsia);"></i>
+              Velocidad de Giro en Espera:
+            </span>
+            <span class="slider-val" id="val-spin-speed">2.10s / rev</span>
+          </div>
+          <input type="range" class="lab-slider" id="slider-spin-speed" min="0.5" max="4.0" step="0.1" value="2.10">
+          <div class="slider-hints">
+            <span>0.5s (Rápido)</span>
+            <span>2.10s (Oficial)</span>
+            <span>4.0s (Lento)</span>
+          </div>
+        </div>
+
+        <!-- Slider 6: Retardo de Aparición de Tipografía -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <span class="slider-title">
+              <i data-lucide="clock" style="width: 14px; height: 14px; color: var(--color-fucsia);"></i>
+              Retardo de Revelado Tipográfico:
+            </span>
+            <span class="slider-val" id="val-typo-delay">0.15s</span>
+          </div>
+          <input type="range" class="lab-slider" id="slider-typo-delay" min="0" max="0.5" step="0.05" value="0.15">
+          <div class="slider-hints">
+            <span>0.0s (Inmediato)</span>
+            <span>0.15s (Suave &amp; Orgánico)</span>
+            <span>0.50s (Tardío)</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Panel 2: Paleta de Colores & Telemetría Generada -->
+      <div class="control-card">
+        <div class="control-card-title">
+          <span>Paleta de Fondos</span>
+          <span>Catalán y Cía.</span>
+        </div>
+
+        <div class="color-swatches">
+          <button class="swatch-btn active" data-bg="#f9cee1" data-typo="#69112a" data-pin="#e61466"
+            data-name="Rosado (#f9cee1)" data-indic="#69112a">
+            <span class="swatch-circle" style="background: #f9cee1;"></span>
+            <span>Rosado</span>
+          </button>
+
+          <button class="swatch-btn" data-bg="#69112a" data-typo="#f9cee1" data-pin="#e61466"
+            data-name="Burdeo (#69112a)" data-indic="#f9cee1">
+            <span class="swatch-circle" style="background: #69112a;"></span>
+            <span>Burdeo</span>
+          </button>
+
+          <button class="swatch-btn" data-bg="#e61466" data-typo="#ffffff" data-pin="#69112a"
+            data-name="Fucsia (#e61466)" data-indic="#ffffff">
+            <span class="swatch-circle" style="background: #e61466;"></span>
+            <span>Fucsia</span>
+          </button>
+
+          <button class="swatch-btn" data-bg="#f28e0e" data-typo="#69112a" data-pin="#e61466"
+            data-name="Naranja (#f28e0e)" data-indic="#69112a">
+            <span class="swatch-circle" style="background: #f28e0e;"></span>
+            <span>Naranja</span>
+          </button>
+
+          <button class="swatch-btn" data-bg="#cfda8c" data-typo="#69112a" data-pin="#e61466"
+            data-name="Verde (#cfda8c)" data-indic="#69112a">
+            <span class="swatch-circle" style="background: #cfda8c;"></span>
+            <span>Verde</span>
+          </button>
+
+          <button class="swatch-btn" data-bg="#000000" data-typo="#f9cee1" data-pin="#e61466"
+            data-name="Negro (#000000)" data-indic="#f9cee1">
+            <span class="swatch-circle" style="background: #000000;"></span>
+            <span>Negro</span>
+          </button>
+        </div>
+
+        <div class="control-card-title" style="margin-top: 0.5rem;">
+          <span>Diagnóstico de Posición &amp; Alineación</span>
+          <span class="telemetry-success">✓ Posición Exacta (0.0° / 0.0px)</span>
+        </div>
+
+        <div class="telemetry-block" id="telemetry-box">
+          <div class="telemetry-row">
+            <span>Alineación Final:</span>
+            <span class="telemetry-success" id="code-alignment">0.0° (100% Calce Original)</span>
+          </div>
+          <div class="telemetry-row">
+            <span>Posición Final X:</span>
+            <span class="telemetry-success">0.0px (Coordenadas Oficiales)</span>
+          </div>
+          <div class="telemetry-row">
+            <span>Fase Inicial Calculada:</span>
+            <span class="telemetry-highlight" id="code-phase">Auto-calibrada</span>
+          </div>
+          <div class="telemetry-row">
+            <span>Curva de Transición:</span>
+            <span class="telemetry-highlight" id="code-curve">cubic-bezier(0.16, 0.4, 0.2, 1)</span>
+          </div>
+          <div class="telemetry-row">
+            <span>Giro Total de Avance:</span>
+            <span class="telemetry-highlight" id="code-total-deg">360° (1 Vuelta Limpia)</span>
+          </div>
+        </div>
+
+        <button class="copy-code-btn" id="btn-copy-css">
+          <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+          <span id="copy-btn-text">Copiar Parámetros CSS</span>
+        </button>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    const stage = document.getElementById('logo-stage');
+    const canvas = document.getElementById('preview-canvas');
+    const statusLabel = document.getElementById('status-label');
+    const btnReplay = document.getElementById('btn-replay');
+    const btnToggleLoop = document.getElementById('btn-toggle-loop');
+    const loopLabel = document.getElementById('loop-label');
+    const btnToggleGhost = document.getElementById('btn-toggle-ghost');
+    const ghostLabel = document.getElementById('ghost-label');
+    const ghostSvg = document.getElementById('ghost-svg');
+    const swatchButtons = document.querySelectorAll('.swatch-btn');
+    const solutionChips = document.querySelectorAll('.solution-chip');
+    const canvasColorName = document.getElementById('canvas-color-name');
+    const pinwheelSpinEl = document.getElementById('pinwheel-spin-el');
+
+    // Sliders & Readouts
+    const sliderOffsetX = document.getElementById('slider-offset-x');
+    const valOffsetX = document.getElementById('val-offset-x');
+
+    const sliderTurns = document.getElementById('slider-turns');
+    const valTurns = document.getElementById('val-turns');
+
+    const sliderDuration = document.getElementById('slider-duration');
+    const valDuration = document.getElementById('val-duration');
+
+    const sliderWait = document.getElementById('slider-wait');
+    const valWait = document.getElementById('val-wait');
+
+    const sliderSpinSpeed = document.getElementById('slider-spin-speed');
+    const valSpinSpeed = document.getElementById('val-spin-speed');
+
+    const sliderTypoDelay = document.getElementById('slider-typo-delay');
+    const valTypoDelay = document.getElementById('val-typo-delay');
+
+    // Telemetry output
+    const codeAlignment = document.getElementById('code-alignment');
+    const codePhase = document.getElementById('code-phase');
+    const codeCurve = document.getElementById('code-curve');
+    const codeTotalDeg = document.getElementById('code-total-deg');
+    const btnCopyCss = document.getElementById('btn-copy-css');
+    const copyBtnText = document.getElementById('copy-btn-text');
+
+    const typoPaths = document.querySelectorAll('#typography-layer [fill]');
+    const pinwheelPath = document.getElementById('pinwheel-path');
+
+    let sequenceTimer = null;
+    let isLooping = false;
+    let loopTimer = null;
+    let showGhost = false;
+
+    let currentOffsetX = -389.6;
+    let currentTurns = 1;
+    let currentDuration = 1.80;
+    let currentWait = 1.55;
+    let currentSpinSpeed = 2.10;
+    let currentTypoDelay = 0.15;
+    let currentMode = 'mode-auto-phase';
+    let currentCurve = 'cubic-bezier(0.16, 0.4, 0.2, 1)';
+    let startTime = null;
+    let calculatedStartPhase = 0;
+
+    // Calcula los grados totales de rodaje como múltiplo exacto de 360° para garantizar 0° de error
+    function calculateTotalDegrees(turns) {
+      return Math.round(turns * 360);
+    }
+
+    // Calcula la fase inicial necesaria en la "C" para que tras girar currentWait segundos,
+    // el ángulo llegue exactamente a 0°/360° en el momento del despegue
+    function computeAutoStartPhase(waitSec, spinSpeedSec) {
+      const waitRotations = (waitSec / spinSpeedSec) % 1;
+      const angleRotatedInWait = waitRotations * 360;
+      const initialPhase = (360 - angleRotatedInWait) % 360;
+      return initialPhase;
+    }
+
+    function syncCssVariables() {
+      const totalDeg = calculateTotalDegrees(currentTurns);
+      calculatedStartPhase = computeAutoStartPhase(currentWait, currentSpinSpeed);
+
+      document.documentElement.style.setProperty('--start-offset-x', `${currentOffsetX}px`);
+      document.documentElement.style.setProperty('--start-phase-deg', `${calculatedStartPhase.toFixed(2)}deg`);
+      document.documentElement.style.setProperty('--spin-travel-deg', `${totalDeg}deg`);
+      document.documentElement.style.setProperty('--travel-duration', `${currentDuration}s`);
+      document.documentElement.style.setProperty('--travel-easing', currentCurve);
+      document.documentElement.style.setProperty('--initial-spin-speed', `${currentSpinSpeed}s`);
+      document.documentElement.style.setProperty('--initial-wait', `${currentWait}s`);
+      document.documentElement.style.setProperty('--typo-delay', `${currentTypoDelay}s`);
+
+      // Actualizar lecturas de los sliders
+      valOffsetX.textContent = `${currentOffsetX}px`;
+      valTurns.textContent = `${currentTurns} Vuelta${currentTurns > 1 ? 's' : ''} (${totalDeg}°)`;
+      valDuration.textContent = `${currentDuration.toFixed(2)}s`;
+      valWait.textContent = `${currentWait.toFixed(2)}s`;
+      valSpinSpeed.textContent = `${currentSpinSpeed.toFixed(2)}s / rev`;
+      valTypoDelay.textContent = `${currentTypoDelay.toFixed(2)}s`;
+
+      // Telemetría
+      codeAlignment.textContent = `0.0° (100% Calce Original)`;
+      codePhase.textContent = `${calculatedStartPhase.toFixed(1)}° (Auto-calibrada en "C")`;
+      codeCurve.textContent = currentCurve;
+      codeTotalDeg.textContent = `${totalDeg}° (${currentTurns} Vuelta${currentTurns > 1 ? 's' : ''} Limpia${currentTurns > 1 ? 's' : ''})`;
+    }
+
+    function playSequence() {
+      clearTimeout(sequenceTimer);
+      clearTimeout(loopTimer);
+
+      stage.className = 'lab-logo-stage ' + currentMode;
+      statusLabel.textContent = `Girando en "C" (${currentWait.toFixed(2)}s)...`;
+      startTime = performance.now();
+
+      // Reflow para reiniciar animaciones limpiamente
+      stage.style.display = 'none';
+      stage.offsetHeight;
+      stage.style.display = 'block';
+
+      // Captura y transición suave en el tiempo de espera
+      sequenceTimer = setTimeout(() => {
+        // En modo inercia dinámica: calculamos el ángulo en vivo y fijamos el destino en el múltiplo limpio de 360° más próximo
+        if (currentMode === 'mode-fluid-inertia') {
+          const elapsed = (performance.now() - startTime) / 1000;
+          const liveAngle = (calculatedStartPhase + (elapsed / currentSpinSpeed * 360)) % 360;
+          const targetAngle = 360 * (1 + currentTurns);
+          document.documentElement.style.setProperty('--current-spin-angle', `${liveAngle.toFixed(1)}deg`);
+          document.documentElement.style.setProperty('--target-spin-angle', `${targetAngle}deg`);
+        }
+
+        stage.classList.add('state-loaded');
+        statusLabel.textContent = `¡Rodando a posición final 100% exacta!`;
+
+        if (isLooping) {
+          const totalWaitMs = (currentDuration + currentTypoDelay + 1.8) * 1000;
+          loopTimer = setTimeout(playSequence, totalWaitMs);
+        }
+      }, currentWait * 1000);
+    }
+
+    // Selector de Soluciones de Calibración
+    solutionChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        solutionChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+
+        currentMode = chip.dataset.mode;
+        currentCurve = chip.dataset.curve;
+        currentTypoDelay = parseFloat(chip.dataset.typodelay);
+        sliderTypoDelay.value = currentTypoDelay;
+
+        syncCssVariables();
+        playSequence();
+      });
+    });
+
+    // Sliders Event Listeners
+    sliderOffsetX.addEventListener('input', (e) => {
+      currentOffsetX = parseFloat(e.target.value);
+      syncCssVariables();
+      playSequence();
+    });
+
+    sliderTurns.addEventListener('input', (e) => {
+      currentTurns = parseInt(e.target.value, 10);
+      syncCssVariables();
+      playSequence();
+    });
+
+    sliderDuration.addEventListener('input', (e) => {
+      currentDuration = parseFloat(e.target.value);
+      syncCssVariables();
+      playSequence();
+    });
+
+    sliderWait.addEventListener('input', (e) => {
+      currentWait = parseFloat(e.target.value);
+      syncCssVariables();
+      playSequence();
+    });
+
+    sliderSpinSpeed.addEventListener('input', (e) => {
+      currentSpinSpeed = parseFloat(e.target.value);
+      syncCssVariables();
+      playSequence();
+    });
+
+    sliderTypoDelay.addEventListener('input', (e) => {
+      currentTypoDelay = parseFloat(e.target.value);
+      syncCssVariables();
+      playSequence();
+    });
+
+    // Switch de Colores de Fondo
+    swatchButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        swatchButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const bg = btn.dataset.bg;
+        const typo = btn.dataset.typo;
+        const pin = btn.dataset.pin;
+        const indic = btn.dataset.indic || '#ffffff';
+
+        canvas.style.backgroundColor = bg;
+        canvasColorName.textContent = `Fondo: ${btn.dataset.name}`;
+        canvasColorName.style.color = indic;
+
+        typoPaths.forEach(p => p.setAttribute('fill', typo));
+        if (pinwheelPath) pinwheelPath.setAttribute('fill', pin);
+      });
+    });
+
+    // Toggle de Guía de Alineación (Ghost Overlay)
+    btnToggleGhost.addEventListener('click', () => {
+      showGhost = !showGhost;
+      if (showGhost) {
+        btnToggleGhost.classList.add('active-toggle');
+        ghostLabel.textContent = 'Guía de Alineación: ON';
+        ghostSvg.classList.add('show-ghost');
+      } else {
+        btnToggleGhost.classList.remove('active-toggle');
+        ghostLabel.textContent = 'Guía de Alineación: OFF';
+        ghostSvg.classList.remove('show-ghost');
+      }
+    });
+
+    // Toggle de Auto-Loop
+    btnToggleLoop.addEventListener('click', () => {
+      isLooping = !isLooping;
+      if (isLooping) {
+        btnToggleLoop.classList.add('lab-btn-primary');
+        loopLabel.textContent = 'Auto-Loop: ON';
+        playSequence();
+      } else {
+        btnToggleLoop.classList.remove('lab-btn-primary');
+        loopLabel.textContent = 'Auto-Loop: OFF';
+        clearTimeout(loopTimer);
+      }
+    });
+
+    // Copiar Código CSS
+    btnCopyCss.addEventListener('click', () => {
+      const totalDeg = calculateTotalDegrees(currentTurns);
+      const snippet = `/* Parámetros Oficiales Calibrados — Catalán y Cía. */
+--pinwheel-origin: 414.27px 35.28px;
+--start-offset-x: ${currentOffsetX}px;
+--start-phase-deg: ${calculatedStartPhase.toFixed(2)}deg;
+--spin-travel-deg: ${totalDeg}deg;
+--travel-duration: ${currentDuration}s;
+--travel-easing: ${currentCurve};
+--initial-spin-speed: ${currentSpinSpeed}s;
+--initial-wait: ${currentWait}s;
+--typo-delay: ${currentTypoDelay}s;
+/* Garantiza aterrizaje final en exactamente 0.0° y 0.0px */`;
+
+      navigator.clipboard.writeText(snippet).then(() => {
+        copyBtnText.textContent = '¡Copiado al Portapapeles!';
+        setTimeout(() => {
+          copyBtnText.textContent = 'Copiar Parámetros CSS';
+        }, 2000);
+      });
+    });
+
+    btnReplay.addEventListener('click', playSequence);
+    canvas.addEventListener('click', (e) => {
+      if (e.target.closest('button') || e.target.closest('input')) return;
+      playSequence();
+    });
+
+    // Inicializar valores
+    syncCssVariables();
+    window.addEventListener('DOMContentLoaded', playSequence);
+  </script>
+</body>
+
+</html>

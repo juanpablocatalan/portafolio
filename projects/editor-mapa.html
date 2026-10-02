@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor Visual — Mapa Conceptual Fronteo</title>
+  
+  <!-- Estilos base del proyecto -->
+  <link rel="stylesheet" href="../css/style.css?v=70">
+
+  <style>
+    /* --------------------------------------------------------------------------
+       SUPPLY TYPOGRAPHY SYSTEM (@font-face) — EXCLUSIVO PARA MAPA EDITOR
+       -------------------------------------------------------------------------- */
+    @font-face {
+      font-family: 'Supply';
+      src: url('../fonts/Supply-UltraLight.otf') format('opentype');
+      font-weight: 200;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Supply';
+      src: url('../fonts/Supply-Light.otf') format('opentype');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Supply';
+      src: url('../fonts/Supply-Regular.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Supply';
+      src: url('../fonts/Supply-Medium.otf') format('opentype');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: 'Supply';
+      src: url('../fonts/Supply-Bold.otf') format('opentype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* Alias de compatibilidad PPSupplySans dentro del editor */
+    @font-face {
+      font-family: 'PPSupplySans';
+      src: url('../fonts/Supply-UltraLight.otf') format('opentype');
+      font-weight: 200;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'PPSupplySans';
+      src: url('../fonts/Supply-Light.otf') format('opentype');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'PPSupplySans';
+      src: url('../fonts/Supply-Regular.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'PPSupplySans';
+      src: url('../fonts/Supply-Medium.otf') format('opentype');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'PPSupplySans';
+      src: url('../fonts/Supply-Bold.otf') format('opentype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --bg-dark: #0a0a0a;
+      --panel-bg: rgba(18, 18, 20, 0.88);
+      --panel-border: rgba(255, 255, 255, 0.1);
+      --accent: #00E5FF;
+      --accent-glow: rgba(0, 229, 255, 0.25);
+      --text-main: #FFFFFF;
+      --text-muted: #888888;
+      --canvas-bg: #050505;
+      --font-supply: 'Supply', 'PPSupplySans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-supply);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* Top Bar */
+    .editor-topbar {
+      height: 56px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .editor-title-group {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .editor-title-group h1 {
+      font-family: var(--font-supply);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .badge-editor {
+      background: rgba(0, 229, 255, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-family: monospace;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .btn {
+      padding: 0.45rem 0.9rem;
+      font-size: 0.78rem;
+      font-family: var(--font-supply);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      border: 1px solid var(--panel-border);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    .btn-primary:hover {
+      background: #33ebff;
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+
+    .btn-icon {
+      padding: 0.45rem 0.6rem;
+    }
+
+    /* Workspace Layout */
+    .editor-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 320px 1fr 300px;
+      height: calc(100vh - 56px);
+      overflow: hidden;
+    }
+
+    @media (max-width: 1200px) {
+      .editor-layout {
+        grid-template-columns: 280px 1fr 280px;
+      }
+    }
+
+    @media (max-width: 990px) {
+      .editor-layout {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+      }
+    }
+
+    /* Sidebars */
+    .editor-sidebar {
+      background: var(--panel-bg);
+      border-right: 1px solid var(--panel-border);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .editor-sidebar.right {
+      border-right: none;
+      border-left: 1px solid var(--panel-border);
+    }
+
+    .sidebar-header {
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sidebar-header h2 {
+      font-family: var(--font-supply);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #aaa;
+    }
+
+    /* Concept List */
+    .concept-list {
+      list-style: none;
+      padding: 0.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .concept-item {
+      padding: 0.65rem 0.85rem;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.15s ease;
+    }
+
+    .concept-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .concept-item.active {
+      background: rgba(0, 229, 255, 0.08);
+      border-color: rgba(0, 229, 255, 0.4);
+    }
+
+    .concept-item-name {
+      font-family: var(--font-supply);
+      font-size: 0.88rem;
+      color: #fff;
+    }
+
+    .concept-item.active .concept-item-name {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .concept-item-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-family: monospace;
+    }
+
+    /* Canvas Stage Area */
+    .canvas-stage-wrapper {
+      position: relative;
+      background: var(--canvas-bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3.5rem 1.5rem 1.5rem 1.5rem;
+      overflow: auto;
+      min-width: 0;
+    }
+
+    .canvas-toolbar {
+      position: absolute;
+      top: 0.8rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(20, 20, 22, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 0.35rem 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 10;
+      font-size: 0.75rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .canvas-toolbar label {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      cursor: pointer;
+      color: #ccc;
+    }
+
+    .canvas-toolbar select {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--panel-border);
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .canvas-toolbar input[type="checkbox"] {
+      accent-color: var(--accent);
+    }
+
+    .canvas-frame {
+      width: 100%;
+      max-width: 1100px;
+      height: 650px;
+      max-height: 650px;
+      aspect-ratio: 1000 / 650;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      background: #000000;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    .canvas-frame.size-exact {
+      width: 1000px !important;
+      height: 650px !important;
+      max-width: none !important;
+      max-height: none !important;
+    }
+
+    .canvas-frame.size-fronteo {
+      width: 100% !important;
+      max-width: 1100px !important;
+      height: 650px !important;
+      max-height: 650px !important;
+    }
+
+    .canvas-frame.size-fit {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
+      aspect-ratio: 1000 / 650 !important;
+    }
+
+    .svg-editor-canvas,
+    .fronteo-map-svg {
+      width: 100%;
+      max-width: 1100px;
+      height: 100%;
+      max-height: 650px;
+      display: block;
+      touch-action: none;
+    }
+
+    /* SVG Elements */
+    .map-node-item {
+      font-family: var(--font-supply) !important;
+      cursor: grab;
+      user-select: none;
+      transition: fill 0.2s ease, opacity 0.2s ease;
+      opacity: var(--base-op, 0.6);
+    }
+
+    #nodes-container.twinkle-active .map-node-item:nth-child(1)  { animation: bulbFlicker1 4.2s steps(1) infinite; animation-delay: 0s; }
+    #nodes-container.twinkle-active .map-node-item:nth-child(2)  { animation: bulbFlicker2 3.6s steps(1) infinite; animation-delay: -1.4s; }
+    #nodes-container.twinkle-active .map-node-item:nth-child(3)  { animation: bulbFlicker3 5.1s steps(1) infinite; animation-delay: -2.8s; }
+    #nodes-container.twinkle-active .map-node-item:nth-child(4)  { animation: bulbFlicker1 3.3s steps(1) infinite; animation-delay: -0.7s; }
+    #nodes-container.twinkle-active .map-node-item:nth-child(5)  { animation: bulbFlicker2 4.7s steps(1) infinite; animation-delay: -3.2s; }
+    #nodes-container.twinkle-active .map-node-item:nth-child(6)  { animation: bulbFlicker3 3.9s steps(1) infinite; animation-delay: -1.9s; }
+    #nodes-container.twinkle-active .map-node-item:nth-child(7)  { animation: bulbFlicker1 4.8s steps(1) infinite; animation-delay: -0.4s; }
+    #nodes-container.twinkle-active .map-node-item:nth-child(8)  { animation: bulbFlicker2 5.5s steps(1) infinite; animation-delay: -4.1s; }
+    #nodes-container.twinkle-active .map-node-item:nth-child(9)  { animation: bulbFlicker3 3.4s steps(1) infinite; animation-delay: -2.1s; }
+    #nodes-container.twinkle-active .map-node-item:nth-child(10) { animation: bulbFlicker1 4.5s steps(1) infinite; animation-delay: -1.6s; }
+    #nodes-container.twinkle-active .map-node-item:nth-child(11) { animation: bulbFlicker2 5.3s steps(1) infinite; animation-delay: -3.7s; }
+    #nodes-container.twinkle-active .map-node-item:nth-child(12) { animation: bulbFlicker3 3.7s steps(1) infinite; animation-delay: -0.9s; }
+    #nodes-container.twinkle-active .map-node-item:nth-child(13) { animation: bulbFlicker1 4.9s steps(1) infinite; animation-delay: -2.5s; }
+
+    #nodes-container.twinkle-active .map-node-item.selected,
+    #nodes-container.twinkle-active .map-node-item:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes bulbFlicker1 {
+      0%, 100% { opacity: var(--base-op, 0.6); }
+      3%  { opacity: 0.20; }
+      5%  { opacity: 0.85; }
+      7%  { opacity: 0.20; }
+      9%  { opacity: 0.85; }
+      11% { opacity: var(--base-op, 0.6); }
+      42% { opacity: var(--base-op, 0.6); }
+      43% { opacity: 0.20; }
+      44% { opacity: 0.85; }
+      46% { opacity: 0.20; }
+      48% { opacity: var(--base-op, 0.6); }
+      73% { opacity: var(--base-op, 0.6); }
+      74% { opacity: 0.20; }
+      75% { opacity: var(--base-op, 0.6); }
+      89% { opacity: var(--base-op, 0.6); }
+      90% { opacity: 0.85; }
+      91% { opacity: 0.20; }
+      93% { opacity: 0.85; }
+      94% { opacity: var(--base-op, 0.6); }
+    }
+
+    @keyframes bulbFlicker2 {
+      0%, 100% { opacity: var(--base-op, 0.6); }
+      18% { opacity: var(--base-op, 0.6); }
+      19% { opacity: 0.20; }
+      20% { opacity: 0.85; }
+      21% { opacity: 0.20; }
+      23% { opacity: 0.85; }
+      25% { opacity: var(--base-op, 0.6); }
+      55% { opacity: var(--base-op, 0.6); }
+      56% { opacity: 0.85; }
+      57% { opacity: 0.20; }
+      58% { opacity: 0.85; }
+      59% { opacity: var(--base-op, 0.6); }
+      82% { opacity: var(--base-op, 0.6); }
+      83% { opacity: 0.20; }
+      85% { opacity: 0.85; }
+      86% { opacity: 0.20; }
+      88% { opacity: var(--base-op, 0.6); }
+    }
+
+    @keyframes bulbFlicker3 {
+      0%, 100% { opacity: var(--base-op, 0.6); }
+      8%  { opacity: var(--base-op, 0.6); }
+      9%  { opacity: 0.85; }
+      10% { opacity: 0.20; }
+      11% { opacity: var(--base-op, 0.6); }
+      34% { opacity: var(--base-op, 0.6); }
+      35% { opacity: 0.20; }
+      36% { opacity: 0.85; }
+      38% { opacity: 0.20; }
+      40% { opacity: 0.85; }
+      42% { opacity: var(--base-op, 0.6); }
+      65% { opacity: var(--base-op, 0.6); }
+      66% { opacity: 0.20; }
+      68% { opacity: var(--base-op, 0.6); }
+      79% { opacity: var(--base-op, 0.6); }
+      80% { opacity: 0.85; }
+      81% { opacity: 0.20; }
+      82% { opacity: 0.85; }
+      83% { opacity: 0.20; }
+      85% { opacity: var(--base-op, 0.6); }
+    }
+
+    .map-node-item:active {
+      cursor: grabbing;
+    }
+
+    .map-node-item:hover {
+      fill: #49bed9 !important;
+    }
+
+    .map-node-item.selected {
+      fill: var(--accent) !important;
+    }
+
+    /* Guide Grid */
+    .grid-lines {
+      stroke: rgba(255, 255, 255, 0.05);
+      stroke-width: 1;
+      pointer-events: none;
+    }
+
+    .center-guides {
+      stroke: rgba(0, 229, 255, 0.2);
+      stroke-width: 1;
+      stroke-dasharray: 4 4;
+      pointer-events: none;
+    }
+
+    /* Selection box */
+    .selection-box {
+      stroke: var(--accent);
+      stroke-width: 1.5;
+      stroke-dasharray: 3 3;
+      fill: rgba(0, 229, 255, 0.06);
+      pointer-events: none;
+    }
+
+    /* Properties Panel */
+    .prop-group {
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .prop-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #999;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .prop-label span.val {
+      color: var(--accent);
+      font-family: monospace;
+      font-size: 0.75rem;
+    }
+
+    .prop-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--panel-border);
+      color: #fff;
+      padding: 0.5rem 0.65rem;
+      border-radius: 5px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .prop-input:focus {
+      border-color: var(--accent);
+    }
+
+    .prop-range {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .prop-row-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+
+    /* Modal Code Preview */
+    .code-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1.5rem;
+    }
+
+    .code-modal-backdrop.open {
+      display: flex;
+    }
+
+    .code-modal {
+      background: #121214;
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 780px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+      overflow: hidden;
+    }
+
+    .code-modal-header {
+      padding: 1rem 1.4rem;
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .code-modal-header h3 {
+      font-size: 0.95rem;
+      font-family: var(--font-supply);
+      letter-spacing: 0.05em;
+    }
+
+    .code-modal-body {
+      padding: 1rem 1.4rem;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .code-pre {
+      background: #080809;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 1rem;
+      color: #d1d5db;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.78rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .code-modal-footer {
+      padding: 0.9rem 1.4rem;
+      border-top: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    /* Toast Notification */
+    .toast-notice {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(30px);
+      background: #00E5FF;
+      color: #000;
+      font-weight: 700;
+      font-family: var(--font-supply);
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      padding: 0.6rem 1.2rem;
+      border-radius: 99px;
+      box-shadow: 0 10px 30px rgba(0, 229, 255, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 2000;
+    }
+
+    .toast-notice.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="editor-topbar">
+    <div class="editor-title-group">
+      <a href="project-01.html" class="btn btn-icon" title="Volver a Proyecto 1">
+        &larr; Volver
+      </a>
+      <h1>Editor Visual de Conceptos</h1>
+      <span class="badge-editor">Supply Font Activa</span>
+    </div>
+
+    <div class="topbar-actions">
+      <button type="button" class="btn" id="btn-reset" title="Restaurar layout por defecto">
+        ↺ Restaurar
+      </button>
+      <button type="button" class="btn" id="btn-view-code">
+        &lt;/&gt; Ver Código
+      </button>
+      <button type="button" class="btn btn-primary" id="btn-copy-code">
+        ✓ Copiar Código SVG
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Editor Area -->
+  <main class="editor-layout">
+    
+    <!-- Left Sidebar: Concept List -->
+    <aside class="editor-sidebar" aria-label="Lista de conceptos">
+      <div class="sidebar-header">
+        <h2>Conceptos (<span id="concept-count">13</span>)</h2>
+        <button type="button" class="btn btn-icon" id="btn-add-concept" title="Añadir nuevo concepto" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;">
+          + Añadir
+        </button>
+      </div>
+
+      <ul class="concept-list" id="concept-list">
+        <!-- Generado dinámicamente con JavaScript -->
+      </ul>
+
+      <div style="padding: 0.8rem 1.2rem; border-top: 1px solid var(--panel-border); font-size: 0.72rem; color: #666; line-height: 1.4;">
+        Tip: Arrastra los textos directamente sobre el lienzo para moverlos, o usa las flechas del teclado para ajuste fino (Shift + flechas para saltos de 10px).
+      </div>
+    </aside>
+
+    <!-- Center: Interactive SVG Canvas -->
+    <section class="canvas-stage-wrapper">
+      
+      <!-- Quick Canvas Toolbar -->
+      <div class="canvas-toolbar">
+        <label>
+          <input type="checkbox" id="chk-grid" checked> Cuadrícula
+        </label>
+        <label>
+          <input type="checkbox" id="chk-guides" checked> Ejes Guía
+        </label>
+        <label>
+          <input type="checkbox" id="chk-twinkle"> Titileo (20%-85%)
+        </label>
+        <span style="color: #444;">|</span>
+        <label>
+          Tamaño:
+          <select id="sel-canvas-size">
+            <option value="size-fronteo" selected>Fronteo (1100 × 650 max)</option>
+            <option value="size-exact">Pixel Real 1:1 (1000 × 650 px)</option>
+            <option value="size-fit">Ajustar a Pantalla</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Canvas Frame -->
+      <div class="canvas-frame size-fronteo">
+        <svg class="svg-editor-canvas fronteo-map-svg" id="svg-canvas" viewBox="0 0 1000 650" preserveAspectRatio="xMidYMid meet">
+          
+          <!-- Cuadrícula de fondo -->
+          <g id="grid-group" class="grid-lines">
+            <!-- Líneas generadas por script -->
+          </g>
+
+          <!-- Ejes Centrales Guía -->
+          <g id="guides-group" class="center-guides">
+            <line x1="500" y1="0" x2="500" y2="650" />
+            <line x1="0" y1="325" x2="1000" y2="325" />
+          </g>
+
+          <!-- Bounding Box del elemento seleccionado -->
+          <rect id="selection-rect" class="selection-box" style="display: none;" />
+
+          <!-- Nodos y Textos -->
+          <g id="nodes-container" class="map-nodes">
+            <!-- Nodos renderizados aquí -->
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Right Sidebar: Properties Inspector -->
+    <aside class="editor-sidebar right" aria-label="Propiedades del concepto seleccionado">
+      <div class="sidebar-header">
+        <h2>Propiedades</h2>
+        <button type="button" class="btn btn-icon" id="btn-delete-concept" title="Eliminar concepto seleccionado" style="color: #ff5555; padding: 0.25rem 0.55rem; font-size: 0.75rem;">
+          Eliminar
+        </button>
+      </div>
+
+      <div id="properties-panel">
+        
+        <!-- Texto -->
+        <div class="prop-group">
+          <label class="prop-label" for="prop-text">Palabra / Concepto</label>
+          <input type="text" id="prop-text" class="prop-input" placeholder="Escribe el concepto..." autocomplete="off">
+        </div>
+
+        <!-- Posición X / Y -->
+        <div class="prop-group">
+          <label class="prop-label">
+            Posición X <span class="val" id="val-x">500 px</span>
+          </label>
+          <input type="range" id="prop-x" class="prop-range" min="30" max="970" step="1">
+          
+          <label class="prop-label" style="margin-top: 0.35rem;">
+            Posición Y <span class="val" id="val-y">325 px</span>
+          </label>
+          <input type="range" id="prop-y" class="prop-range" min="30" max="620" step="1">
+
+          <!-- Botones de Centrado Rápido -->
+          <div class="prop-row-2col" style="margin-top: 0.35rem;">
+            <button type="button" class="btn" id="btn-center-x" style="justify-content: center; font-size: 0.72rem;">Centrar X</button>
+            <button type="button" class="btn" id="btn-center-y" style="justify-content: center; font-size: 0.72rem;">Centrar Y</button>
+          </div>
+        </div>
+
+        <!-- Tamaño de Fuente -->
+        <div class="prop-group">
+          <label class="prop-label">
+            Tamaño de Fuente <span class="val" id="val-size">44 px</span>
+          </label>
+          <input type="range" id="prop-size" class="prop-range" min="8" max="150" step="1">
+        </div>
+
+        <!-- Grosor / Peso (Supply Weights) -->
+        <div class="prop-group">
+          <label class="prop-label">
+            Grosor / Peso (Supply) <span class="val" id="val-weight">700 (Bold)</span>
+          </label>
+          <select id="prop-weight" class="prop-input" style="cursor: pointer;">
+            <option value="200">Supply UltraLight (200)</option>
+            <option value="300">Supply Light (300)</option>
+            <option value="400">Supply Regular (400)</option>
+            <option value="500">Supply Medium (500)</option>
+            <option value="700">Supply Bold (700)</option>
+          </select>
+        </div>
+
+        <!-- Letter Spacing -->
+        <div class="prop-group">
+          <label class="prop-label">
+            Espaciado de Letras <span class="val" id="val-spacing">0.06 em</span>
+          </label>
+          <input type="range" id="prop-spacing" class="prop-range" min="-0.25" max="0.50" step="0.01">
+        </div>
+
+        <!-- Opacidad -->
+        <div class="prop-group">
+          <label class="prop-label">
+            Opacidad <span class="val" id="val-opacity">100%</span>
+          </label>
+          <input type="range" id="prop-opacity" class="prop-range" min="0.1" max="1" step="0.01">
+        </div>
+
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Code Modal Preview -->
+  <div class="code-modal-backdrop" id="code-modal">
+    <div class="code-modal">
+      <div class="code-modal-header">
+        <h3>Código SVG para el Proyecto</h3>
+        <button type="button" class="btn btn-icon" id="btn-close-modal">&times;</button>
+      </div>
+      <div class="code-modal-body">
+        <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 0.75rem;">
+          Copia y pega este bloque en tu archivo <code>projects/project-01.html</code> dentro del módulo <code>fronteo-map-section</code>:
+        </p>
+        <pre class="code-pre" id="code-output"></pre>
+      </div>
+      <div class="code-modal-footer">
+        <button type="button" class="btn" id="btn-modal-close-btn">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="btn-modal-copy">Copiar al Portapapeles</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-notice" id="toast-notice">Código copiado al portapapeles ✓</div>
+
+  <!-- Script del Editor -->
+  <script>
+    // Conceptos iniciales
+    const DEFAULT_CONCEPTS = [
+       { id: 'c1', text: 'resistencia', x: 499, y: 338, size: 150, weight: 500, spacing: -0.12, opacity: 0.58 },
+       { id: 'c2', text: 'identidad', x: 838, y: 506, size: 80, weight: 500, spacing: -0.08, opacity: 0.71 },
+       { id: 'c3', text: 'archivo visual', x: 726, y: 185, size: 78, weight: 500, spacing: -0.1, opacity: 0.8 },
+       { id: 'c4', text: 'cultura', x: 62, y: 485, size: 59, weight: 500, spacing: -0.1, opacity: 0.7 },
+       { id: 'c5', text: 'visibilidad', x: 160, y: 211, size: 54, weight: 500, spacing: -0.1, opacity: 0.65 },
+       { id: 'c6', text: 'historia', x: 436, y: 103, size: 32, weight: 400, spacing: -0.1, opacity: 0.55 },
+       { id: 'c7', text: 'patrimonio', x: 316, y: 555, size: 32, weight: 400, spacing: -0.1, opacity: 0.75 },
+       { id: 'c8', text: 'expansión', x: 481, y: 625, size: 25, weight: 400, spacing: -0.1, opacity: 0.45 },
+       { id: 'c9', text: 'estética', x: 941, y: 90, size: 24, weight: 400, spacing: -0.1, opacity: 0.72 },
+       { id: 'c10', text: 'vanguardia visual', x: 859, y: 609, size: 24, weight: 400, spacing: -0.09, opacity: 0.38 },
+       { id: 'c11', text: 'orígenes', x: 116, y: 89, size: 29, weight: 400, spacing: -0.09, opacity: 0.59 },
+       { id: 'c12', text: 'rescatar', x: 625, y: 48, size: 17, weight: 400, spacing: -0.1, opacity: 0.54 },
+       { id: 'c13', text: 'valor', x: 234, y: 40, size: 22, weight: 500, spacing: -0.05, opacity: 0.77 }
+     ];
+
+    // Estado de la aplicación
+    let concepts = [];
+    let selectedId = 'c1';
+    let isDragging = false;
+    let dragOffset = { x: 0, y: 0 };
+
+    // Elementos DOM
+    const svgCanvas = document.getElementById('svg-canvas');
+    const nodesContainer = document.getElementById('nodes-container');
+    const conceptList = document.getElementById('concept-list');
+    const conceptCount = document.getElementById('concept-count');
+    const selectionRect = document.getElementById('selection-rect');
+    const gridGroup = document.getElementById('grid-group');
+    const guidesGroup = document.getElementById('guides-group');
+
+    // Inputs de propiedades
+    const propText = document.getElementById('prop-text');
+    const propX = document.getElementById('prop-x');
+    const propY = document.getElementById('prop-y');
+    const propSize = document.getElementById('prop-size');
+    const propWeight = document.getElementById('prop-weight');
+    const propSpacing = document.getElementById('prop-spacing');
+    const propOpacity = document.getElementById('prop-opacity');
+
+    const valX = document.getElementById('val-x');
+    const valY = document.getElementById('val-y');
+    const valSize = document.getElementById('val-size');
+    const valWeight = document.getElementById('val-weight');
+    const valSpacing = document.getElementById('val-spacing');
+    const valOpacity = document.getElementById('val-opacity');
+
+    // Cargar datos
+    function loadData() {
+      const saved = localStorage.getItem('fronteo_map_concepts_v4');
+      if (saved) {
+        try {
+          concepts = JSON.parse(saved);
+        } catch(e) {
+          concepts = JSON.parse(JSON.stringify(DEFAULT_CONCEPTS));
+        }
+      } else {
+        concepts = JSON.parse(JSON.stringify(DEFAULT_CONCEPTS));
+      }
+      if (!concepts.find(c => c.id === selectedId) && concepts.length > 0) {
+        selectedId = concepts[0].id;
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem('fronteo_map_concepts_v4', JSON.stringify(concepts));
+    }
+
+    // Inicializar Cuadrícula
+    function initGrid() {
+      gridGroup.innerHTML = '';
+      for (let x = 50; x < 1000; x += 50) {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x);
+        line.setAttribute('y1', 0);
+        line.setAttribute('x2', x);
+        line.setAttribute('y2', 650);
+        gridGroup.appendChild(line);
+      }
+      for (let y = 50; y < 650; y += 50) {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', 0);
+        line.setAttribute('y1', y);
+        line.setAttribute('x2', 1000);
+        line.setAttribute('y2', y);
+        gridGroup.appendChild(line);
+      }
+    }
+
+    // Renderizar lista en la barra lateral
+    function renderConceptList() {
+      conceptList.innerHTML = '';
+      conceptCount.textContent = concepts.length;
+
+      concepts.forEach((concept) => {
+        const li = document.createElement('li');
+        li.className = `concept-item ${concept.id === selectedId ? 'active' : ''}`;
+        li.innerHTML = `
+          <span class="concept-item-name">${concept.text}</span>
+          <span class="concept-item-meta">${concept.size}px | (${Math.round(concept.x)}, ${Math.round(concept.y)})</span>
+        `;
+        li.addEventListener('click', () => {
+          selectConcept(concept.id);
+        });
+        conceptList.appendChild(li);
+      });
+    }
+
+    // Renderizar nodos SVG en el lienzo
+    function renderSvgNodes() {
+      nodesContainer.innerHTML = '';
+
+      concepts.forEach((concept) => {
+        const textEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        textEl.setAttribute('id', `node-${concept.id}`);
+        textEl.setAttribute('x', concept.x);
+        textEl.setAttribute('y', concept.y);
+        textEl.setAttribute('text-anchor', 'middle');
+        textEl.setAttribute('dominant-baseline', 'central');
+        textEl.setAttribute('class', `map-node-item ${concept.id === selectedId ? 'selected' : ''}`);
+        
+        textEl.style.fontFamily = "'Supply', 'PPSupplySans', -apple-system, BlinkMacSystemFont, sans-serif";
+        textEl.style.fontSize = `${concept.size}px`;
+        textEl.style.fontWeight = concept.weight;
+        textEl.style.letterSpacing = `${concept.spacing}em`;
+        textEl.style.opacity = concept.opacity;
+        textEl.style.setProperty('--base-op', concept.opacity);
+        textEl.style.fill = concept.id === selectedId ? '#00E5FF' : '#FFFFFF';
+        textEl.style.textTransform = 'lowercase';
+
+        textEl.textContent = concept.text;
+
+        // Eventos de arrastre
+        textEl.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          selectConcept(concept.id);
+          startDragging(e, concept);
+        });
+
+        nodesContainer.appendChild(textEl);
+      });
+
+      updateSelectionBox();
+    }
+
+    // Actualizar Bounding Box de Selección
+    function updateSelectionBox() {
+      const selected = concepts.find(c => c.id === selectedId);
+      if (!selected) {
+        selectionRect.style.display = 'none';
+        return;
+      }
+
+      const nodeEl = document.getElementById(`node-${selected.id}`);
+      if (nodeEl) {
+        try {
+          const bbox = nodeEl.getBBox();
+          const pad = 8;
+          selectionRect.setAttribute('x', bbox.x - pad);
+          selectionRect.setAttribute('y', bbox.y - pad);
+          selectionRect.setAttribute('width', bbox.width + pad * 2);
+          selectionRect.setAttribute('height', bbox.height + pad * 2);
+          selectionRect.setAttribute('rx', 4);
+          selectionRect.style.display = 'block';
+        } catch(e) {
+          selectionRect.style.display = 'none';
+        }
+      }
+    }
+
+    // Seleccionar Concepto
+    function selectConcept(id) {
+      selectedId = id;
+      renderConceptList();
+      
+      // Actualizar clases de nodos
+      document.querySelectorAll('.map-node-item').forEach(el => {
+        const isCurrent = el.id === `node-${id}`;
+        el.classList.toggle('selected', isCurrent);
+        el.style.fill = isCurrent ? '#00E5FF' : '#FFFFFF';
+      });
+
+      updateSelectionBox();
+      syncPropertiesPanel();
+    }
+
+    // Sincronizar el panel derecho con el elemento activo
+    function syncPropertiesPanel() {
+      const concept = concepts.find(c => c.id === selectedId);
+      if (!concept) return;
+
+      propText.value = concept.text;
+      propX.value = concept.x;
+      propY.value = concept.y;
+      propSize.value = concept.size;
+      propWeight.value = concept.weight;
+      propSpacing.value = concept.spacing;
+      propOpacity.value = concept.opacity;
+
+      valX.textContent = `${Math.round(concept.x)} px`;
+      valY.textContent = `${Math.round(concept.y)} px`;
+      valSize.textContent = `${concept.size} px`;
+      valWeight.textContent = `${concept.weight}`;
+      valSpacing.textContent = `${concept.spacing} em`;
+      valOpacity.textContent = `${Math.round(concept.opacity * 100)}%`;
+    }
+
+    // Drag & Drop con coordenadas exactas SVG
+    function getSvgCoordinates(e) {
+      const pt = svgCanvas.createSVGPoint();
+      pt.x = e.clientX;
+      pt.y = e.clientY;
+      const ctm = svgCanvas.getScreenCTM();
+      if (ctm) {
+        const transformed = pt.matrixTransform(ctm.inverse());
+        return { x: transformed.x, y: transformed.y };
+      }
+      return { x: 0, y: 0 };
+    }
+
+    function startDragging(e, concept) {
+      isDragging = true;
+      svgCanvas.setPointerCapture(e.pointerId);
+      const svgPos = getSvgCoordinates(e);
+      dragOffset.x = svgPos.x - concept.x;
+      dragOffset.y = svgPos.y - concept.y;
+    }
+
+    svgCanvas.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      const concept = concepts.find(c => c.id === selectedId);
+      if (!concept) return;
+
+      const svgPos = getSvgCoordinates(e);
+      let newX = Math.round(svgPos.x - dragOffset.x);
+      let newY = Math.round(svgPos.y - dragOffset.y);
+
+      // Bounds
+      newX = Math.max(30, Math.min(970, newX));
+      newY = Math.max(25, Math.min(625, newY));
+
+      concept.x = newX;
+      concept.y = newY;
+
+      const nodeEl = document.getElementById(`node-${concept.id}`);
+      if (nodeEl) {
+        nodeEl.setAttribute('x', newX);
+        nodeEl.setAttribute('y', newY);
+      }
+
+      syncPropertiesPanel();
+      updateSelectionBox();
+      renderConceptList();
+      saveData();
+    });
+
+    svgCanvas.addEventListener('pointerup', (e) => {
+      if (isDragging) {
+        isDragging = false;
+        try { svgCanvas.releasePointerCapture(e.pointerId); } catch(err) {}
+      }
+    });
+
+    // Inputs de propiedades (Event Listeners)
+    propText.addEventListener('input', (e) => {
+      const concept = concepts.find(c => c.id === selectedId);
+      if (concept) {
+        concept.text = e.target.value.toLowerCase();
+        const nodeEl = document.getElementById(`node-${concept.id}`);
+        if (nodeEl) nodeEl.textContent = concept.text;
+        updateSelectionBox();
+        renderConceptList();
+        saveData();
+      }
+    });
+
+    propX.addEventListener('input', (e) => {
+      const concept = concepts.find(c => c.id === selectedId);
+      if (concept) {
+        concept.x = parseFloat(e.target.value);
+        valX.textContent = `${Math.round(concept.x)} px`;
+        const nodeEl = document.getElementById(`node-${concept.id}`);
+        if (nodeEl) nodeEl.setAttribute('x', concept.x);
+        updateSelectionBox();
+        renderConceptList();
+        saveData();
+      }
+    });
+
+    propY.addEventListener('input', (e) => {
+      const concept = concepts.find(c => c.id === selectedId);
+      if (concept) {
+        concept.y = parseFloat(e.target.value);
+        valY.textContent = `${Math.round(concept.y)} px`;
+        const nodeEl = document.getElementById(`node-${concept.id}`);
+        if (nodeEl) nodeEl.setAttribute('y', concept.y);
+        updateSelectionBox();
+        renderConceptList();
+        saveData();
+      }
+    });
+
+    propSize.addEventListener('input', (e) => {
+      const concept = concepts.find(c => c.id === selectedId);
+      if (concept) {
+        concept.size = parseInt(e.target.value, 10);
+        valSize.textContent = `${concept.size} px`;
+        const nodeEl = document.getElementById(`node-${concept.id}`);
+        if (nodeEl) nodeEl.style.fontSize = `${concept.size}px`;
+        updateSelectionBox();
+        renderConceptList();
+        saveData();
+      }
+    });
+
+    propWeight.addEventListener('change', (e) => {
+      const concept = concepts.find(c => c.id === selectedId);
+      if (concept) {
+        concept.weight = parseInt(e.target.value, 10);
+        valWeight.textContent = `${concept.weight}`;
+        const nodeEl = document.getElementById(`node-${concept.id}`);
+        if (nodeEl) nodeEl.style.fontWeight = concept.weight;
+        updateSelectionBox();
+        saveData();
+      }
+    });
+
+    propSpacing.addEventListener('input', (e) => {
+      const concept = concepts.find(c => c.id === selectedId);
+      if (concept) {
+        concept.spacing = parseFloat(e.target.value);
+        valSpacing.textContent = `${concept.spacing} em`;
+        const nodeEl = document.getElementById(`node-${concept.id}`);
+        if (nodeEl) nodeEl.style.letterSpacing = `${concept.spacing}em`;
+        updateSelectionBox();
+        saveData();
+      }
+    });
+
+    propOpacity.addEventListener('input', (e) => {
+      const concept = concepts.find(c => c.id === selectedId);
+      if (concept) {
+        concept.opacity = parseFloat(e.target.value);
+        valOpacity.textContent = `${Math.round(concept.opacity * 100)}%`;
+        const nodeEl = document.getElementById(`node-${concept.id}`);
+        if (nodeEl) {
+          nodeEl.style.opacity = concept.opacity;
+          nodeEl.style.setProperty('--base-op', concept.opacity);
+        }
+        saveData();
+      }
+    });
+
+    // Centrado rápido
+    document.getElementById('btn-center-x').addEventListener('click', () => {
+      const concept = concepts.find(c => c.id === selectedId);
+      if (concept) {
+        concept.x = 500;
+        syncPropertiesPanel();
+        const nodeEl = document.getElementById(`node-${concept.id}`);
+        if (nodeEl) nodeEl.setAttribute('x', 500);
+        updateSelectionBox();
+        renderConceptList();
+        saveData();
+      }
+    });
+
+    document.getElementById('btn-center-y').addEventListener('click', () => {
+      const concept = concepts.find(c => c.id === selectedId);
+      if (concept) {
+        concept.y = 325;
+        syncPropertiesPanel();
+        const nodeEl = document.getElementById(`node-${concept.id}`);
+        if (nodeEl) nodeEl.setAttribute('y', 325);
+        updateSelectionBox();
+        renderConceptList();
+        saveData();
+      }
+    });
+
+    // Añadir Concepto
+    document.getElementById('btn-add-concept').addEventListener('click', () => {
+      const newId = 'c_' + Date.now();
+      const newConcept = {
+        id: newId,
+        text: 'nuevo concepto',
+        x: 500,
+        y: 325,
+        size: 22,
+        weight: 400,
+        spacing: 0.04,
+        opacity: 1
+      };
+      concepts.push(newConcept);
+      selectedId = newId;
+      renderSvgNodes();
+      renderConceptList();
+      syncPropertiesPanel();
+      saveData();
+      propText.focus();
+      propText.select();
+    });
+
+    // Eliminar Concepto
+    document.getElementById('btn-delete-concept').addEventListener('click', () => {
+      if (concepts.length <= 1) {
+        alert('Debe haber al menos un concepto en el mapa.');
+        return;
+      }
+      concepts = concepts.filter(c => c.id !== selectedId);
+      selectedId = concepts[0].id;
+      renderSvgNodes();
+      renderConceptList();
+      syncPropertiesPanel();
+      saveData();
+    });
+
+    // Restaurar Layout
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      if (confirm('¿Restaurar las posiciones y tamaños originales?')) {
+        concepts = JSON.parse(JSON.stringify(DEFAULT_CONCEPTS));
+        selectedId = concepts[0].id;
+        renderSvgNodes();
+        renderConceptList();
+        syncPropertiesPanel();
+        saveData();
+        showToast('Layout restaurado');
+      }
+    });
+
+    // Toggles de Guías
+    document.getElementById('chk-grid').addEventListener('change', (e) => {
+      gridGroup.style.display = e.target.checked ? 'block' : 'none';
+    });
+
+    document.getElementById('chk-guides').addEventListener('change', (e) => {
+      guidesGroup.style.display = e.target.checked ? 'block' : 'none';
+    });
+
+    document.getElementById('chk-twinkle').addEventListener('change', (e) => {
+      nodesContainer.classList.toggle('twinkle-active', e.target.checked);
+    });
+
+    // Generar Código HTML/SVG
+    function generateCode() {
+      let code = '          <!-- Nodos y Textos -->\n          <g class="map-nodes">\n';
+      concepts.forEach(c => {
+        let styleParts = [];
+        styleParts.push(`font-size: ${c.size}px;`);
+        if (c.weight !== 400) styleParts.push(`font-weight: ${c.weight};`);
+        if (c.spacing !== 0.04) styleParts.push(`letter-spacing: ${c.spacing}em;`);
+        if (c.opacity < 1) styleParts.push(`opacity: ${c.opacity}; --base-op: ${c.opacity};`);
+
+        const styleAttr = styleParts.length > 0 ? ` style="${styleParts.join(' ')}"` : '';
+        code += `            <text x="${Math.round(c.x)}" y="${Math.round(c.y)}" class="map-node-text" text-anchor="middle" dominant-baseline="central"${styleAttr}>${c.text}</text>\n`;
+      });
+      code += '          </g>';
+      return code;
+    }
+
+    // Modal de Código
+    const codeModal = document.getElementById('code-modal');
+    const codeOutput = document.getElementById('code-output');
+
+    document.getElementById('btn-view-code').addEventListener('click', () => {
+      codeOutput.textContent = generateCode();
+      codeModal.classList.add('open');
+    });
+
+    document.getElementById('btn-close-modal').addEventListener('click', () => {
+      codeModal.classList.remove('open');
+    });
+    document.getElementById('btn-modal-close-btn').addEventListener('click', () => {
+      codeModal.classList.remove('open');
+    });
+
+    // Copiar al Portapapeles
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('¡Código copiado al portapapeles! ✓');
+      }).catch(() => {
+        showToast('Código generado');
+      });
+    }
+
+    document.getElementById('btn-copy-code').addEventListener('click', () => {
+      copyToClipboard(generateCode());
+    });
+
+    document.getElementById('btn-modal-copy').addEventListener('click', () => {
+      copyToClipboard(generateCode());
+      codeModal.classList.remove('open');
+    });
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-notice');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    // Teclado (flechas para mover con precisión)
+    window.addEventListener('keydown', (e) => {
+      if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT') return;
+      const concept = concepts.find(c => c.id === selectedId);
+      if (!concept) return;
+
+      const step = e.shiftKey ? 10 : 1;
+      let changed = false;
+
+      if (e.key === 'ArrowLeft') { concept.x -= step; changed = true; }
+      if (e.key === 'ArrowRight') { concept.x += step; changed = true; }
+      if (e.key === 'ArrowUp') { concept.y -= step; changed = true; }
+      if (e.key === 'ArrowDown') { concept.y += step; changed = true; }
+
+      if (changed) {
+        e.preventDefault();
+        concept.x = Math.max(30, Math.min(970, concept.x));
+        concept.y = Math.max(25, Math.min(625, concept.y));
+        const nodeEl = document.getElementById(`node-${concept.id}`);
+        if (nodeEl) {
+          nodeEl.setAttribute('x', concept.x);
+          nodeEl.setAttribute('y', concept.y);
+        }
+        syncPropertiesPanel();
+        updateSelectionBox();
+        renderConceptList();
+        saveData();
+      }
+    });
+
+    // Selector de Tamaño del Lienzo
+    const selCanvasSize = document.getElementById('sel-canvas-size');
+    const canvasFrame = document.querySelector('.canvas-frame');
+    if (selCanvasSize && canvasFrame) {
+      selCanvasSize.addEventListener('change', (e) => {
+        canvasFrame.classList.remove('size-exact', 'size-fronteo', 'size-fit');
+        canvasFrame.classList.add(e.target.value);
+        setTimeout(updateSelectionBox, 50);
+      });
+    }
+
+    // Iniciar
+    loadData();
+    initGrid();
+    renderSvgNodes();
+    renderConceptList();
+    syncPropertiesPanel();
+  </script>
+</body>
+</html>

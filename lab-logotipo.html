@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estudio Illustrator - Posicionamiento de Logotipos en Grilla</title>
+  <style>
+    :root {
+      --color-burdeo: #69112a;
+      --color-rosado: #f9cee1;
+      --color-fucsia: #e61466;
+      --color-accent: #00e5ff;
+      --bg-dark: #1e1e1e;
+      --bg-panel: #252526;
+      --bg-input: #3c3c3c;
+      --border-color: #454545;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: #cccccc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* BARRA SUPERIOR / TOPBAR */
+    .topbar {
+      height: 48px;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 10;
+    }
+
+    .topbar-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: #ffffff;
+      font-size: 14px;
+    }
+
+    .topbar-badge {
+      background: var(--color-burdeo);
+      color: var(--color-rosado);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-illustrator {
+      background: var(--color-fucsia);
+      color: #ffffff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-illustrator:hover {
+      background: #ff2a7b;
+      transform: translateY(-1px);
+    }
+
+    /* ESTRUCTURA PRINCIPAL TIPO WORKSPACE */
+    .workspace {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* TOOLBAR IZQUIERDA */
+    .toolbar {
+      width: 48px;
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 10px;
+      gap: 8px;
+    }
+
+    .tool-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ccc;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .tool-btn:hover {
+      background: #333333;
+      color: #fff;
+    }
+
+    .tool-btn.active {
+      background: #0e639c;
+      color: #ffffff;
+      border-color: #1177bb;
+    }
+
+    /* CANVAS AREA / LIENZO */
+    .canvas-viewport {
+      flex: 1;
+      background: #121212;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: auto;
+      position: relative;
+    }
+
+    .artboard-container {
+      background: #ffffff;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      position: relative;
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .logotipo-grid-svg {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 793.72 / 770;
+      display: block;
+      shape-rendering: crispEdges;
+    }
+
+    /* INSPECTOR / PANEL DERECHO */
+    .inspector-panel {
+      width: 320px;
+      background: var(--bg-panel);
+      border-left: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .panel-section {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .panel-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #888888;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .prop-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .prop-row.full {
+      grid-template-columns: 1fr;
+    }
+
+    .prop-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .prop-field label {
+      font-size: 11px;
+      color: #aaaaaa;
+    }
+
+    .input-with-unit {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-with-unit input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid #555;
+      color: #ffffff;
+      padding: 6px 8px;
+      padding-right: 32px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-family: monospace;
+    }
+
+    .input-with-unit input:focus {
+      border-color: var(--color-accent);
+      outline: none;
+    }
+
+    .input-unit {
+      position: absolute;
+      right: 8px;
+      font-size: 10px;
+      color: #888888;
+      pointer-events: none;
+    }
+
+    .element-card {
+      background: #2d2d2d;
+      border: 1px solid #3d3d3d;
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .element-card:hover {
+      border-color: #666;
+    }
+
+    .element-card.selected {
+      border-color: var(--color-accent);
+      background: #1e3846;
+    }
+
+    .element-card-header {
+      font-size: 12px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .element-card-info {
+      font-size: 10px;
+      color: #aaa;
+      font-family: monospace;
+    }
+
+    /* SELECCIÓN Y TRANSFORM HANDLES (TIPO ILLUSTRATOR) */
+    .draggable-glyph {
+      cursor: grab;
+    }
+
+    .draggable-glyph:hover {
+      filter: drop-shadow(0 0 3px rgba(0,229,255,0.8));
+    }
+
+    .draggable-glyph.dragging {
+      cursor: grabbing;
+    }
+
+    /* MANEJADORES DE TRANSFORMACIÓN OVERLAY */
+    #transformOverlay {
+      pointer-events: none;
+    }
+
+    .bounding-box {
+      fill: none;
+      stroke: var(--color-accent);
+      stroke-width: 1.2px;
+      stroke-dasharray: 4 2;
+    }
+
+    .handle {
+      fill: #ffffff;
+      stroke: var(--color-accent);
+      stroke-width: 1.5px;
+      cursor: pointer;
+      pointer-events: all;
+    }
+
+    .handle:hover {
+      fill: var(--color-accent);
+    }
+
+    /* MODAL DE CÓDIGO */
+    .code-box {
+      background: #111;
+      color: #00ff66;
+      padding: 12px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 11px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      max-height: 180px;
+      overflow-y: auto;
+      border: 1px solid #333;
+    }
+
+    /* REGLAS SUPERIOR E IZQUIERDA */
+    .ruler-info {
+      background: #1a1a1a;
+      color: var(--color-rosado);
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA SUPERIOR -->
+  <div class="topbar">
+    <div class="topbar-title">
+      <span>📐 Illustrator Studio</span>
+      <span class="topbar-badge">GRILLA CONTINUA: 209 CUADROS DE ANCHO × 203 CUADROS DE ALTO</span>
+    </div>
+    <div class="ruler-info" id="rulerCoords">
+      📍 Cursor: Col 0.0, Fila 0.0
+    </div>
+    <div class="topbar-actions">
+      <button class="btn-illustrator" onclick="copyCode()">
+        <span>📋</span> Copiar Código SVG Directo
+      </button>
+    </div>
+  </div>
+
+  <!-- WORKSPACE PRINCIPAL -->
+  <div class="workspace">
+
+    <!-- TOOLBAR IZQUIERDA -->
+    <div class="toolbar">
+      <div class="tool-btn active" title="Herramienta Selección Directa (V)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2l12 11.2-5.8.5 3.3 7.3-2.2 1-3.2-7.4L7 18.5V2z"/></svg>
+      </div>
+      <div class="tool-btn" title="Snap Imantado Activo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+      </div>
+    </div>
+
+    <!-- CANVAS / LIENZO DE TRABAJO -->
+    <div class="canvas-viewport" id="canvasViewport">
+      <div class="artboard-container">
+        <svg class="logotipo-grid-svg" id="mainSvg" viewBox="0 0 793.72 770" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="logotipo-grid-pattern" width="3.7977" height="3.7977" patternUnits="userSpaceOnUse">
+              <path d="M 3.7977 0 L 0 0 0 3.7977" fill="none" stroke="#9d9d9c" stroke-width="0.2pt" shape-rendering="crispEdges" />
+            </pattern>
+          </defs>
+
+          <!-- Fondo y Grilla continua -->
+          <rect width="793.72" height="770" fill="#fafafa" />
+          <rect width="793.72" height="770" fill="url(#logotipo-grid-pattern)" />
+          <rect width="793.72" height="770" fill="none" stroke="#9d9d9c" stroke-width="0.2pt" shape-rendering="crispEdges" />
+
+          <!-- Logotipo Superior (Fijo) -->
+          <g id="logotipo-scaled-glyphs" transform="scale(0.956938)">
+            <g id="logotipo-letters-shifted" transform="translate(0, 23.81)">
+              <g transform="translate(-3.97, 0)"><path fill="#69112a" d="M 162.71 146.83 L 182.55 146.83 C 170.65 170.65, 146.83 190.49, 115.01 186.51 C 23.81 174.61, 15.87 11.91, 115.09 11.91 C 150.80 11.91, 166.68 27.78, 178.58 47.62 L 154.77 59.53 C 146.83 35.72, 134.93 19.84, 115.09 19.84 C 47.62 19.84, 71.49 178.58, 126.98 178.58 C 150.80 178.58, 158.74 162.71, 162.71 146.83 Z" /></g>
+              <g transform="translate(-3.97, 0)"><path fill="#69112a" d="M 186.56 249.94 L 166.71 249.94 C 166.71 234.10, 175.74 214.94, 186.52 210.33 C 178.61 222.21, 178.61 238.06, 186.56 249.94 Z" /></g>
+              <g transform="translate(154.77, 23.81)"><path fill="#69112a" d="M 67.51 39.73 C 99.26 39.74, 146.88 39.74, 146.88 67.52 V 158.80 H 115.13 C 115.13 150.86, 131.00 127.05, 131.00 127.05 C 123.07 134.99, 111.16 158.80, 87.35 158.80 C 67.50 158.80, 51.63 150.86, 51.63 127.05 C 51.63 71.49, 138.94 95.30, 138.94 67.52 C 138.94 59.58, 131.01 55.61, 123.07 55.61 C 107.20 55.61, 91.32 71.48, 67.51 71.48 V 39.73 Z" /></g>
+              <g transform="translate(297.64, 0)"><path fill="#69112a" d="M 47.67 39.70 L 79.42 23.82 L 79.42 63.51 L 95.29 63.51 L 95.29 71.44 L 79.42 71.44 L 79.42 182.56 L 47.67 182.56 L 47.67 71.44 L 31.80 71.44 L 31.80 63.51 L 47.67 63.51 Z" /></g>
+              <g transform="translate(226.21, 0)"><path fill="#69112a" d="M 194.45 31.76 L 226.20 15.88 L 226.20 182.56 L 194.45 182.56 Z" /></g>
+              <g transform="translate(99.21, 23.81)"><path fill="#69112a" d="M 381.02 39.74 L 412.77 39.74 C 412.77 55.61, 404.83 55.61, 404.83 79.41 C 404.83 57.50, 422.60 39.74, 444.51 39.74 C 466.43 39.74, 484.20 57.51, 484.20 79.43 L 484.20 158.80 L 452.45 158.80 L 452.45 75.46 C 452.45 64.50, 443.57 55.62, 432.61 55.62 C 421.65 55.62, 412.77 64.50, 412.77 75.46 L 412.77 158.80 L 381.02 158.80 Z" /></g>
+              <g transform="translate(571.48, 55.51)"><path fill="#69112a" d="M 123.07 7.99 C 123.07 31.80, 138.92 31.79, 131.01 55.61 C 127.06 67.52, 117.17 97.13, 111.17 115.14 L 75.44 7.99 H 39.72 L 79.41 127.05 H 107.19 C 99.25 154.83, 99.25 162.77, 51.63 166.73 L 67.50 190.54 C 75.44 190.54, 99.25 186.57, 111.16 150.85 C 115.13 138.94, 119.10 127.04, 119.10 127.04 L 158.78 7.99 H 123.07 Z" /></g>
+              <g transform="translate(428.61, 0)"><path fill="#69112a" d="M 329.41 63.51 L 361.16 63.51 L 361.16 182.57 L 329.41 182.57 Z" /></g>
+            </g>
+          </g>
+
+          <!-- SECCIÓN INFERIOR ARRASTRABLE TIPO ILLUSTRATOR -->
+          <g id="logotipo-isotipo-section" transform="translate(0, 285.73)">
+            
+            <!-- Elemento 1: Pétalo 5 cuadros -->
+            <g id="elem-petalo-5" class="draggable-glyph" transform="translate(67.722, 279.940) scale(-0.4192, 0.4192)" data-name="Pétalo (5 cuadros alto)" data-scale-x="-0.4192" data-scale-y="0.4192" data-col="17" data-row="162">
+              <path fill="#69112a" opacity="0.4" d="m85.94 184.3h47.33c0-37.87-21.55-83.64-47.25-94.66 18.87 28.4 18.88 66.26-0.08 94.66z"/>
+            </g>
+
+            <!-- Elemento 2: Pétalo Reflejado -->
+            <g id="elem-petalo-flipped" class="draggable-glyph" transform="translate(271.066, 108.113) scale(-1.3511, 1.3511)" data-name="Pétalo Izquierdo (60 cuadros alto)" data-scale-x="-1.3511" data-scale-y="1.3511" data-col="68" data-row="162">
+              <path fill="#69112a" opacity="0.4" d="m85.94 184.3h47.33c0-37.87-21.55-83.64-47.25-94.66 18.87 28.4 18.88 66.26-0.08 94.66z"/>
+            </g>
+
+            <!-- Elemento 3: Pétalo Estándar -->
+            <g id="elem-petalo-estandar" class="draggable-glyph" transform="translate(97.747, 108.113) scale(1.3511)" data-name="Pétalo Derecho (60 cuadros alto)" data-scale-x="1.3511" data-scale-y="1.3511" data-col="25" data-row="162">
+              <path fill="#69112a" opacity="0.4" d="m85.94 184.3h47.33c0-37.87-21.55-83.64-47.25-94.66 18.87 28.4 18.88 66.26-0.08 94.66z"/>
+            </g>
+
+            <!-- Elemento 4: Isotipo Descomposición (5 Pétalos) -->
+            <g id="elem-isotipo-5" class="draggable-glyph" transform="translate(286.071, 99.824) scale(1.3511)" data-name="Isotipo Guías (60 cuadros alto)" data-scale-x="1.3511" data-scale-y="1.3511" data-col="72" data-row="162">
+              <g opacity="0.3" fill="#69112a">
+                <path stroke="#9d9d9c" stroke-width="0.25px" d="M168.6,135.68l14.63-45.02c-36.02-11.7-86.21-5.36-104.63,15.69,32.84-9.17,68.86,2.52,90,29.33Z"/>
+                <path stroke="#9d9d9c" stroke-width="0.25px" d="M85.94,184.3h47.33c0-37.87-21.55-83.64-47.25-94.66,18.87,28.4,18.88,66.26-.08,94.66Z"/>
+                <path stroke="#9d9d9c" stroke-width="0.25px" d="M14.16,120.72l14.63,45.02c36.01-11.71,72.89-46.34,75.43-74.19-21.18,26.72-57.19,38.43-90.05,29.18Z"/>
+                <path stroke="#9d9d9c" stroke-width="0.25px" d="M52.45,32.8L14.15,60.62c22.26,30.63,66.6,55.01,93.87,48.81-31.96-11.88-54.22-42.51-55.58-76.63Z"/>
+                <path stroke="#9d9d9c" stroke-width="0.25px" d="M147.89,42.05l-38.29-27.82c-22.25,30.64-31.73,80.33-17.41,104.36,1.42-34.07,23.68-64.71,55.7-76.54Z"/>
+              </g>
+              <g fill="none" stroke="#69112a" stroke-width="0.5px">
+                <path d="M168.6,135.68l14.63-45.02c-36.02-11.7-86.21-5.36-104.63,15.69,32.84-9.17,68.86,2.52,90,29.33Z"/>
+                <path d="M85.94,184.3h47.33c0-37.87-21.55-83.64-47.25-94.66,18.87,28.4,18.88,66.26-.08,94.66Z"/>
+                <path d="M14.16,120.72l14.63,45.02c36.01-11.71,72.89-46.34,75.43-74.19-21.18,26.72-57.19,38.43-90.05,29.18Z"/>
+                <path d="M52.45,32.8L14.15,60.62c22.26,30.63,66.6,55.01,93.87,48.81-31.96-11.88-54.22-42.51-55.58-76.63Z"/>
+                <path d="M147.89,42.05l-38.29-27.82c-22.25,30.64-31.73,80.33-17.41,104.36,1.42-34.07,23.68-64.71,55.7-76.54Z"/>
+              </g>
+            </g>
+
+            <!-- Elemento 5: Isotipo Sólido 100% -->
+            <g id="elem-isotipo-solido" class="draggable-glyph" transform="translate(569.971, 99.824) scale(1.3511)" data-name="Isotipo Sólido Recurso 2 (60 cuadros alto)" data-scale-x="1.3511" data-scale-y="1.3511" data-col="143" data-row="162">
+              <path fill="#69112a" fill-rule="evenodd" d="M97.1,93.63c8.41-23.41,26.87-42.74,50.8-51.58l-38.29-27.82c-16.82,23.16-26.34,57.21-23.8,82.83-19.67-15.23-32.35-38.77-33.36-64.25L14.15,60.62c16.83,23.16,46.27,42.73,71.42,48.23-20.57,14-46.87,18.79-71.41,11.87l14.63,45.02c27.22-8.85,54.93-30.8,67.93-53.02,6.96,23.88,3.38,50.38-10.78,71.58h47.33c0-28.63-12.32-61.76-29.43-81,24.87.76,48.96,12.35,64.76,32.37l14.63-45.02c-27.23-8.84-62.55-7.37-86.13,2.96Z"/>
+            </g>
+
+            <!-- OVERLAY DE BOUNDING BOX TIPO ILLUSTRATOR -->
+            <g id="transformOverlay">
+              <rect id="boundingBox" class="bounding-box" x="0" y="0" width="0" height="0" />
+              <circle id="handleNW" class="handle" r="4" />
+              <circle id="handleNE" class="handle" r="4" />
+              <circle id="handleSW" class="handle" r="4" />
+              <circle id="handleSE" class="handle" r="4" />
+            </g>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- PANEL DERECHO DE PROPIEDADES (INSPECTOR) -->
+    <div class="inspector-panel">
+
+      <!-- PROPIEDADES DE POSICIÓN Y GRILLA -->
+      <div class="panel-section">
+        <div class="panel-title">
+          <span>Transformación y Grilla</span>
+          <span style="color: var(--color-accent);" id="selectedBadge">Pétalo 1</span>
+        </div>
+
+        <div class="prop-row">
+          <div class="prop-field">
+            <label for="inputCol">Columna X (Cuadros)</label>
+            <div class="input-with-unit">
+              <input type="number" id="inputCol" value="143" step="1" oninput="updateFromInputs()">
+              <span class="input-unit">col</span>
+            </div>
+          </div>
+          <div class="prop-field">
+            <label for="inputRow">Fila Y (Base)</label>
+            <div class="input-with-unit">
+              <input type="number" id="inputRow" value="162" step="1" oninput="updateFromInputs()">
+              <span class="input-unit">fila</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="prop-row">
+          <div class="prop-field">
+            <label for="inputAltoCuadros">Alto Isotipo</label>
+            <div class="input-with-unit">
+              <input type="number" id="inputAltoCuadros" value="60" step="1" oninput="updateAltoCuadros()">
+              <span class="input-unit">cuadros</span>
+            </div>
+          </div>
+          <div class="prop-field">
+            <label for="inputScale">Escala Exacta</label>
+            <div class="input-with-unit">
+              <input type="number" id="inputScale" value="1.3511" step="0.0001" oninput="updateFromInputs()">
+              <span class="input-unit">S</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="prop-row full">
+          <div class="prop-field">
+            <label for="snapSelect">Modo de Alineación / Snap</label>
+            <div class="input-with-unit">
+              <select id="snapSelect" style="width:100%; background:var(--bg-input); color:#fff; border:1px solid #555; padding:6px; border-radius:3px; font-size:12px;">
+                <option value="snap">Imán Exacto a Vértices de Grilla (Snap)</option>
+                <option value="free">Movimiento Píxel Libre</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAPAS Y CAPAS DE ELEMENTOS -->
+      <div class="panel-section" style="flex:1;">
+        <div class="panel-title">Capas y Objetos en Grilla</div>
+        
+        <div id="elementsList">
+          <!-- Se puebla dinámicamente -->
+        </div>
+      </div>
+
+      <!-- CÓDIGO GENERADO AUTOMÁTICAMENTE -->
+      <div class="panel-section">
+        <div class="panel-title">Código SVG resultante</div>
+        <div class="code-box" id="codeOutput">&lt;!-- Selecciona y mueve un objeto para generar el SVG --&gt;</div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const svg = document.getElementById('mainSvg');
+    const inputCol = document.getElementById('inputCol');
+    const inputRow = document.getElementById('inputRow');
+    const inputAltoCuadros = document.getElementById('inputAltoCuadros');
+    const inputScale = document.getElementById('inputScale');
+    const selectedBadge = document.getElementById('selectedBadge');
+    const snapSelect = document.getElementById('snapSelect');
+    const elementsList = document.getElementById('elementsList');
+    const codeOutput = document.getElementById('codeOutput');
+    const rulerCoords = document.getElementById('rulerCoords');
+
+    // Bounding box overlay elements
+    const transformOverlay = document.getElementById('transformOverlay');
+    const boundingBox = document.getElementById('boundingBox');
+    const handleNW = document.getElementById('handleNW');
+    const handleNE = document.getElementById('handleNE');
+    const handleSW = document.getElementById('handleSW');
+    const handleSE = document.getElementById('handleSE');
+
+    const QUADRO_SIZE = 3.7977 / 0.956938; // 3.9686 pt
+    const Y_OFFSET = 285.73;
+
+    let selectedElem = null;
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let startTransX = 0;
+    let startTransY = 0;
+
+    // Inicializar lista de capas
+    function initLayersList() {
+      elementsList.innerHTML = '';
+      document.querySelectorAll('.draggable-glyph').forEach(elem => {
+        const id = elem.id;
+        const name = elem.getAttribute('data-name') || id;
+        
+        const card = document.createElement('div');
+        card.className = `element-card ${selectedElem === elem ? 'selected' : ''}`;
+        card.id = `card-${id}`;
+        card.innerHTML = `
+          <div class="element-card-header">
+            <span>${name}</span>
+          </div>
+          <div class="element-card-info">
+            Col: <span class="card-col">${elem.getAttribute('data-col')}</span> | Fila: <span class="card-row">${elem.getAttribute('data-row')}</span>
+          </div>
+        `;
+        card.onclick = () => selectElement(elem);
+        elementsList.appendChild(card);
+      });
+    }
+
+    // Seleccionar Elemento
+    function selectElement(elem) {
+      if (selectedElem) selectedElem.classList.remove('selected');
+      selectedElem = elem;
+      selectedElem.classList.add('selected');
+
+      const name = elem.getAttribute('data-name');
+      selectedBadge.textContent = name;
+
+      updateInputsFromElem(elem);
+      updateBoundingBox();
+      initLayersList();
+    }
+
+    // Actualizar Bounding Box Overlay tipo Illustrator
+    function updateBoundingBox() {
+      if (!selectedElem) {
+        transformOverlay.style.display = 'none';
+        return;
+      }
+      transformOverlay.style.display = 'block';
+
+      const bbox = selectedElem.getBBox();
+      const transform = selectedElem.getAttribute('transform') || '';
+      
+      const matchT = transform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+      const matchS = transform.match(/scale\(([^,)]+)(?:,\s*([^)]+))?\)/);
+      
+      const tx = matchT ? parseFloat(matchT[1]) : 0;
+      const ty = matchT ? parseFloat(matchT[2]) : 0;
+      const sx = matchS ? parseFloat(matchS[1]) : 1;
+      const sy = matchS ? parseFloat(matchS[2] || matchS[1]) : 1;
+
+      const x = tx + (bbox.x * sx);
+      const y = ty + (bbox.y * sy);
+      const w = bbox.width * Math.abs(sx);
+      const h = bbox.height * Math.abs(sy);
+
+      boundingBox.setAttribute('x', x);
+      boundingBox.setAttribute('y', y);
+      boundingBox.setAttribute('width', w);
+      boundingBox.setAttribute('height', h);
+
+      handleNW.setAttribute('cx', x); handleNW.setAttribute('cy', y);
+      handleNE.setAttribute('cx', x + w); handleNE.setAttribute('cy', y);
+      handleSW.setAttribute('cx', x); handleSW.setAttribute('cy', y + h);
+      handleSE.setAttribute('cx', x + w); handleSE.setAttribute('cy', y + h);
+    }
+
+    function updateInputsFromElem(elem) {
+      const transform = elem.getAttribute('transform') || '';
+      const matchT = transform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+      const matchS = transform.match(/scale\(([^,)]+)(?:,\s*([^)]+))?\)/);
+
+      const tx = matchT ? parseFloat(matchT[1]) : 0;
+      const ty = matchT ? parseFloat(matchT[2]) : 0;
+      const sy = matchS ? Math.abs(parseFloat(matchS[2] || matchS[1])) : 1.3511;
+
+      const col = Math.round(tx / QUADRO_SIZE);
+      
+      // Native Y bottom
+      const elemId = elem.id;
+      const nativeY = elemId.includes('solido') ? 170.08 : (elemId.includes('flipped') || elemId.includes('estandar') || elemId.includes('petalo-5') ? 184.3 : 170.08);
+      const row = Math.round((ty + Y_OFFSET + (nativeY * sy)) / QUADRO_SIZE);
+
+      // Fila real
+      inputCol.value = col;
+      inputRow.value = row;
+      inputScale.value = sy.toFixed(4);
+
+      // Calcular alto en cuadros
+      const cuadrosAlto = Math.round((sy * 176.23 * 0.956938) / 3.7977);
+      inputAltoCuadros.value = cuadrosAlto;
+
+      elem.setAttribute('data-col', col);
+      elem.setAttribute('data-row', row);
+    }
+
+    function updateFromInputs() {
+      if (!selectedElem) return;
+      const col = parseFloat(inputCol.value) || 0;
+      const row = parseFloat(inputRow.value) || 162;
+      const sy = parseFloat(inputScale.value) || 1.3511;
+
+      const scaleSignX = parseFloat(selectedElem.getAttribute('data-scale-x')) < 0 ? -1 : 1;
+      const scaleSignY = parseFloat(selectedElem.getAttribute('data-scale-y')) < 0 ? -1 : 1;
+
+      selectedElem.setAttribute('data-scale-x', (sy * scaleSignX).toFixed(4));
+      selectedElem.setAttribute('data-scale-y', (sy * scaleSignY).toFixed(4));
+
+      const elemId = selectedElem.id;
+      const posX = col * QUADRO_SIZE;
+
+      const nativeY = elemId.includes('solido') ? 170.08 : (elemId.includes('flipped') || elemId.includes('estandar') || elemId.includes('petalo-5') ? 184.3 : 170.08);
+      const posY = (row * QUADRO_SIZE) - Y_OFFSET - (nativeY * sy);
+
+      const transformStr = `translate(${posX.toFixed(3)}, ${posY.toFixed(3)}) scale(${(sy * scaleSignX).toFixed(4)}, ${(sy * scaleSignY).toFixed(4)})`;
+      selectedElem.setAttribute('transform', transformStr);
+
+      selectedElem.setAttribute('data-col', col);
+      selectedElem.setAttribute('data-row', row);
+
+      updateBoundingBox();
+      generateCode();
+      initLayersList();
+    }
+
+    function updateAltoCuadros() {
+      const hCuadros = parseFloat(inputAltoCuadros.value) || 60;
+      // Escala S = (H * 3.7977) / (176.23 * 0.956938)
+      const newScale = (hCuadros * 3.7977) / (176.23 * 0.956938);
+      inputScale.value = newScale.toFixed(4);
+      updateFromInputs();
+    }
+
+    // Interacción Drag & Drop en lienzo
+    document.querySelectorAll('.draggable-glyph').forEach(elem => {
+      elem.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        selectElement(elem);
+        isDragging = true;
+        elem.classList.add('dragging');
+
+        const rect = svg.getBoundingClientRect();
+        dragStartX = (e.clientX - rect.left) / rect.width * 793.72;
+        dragStartY = (e.clientY - rect.top) / rect.height * 770;
+
+        const transform = elem.getAttribute('transform') || '';
+        const match = transform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+        startTransX = match ? parseFloat(match[1]) : 0;
+        startTransY = match ? parseFloat(match[2]) : 0;
+      });
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      const rect = svg.getBoundingClientRect();
+      const mouseX = (e.clientX - rect.left) / rect.width * 793.72;
+      const mouseY = (e.clientY - rect.top) / rect.height * 770;
+
+      const colCursor = (mouseX / QUADRO_SIZE).toFixed(1);
+      const rowCursor = (mouseY / QUADRO_SIZE).toFixed(1);
+      rulerCoords.textContent = `📍 Cursor: Col ${colCursor}, Fila ${rowCursor}`;
+
+      if (!isDragging || !selectedElem) return;
+
+      const deltaX = mouseX - dragStartX;
+      const deltaY = mouseY - dragStartY;
+
+      let newX = startTransX + deltaX;
+      let newY = startTransY + deltaY;
+
+      if (snapSelect.value === 'snap') {
+        const col = Math.round(newX / QUADRO_SIZE);
+        const elemId = selectedElem.id;
+        const sy = Math.abs(parseFloat(selectedElem.getAttribute('data-scale-y')) || 1.3511);
+        const nativeY = elemId.includes('solido') ? 170.08 : (elemId.includes('flipped') || elemId.includes('estandar') || elemId.includes('petalo-5') ? 184.3 : 170.08);
+        
+        const row = Math.round((newY + Y_OFFSET + (nativeY * sy)) / QUADRO_SIZE);
+
+        inputCol.value = col;
+        inputRow.value = row;
+        updateFromInputs();
+      } else {
+        const sx = selectedElem.getAttribute('data-scale-x');
+        const sy = selectedElem.getAttribute('data-scale-y');
+        selectedElem.setAttribute('transform', `translate(${newX.toFixed(3)}, ${newY.toFixed(3)}) scale(${sx}, ${sy})`);
+        updateInputsFromElem(selectedElem);
+        updateBoundingBox();
+        generateCode();
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (selectedElem) selectedElem.classList.remove('dragging');
+      isDragging = false;
+    });
+
+    function generateCode() {
+      let code = `<g id="logotipo-isotipo-section" transform="translate(0, 285.73)">\n`;
+      document.querySelectorAll('.draggable-glyph').forEach(elem => {
+        const id = elem.id;
+        const transform = elem.getAttribute('transform');
+        code += `  <g id="${id}" transform="${transform}">...</g>\n`;
+      });
+      code += `</g>`;
+      codeOutput.textContent = code;
+    }
+
+    function copyCode() {
+      navigator.clipboard.writeText(codeOutput.textContent);
+      alert('¡Código SVG copiado al portapapeles!');
+    }
+
+    // Inicializar primer elemento
+    selectElement(document.getElementById('elem-isotipo-solido'));
+  </script>
+</body>
+</html>

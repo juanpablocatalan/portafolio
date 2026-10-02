@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desglose de Piezas &middot; Acrílico Transparente &middot; Caja 3D</title>
+  <meta name="description" content="Inspección técnica de cada una de las piezas en acrílico transparente y corte láser de la caja 3D.">
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    @font-face {
+      font-family: 'PPSupplySans';
+      src: url('fonts/PPSupplySans-Ultralight.otf') format('opentype'),
+           url('fonts/Copia de PPSupplySans-Ultralight.otf') format('opentype');
+      font-weight: 100 200;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'PPSupplySans';
+      src: url('fonts/PPSupplySans-Regular.otf') format('opentype');
+      font-weight: 400 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'AcidGrotesk';
+      src: url('fonts/FFF-AcidGrotesk-Normal-TRIAL.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --bg-color: #dce7f2;
+      --card-bg: rgba(255, 255, 255, 0.78);
+      --card-border: rgba(0, 0, 0, 0.1);
+      --text-color: #0b0b12;
+      --text-muted: #555568;
+      --accent-color: #49bed9;
+      --accent-red: #e52421;
+      --font-primary: 'AcidGrotesk', 'Inter', -apple-system, sans-serif;
+      --font-mono: 'PPSupplySans', 'SF Mono', ui-monospace, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      background-image: url('assets/v2/fondo.png');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: var(--text-color);
+      font-family: var(--font-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Header Bar */
+    header {
+      padding: clamp(1.5rem, 3vw, 2.5rem) clamp(1.5rem, 4vw, 3.5rem);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(24px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header-tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #007a99;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+    }
+
+    .header-tag::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--accent-color);
+      box-shadow: 0 0 10px var(--accent-color);
+    }
+
+    .header-title {
+      font-family: var(--font-mono);
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 200;
+      letter-spacing: -0.01em;
+      color: #0b0b12;
+    }
+
+    .header-title strong {
+      font-weight: 400;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-3d-link {
+      background: #0b0b12;
+      color: #FFFFFF;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      padding: 0.65rem 1.25rem;
+      border-radius: 6px;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    .btn-3d-link:hover {
+      background: var(--accent-color);
+      color: #000000;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 26px rgba(73, 190, 217, 0.4);
+    }
+
+    /* Main Grid Layout */
+    main {
+      padding: clamp(1.5rem, 4vw, 3.5rem);
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Material info banner */
+    .mat-banner {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    .mat-banner strong {
+      color: #007a99;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .mat-banner-specs {
+      display: flex;
+      gap: 1.25rem;
+      color: var(--text-muted);
+      font-size: 0.74rem;
+    }
+
+    .mat-banner-specs span {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .mat-banner-specs span::before {
+      content: '✓';
+      color: #007a99;
+    }
+
+    .pieces-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: clamp(1.5rem, 2.5vw, 2.5rem);
+      align-items: stretch;
+    }
+
+    /* Card styling */
+    .piece-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+    }
+
+    .piece-card:hover {
+      border-color: rgba(73, 190, 217, 0.6);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.12);
+    }
+
+    .piece-header {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .piece-num {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #007a99;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .piece-title {
+      font-family: var(--font-mono);
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #0b0b12;
+      margin-top: 0.2rem;
+    }
+
+    .piece-dim {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: rgba(0, 0, 0, 0.05);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    /* Stage Viewer for each SVG */
+    .piece-stage {
+      padding: 2.5rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: 
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.85) 0%, rgba(220, 231, 242, 0.7) 100%),
+        linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 20px 20px, 20px 20px;
+      min-height: 420px;
+      flex: 1;
+      position: relative;
+    }
+
+    .piece-stage img,
+    .piece-stage svg,
+    .piece-stage object {
+      max-width: 90%;
+      max-height: 380px;
+      width: auto;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 14px 32px rgba(0, 0, 0, 0.65));
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .piece-card:hover .piece-stage img,
+    .piece-card:hover .piece-stage svg,
+    .piece-card:hover .piece-stage object {
+      transform: scale(1.03);
+    }
+
+    .acrylic-indicator {
+      position: absolute;
+      bottom: 12px;
+      right: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: rgba(255, 255, 255, 0.45);
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .piece-footer {
+      padding: 1.15rem 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      background: rgba(255, 255, 255, 0.015);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .piece-footer .detail-tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #E0E0E6;
+    }
+
+    .piece-footer .open-btn {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent-color);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .piece-footer .open-btn:hover {
+      color: #FFFFFF;
+      text-decoration: underline;
+    }
+
+    /* Grid Span Configurations */
+    .col-large {
+      grid-column: span 6;
+    }
+
+    .col-narrow {
+      grid-column: span 6;
+    }
+
+    @media (max-width: 1024px) {
+      .col-large, .col-narrow {
+        grid-column: span 12;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation -->
+  <header>
+    <div>
+      <div class="header-tag">Desglose Técnico &middot; Acrílico Transparente 8 mm &middot; Corte Láser</div>
+      <h1 class="header-title"><span>piezas</span> <strong>*acrílico 8mm</strong></h1>
+    </div>
+    <div class="header-actions">
+      <a href="visor-caja-3d.html" class="btn-3d-link">
+        <span>Visor 3D Interactivo 360&deg;</span> &rarr;
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Material Specification Banner -->
+    <div class="mat-banner">
+      <div><strong>Material de Fabricación:</strong> Acrílico Cristalino Óptico Macizo (PMMA 8 mm)</div>
+      <div class="mat-banner-specs">
+        <span>Corte Láser CNC</span>
+        <span>Espesor 8 mm</span>
+        <span>58 Ranuras de Calado</span>
+        <span>Pulido de Cantos a Diamante</span>
+        <span>100% Translúcido</span>
+      </div>
+    </div>
+
+    <div class="pieces-grid">
+
+      <!-- 1. PARTE DELANTERA (Recurso 2.svg) -->
+      <article class="piece-card col-large">
+        <div class="piece-header">
+          <div>
+            <div class="piece-num">Pieza 01 / Frente</div>
+            <h2 class="piece-title">Cara Delantera &middot; Acrílico 8 mm</h2>
+          </div>
+          <div class="piece-dim">588.62 &times; 768.62 mm &bull; Esp. 8 mm</div>
+        </div>
+        <div class="piece-stage">
+          <img src="assets/cajaql/SVG/Recurso 2.svg" alt="Parte Delantera de la Caja">
+          <div class="acrylic-indicator">Acrílico 8 mm &bull; Frente</div>
+        </div>
+        <div class="piece-footer">
+          <span class="detail-tag">58 ranuras de ensamble / calado &bull; Placa maciza 8 mm</span>
+          <a href="assets/cajaql/SVG/Recurso 2.svg" target="_blank" class="open-btn">Ver SVG Original &nearr;</a>
+        </div>
+      </article>
+
+      <!-- 2. PARTE TRASERA (Recurso 3.svg) -->
+      <article class="piece-card col-large">
+        <div class="piece-header">
+          <div>
+            <div class="piece-num">Pieza 02 / Dorso</div>
+            <h2 class="piece-title">Cara Trasera &middot; Acrílico 8 mm</h2>
+          </div>
+          <div class="piece-dim">588.62 &times; 768.62 mm &bull; Esp. 8 mm</div>
+        </div>
+        <div class="piece-stage">
+          <img src="assets/cajaql/SVG/Recurso 3.svg" alt="Parte Trasera de la Caja">
+          <div class="acrylic-indicator">Acrílico 8 mm &bull; Dorso</div>
+        </div>
+        <div class="piece-footer">
+          <span class="detail-tag">58 ranuras de ensamble / calado &bull; Placa maciza 8 mm</span>
+          <a href="assets/cajaql/SVG/Recurso 3.svg" target="_blank" class="open-btn">Ver SVG Original &nearr;</a>
+        </div>
+      </article>
+
+      <!-- 3. LADOS / LATERALES (Recurso 4.svg) -->
+      <article class="piece-card col-narrow">
+        <div class="piece-header">
+          <div>
+            <div class="piece-num">Pieza 03 / Laterales</div>
+            <h2 class="piece-title">Paneles Laterales (Izquierdo / Derecho)</h2>
+          </div>
+          <div class="piece-dim">103.05 &times; 768.62 mm &bull; Esp. 8 mm</div>
+        </div>
+        <div class="piece-stage">
+          <img src="assets/cajaql/SVG/Recurso 4.svg" alt="Paneles Laterales de la Caja" style="max-height: 380px;">
+          <div class="acrylic-indicator">Acrílico 8 mm &bull; Laterales</div>
+        </div>
+        <div class="piece-footer">
+          <span class="detail-tag">Panel lateral vertical macizo de 8 mm</span>
+          <a href="assets/cajaql/SVG/Recurso 4.svg" target="_blank" class="open-btn">Ver SVG Original &nearr;</a>
+        </div>
+      </article>
+
+      <!-- 4. BASE (Recurso 5.svg) -->
+      <article class="piece-card col-narrow">
+        <div class="piece-header">
+          <div>
+            <div class="piece-num">Pieza 04 / Base</div>
+            <h2 class="piece-title">Base Inferior &middot; Fondo de Caja</h2>
+          </div>
+          <div class="piece-dim">571.61 &times; 103.05 mm &bull; Esp. 8 mm</div>
+        </div>
+        <div class="piece-stage">
+          <img src="assets/cajaql/SVG/Recurso 5.svg" alt="Base Inferior de la Caja" style="max-height: 180px;">
+          <div class="acrylic-indicator">Acrílico 8 mm &bull; Base</div>
+        </div>
+        <div class="piece-footer">
+          <span class="detail-tag">Placa inferior maciza de 8 mm &bull; Apertura superior</span>
+          <a href="assets/cajaql/SVG/Recurso 5.svg" target="_blank" class="open-btn">Ver SVG Original &nearr;</a>
+        </div>
+      </article>
+
+    </div>
+  </main>
+
+</body>
+</html>

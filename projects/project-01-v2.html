@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+  </script>
+  <title>Fronteo — Juan Pablo</title>
+  <meta name="description" content="Case study for Fronteo by Juan Pablo — Brand Identity & Direction.">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="../css/style.css?v=62">
+  <link rel="stylesheet" href="../css/magazine.css?v=10">
+
+  <style>
+    /* Ambient Fixed Background for V2 */
+    body {
+      background-color: transparent !important;
+      color: #000000 !important;
+    }
+
+    :root {
+      --color-text: #000000;
+      --color-muted: #555555;
+      --color-border: rgba(0, 0, 0, 0.15);
+      --color-border-dark: #000000;
+    }
+
+    /* Header superior en color negro */
+    .site-header {
+      background-color: #000000 !important;
+    }
+
+    .site-header a,
+    .site-header .nav-link,
+    .site-header .back-link {
+      color: #FFFFFF !important;
+    }
+
+    .site-header a:hover,
+    .site-header .nav-link:hover,
+    .site-header .back-link:hover {
+      color: #FFE500 !important;
+    }
+
+    .meta-label {
+      color: #666666 !important;
+    }
+
+    .project-intro-statement {
+      color: #000000 !important;
+    }
+
+    .mockup-caption div:first-child {
+      color: #000000 !important;
+    }
+
+    .mockup-caption div:last-child {
+      color: #49bed9 !important;
+    }
+
+    .mag-interaction-hint {
+      color: #000000 !important;
+    }
+
+    .mag-special-title,
+    .mag-special-title .part-pagina,
+    .mag-special-title .part-especial {
+      color: #000000 !important;
+    }
+
+    .mag-special-desc {
+      color: #333333 !important;
+    }
+
+    .mag-special-link {
+      color: #000000 !important;
+    }
+
+    .mag-special-link:hover {
+      color: #49bed9 !important;
+    }
+
+    .project-quote {
+      color: #000000 !important;
+    }
+
+    .credit-role {
+      color: #666666 !important;
+    }
+
+    .credit-name {
+      color: #000000 !important;
+    }
+
+    /* Barra de siguiente proyecto en color negro */
+    .next-project-section,
+    .next-project-link {
+      background-color: #000000 !important;
+      color: #FFFFFF !important;
+    }
+
+    .next-label {
+      color: #8E8E8E !important;
+    }
+
+    .next-title,
+    .next-arrow {
+      color: #FFFFFF !important;
+    }
+
+    .next-project-link:hover,
+    .next-project-section:hover .next-project-link {
+      background-color: #FFE500 !important;
+      color: #000000 !important;
+    }
+
+    .next-project-link:hover .next-label,
+    .next-project-section:hover .next-label,
+    .next-project-link:hover .next-title,
+    .next-project-section:hover .next-title,
+    .next-project-link:hover .next-arrow,
+    .next-project-section:hover .next-arrow {
+      color: #000000 !important;
+    }
+
+    /* Barra de Navegación de Páginas (Magazine Dock) en color negro para V2 */
+    .magazine-dock {
+      background: #000000 !important;
+      border: 1.5px solid #000000 !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+    }
+
+    .magazine-dock .mag-btn {
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      color: #FFFFFF !important;
+      background: transparent !important;
+    }
+
+    .magazine-dock .mag-btn:hover {
+      background: #FFFFFF !important;
+      color: #000000 !important;
+      border-color: #FFFFFF !important;
+    }
+
+    .magazine-dock .mag-btn:disabled {
+      opacity: 0.3 !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+      color: #FFFFFF !important;
+    }
+
+    .magazine-dock .mag-page-indicator {
+      color: rgba(255, 255, 255, 0.7) !important;
+    }
+
+    .magazine-dock .mag-current-page-num {
+      color: #FFFFFF !important;
+      font-weight: 700;
+    }
+
+    .site-footer {
+      background-color: transparent !important;
+      border-top: 1px solid rgba(0, 0, 0, 0.12) !important;
+    }
+
+    .site-footer .footer-brand,
+    .site-footer .footer-link {
+      color: #000000 !important;
+    }
+
+    .site-footer .footer-copy {
+      color: #666666 !important;
+    }
+
+    .site-footer .footer-link:hover {
+      color: #49bed9 !important;
+    }
+
+    .v2-fixed-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('../assets/v2/fondo.png');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      pointer-events: none;
+      z-index: -1;
+      will-change: transform;
+      transform: translateZ(0);
+    }
+
+    .project-3d-stage,
+    #fronteo-3d-wrapper,
+    #fronteo-3d-canvas {
+      background: transparent !important;
+      background-color: transparent !important;
+      background-image: none !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    .mockups-4col-grid {
+      display: grid !important;
+      grid-template-columns: repeat(4, 1fr) !important;
+      column-gap: clamp(1.2rem, 3.2vw, 3.6rem) !important;
+      padding: 0 clamp(1.2rem, 3.2vw, 3.6rem) !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .mockup-item-card {
+      background: transparent !important;
+      border: none !important;
+      overflow: visible !important;
+      min-width: 0 !important;
+    }
+    .mockup-card-canvas-stage {
+      width: 100% !important;
+      height: clamp(260px, 38vw, 620px) !important;
+      position: relative;
+      cursor: grab;
+      background: transparent !important;
+      touch-action: none;
+    }
+    .mockup-card-canvas-stage canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    /* Module: Mapa Conceptual / Red de Fronteo */
+    .fronteo-map-section {
+      width: 100vw;
+      position: relative;
+      left: 50%;
+      right: 50%;
+      margin-left: -50vw !important;
+      margin-right: -50vw !important;
+      margin-top: clamp(3rem, 7vh, 6rem) !important;
+      margin-bottom: clamp(3rem, 7vh, 6rem) !important;
+      padding: clamp(3rem, 6vh, 5.5rem) 0 !important;
+      overflow: hidden;
+      background: transparent !important;
+    }
+
+    .fronteo-map-container {
+      position: relative;
+      width: 100%;
+      height: clamp(420px, 58vh, 660px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 clamp(0.75rem, 2vw, 1.5rem) !important;
+      box-sizing: border-box;
+    }
+
+    .fronteo-map-svg {
+      width: 100%;
+      max-width: 1100px;
+      height: 100%;
+      max-height: 650px;
+      display: block;
+      overflow: visible;
+    }
+
+    @media (max-width: 768px) {
+      .fronteo-map-section {
+        margin-top: clamp(1.5rem, 4vh, 2.5rem) !important;
+        margin-bottom: clamp(1.5rem, 4vh, 2.5rem) !important;
+        padding: clamp(1.2rem, 3vh, 2rem) 0 !important;
+      }
+
+      .fronteo-map-container {
+        height: auto !important;
+        aspect-ratio: 1160 / 690;
+      }
+
+      .fronteo-map-svg {
+        height: auto !important;
+      }
+    }
+
+    .fronteo-map-svg .map-lines line {
+      stroke: #000000 !important;
+      stroke-width: 2px;
+      stroke-linecap: round;
+      stroke-dasharray: 0 10px;
+      opacity: 0.35;
+    }
+
+    /* Supply Font Family para el Mapa Conceptual */
+    @font-face {
+      font-family: 'Supply';
+      src: url('../fonts/Supply-UltraLight.otf') format('opentype');
+      font-weight: 200;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Supply';
+      src: url('../fonts/Supply-Light.otf') format('opentype');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Supply';
+      src: url('../fonts/Supply-Regular.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Supply';
+      src: url('../fonts/Supply-Medium.otf') format('opentype');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Supply';
+      src: url('../fonts/Supply-Bold.otf') format('opentype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* PP Supply Sans (Ultralight & Regular) */
+    @font-face {
+      font-family: 'PPSupplySans';
+      src: url('../fonts/PPSupplySans-Ultralight.otf') format('opentype'),
+           url('../fonts/Copia de PPSupplySans-Ultralight.otf') format('opentype');
+      font-weight: 100 200;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'PPSupplySans';
+      src: url('../fonts/PPSupplySans-Regular.otf') format('opentype');
+      font-weight: 400 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @property --base-op {
+      syntax: '<number>';
+      inherits: true;
+      initial-value: 0.6;
+    }
+
+    .fronteo-map-svg .map-node-text {
+      fill: #000000 !important;
+      font-family: 'Supply', 'PPSupplySans', -apple-system, BlinkMacSystemFont, sans-serif;
+      text-transform: lowercase;
+      user-select: none;
+      opacity: var(--base-op, 0.6);
+      transition: fill 0.25s ease, opacity 0.25s ease;
+      cursor: default;
+    }
+
+    .fronteo-map-svg .map-node-text:hover {
+      animation-play-state: paused !important;
+      fill: #49bed9 !important;
+      opacity: 1 !important;
+    }
+
+    /* Bombilla defectuosa / Tubo fluorescente con fallas de contacto (Flicker Glitch 20% - 85%) */
+    @keyframes bulbFlicker1 {
+      0%, 100% { opacity: var(--base-op, 0.6); }
+      3%  { opacity: 0.20; }
+      5%  { opacity: 0.85; }
+      7%  { opacity: 0.20; }
+      9%  { opacity: 0.85; }
+      11% { opacity: var(--base-op, 0.6); }
+      42% { opacity: var(--base-op, 0.6); }
+      43% { opacity: 0.20; }
+      44% { opacity: 0.85; }
+      46% { opacity: 0.20; }
+      48% { opacity: var(--base-op, 0.6); }
+      73% { opacity: var(--base-op, 0.6); }
+      74% { opacity: 0.20; }
+      75% { opacity: var(--base-op, 0.6); }
+      89% { opacity: var(--base-op, 0.6); }
+      90% { opacity: 0.85; }
+      91% { opacity: 0.20; }
+      93% { opacity: 0.85; }
+      94% { opacity: var(--base-op, 0.6); }
+    }
+
+    @keyframes bulbFlicker2 {
+      0%, 100% { opacity: var(--base-op, 0.6); }
+      18% { opacity: var(--base-op, 0.6); }
+      19% { opacity: 0.20; }
+      20% { opacity: 0.85; }
+      21% { opacity: 0.20; }
+      23% { opacity: 0.85; }
+      25% { opacity: var(--base-op, 0.6); }
+      55% { opacity: var(--base-op, 0.6); }
+      56% { opacity: 0.85; }
+      57% { opacity: 0.20; }
+      58% { opacity: 0.85; }
+      59% { opacity: var(--base-op, 0.6); }
+      82% { opacity: var(--base-op, 0.6); }
+      83% { opacity: 0.20; }
+      85% { opacity: 0.85; }
+      86% { opacity: 0.20; }
+      88% { opacity: var(--base-op, 0.6); }
+    }
+
+    @keyframes bulbFlicker3 {
+      0%, 100% { opacity: var(--base-op, 0.6); }
+      8%  { opacity: var(--base-op, 0.6); }
+      9%  { opacity: 0.85; }
+      10% { opacity: 0.20; }
+      11% { opacity: var(--base-op, 0.6); }
+      34% { opacity: var(--base-op, 0.6); }
+      35% { opacity: 0.20; }
+      36% { opacity: 0.85; }
+      38% { opacity: 0.20; }
+      40% { opacity: 0.85; }
+      42% { opacity: var(--base-op, 0.6); }
+      65% { opacity: var(--base-op, 0.6); }
+      66% { opacity: 0.20; }
+      68% { opacity: var(--base-op, 0.6); }
+      79% { opacity: var(--base-op, 0.6); }
+      80% { opacity: 0.85; }
+      81% { opacity: 0.20; }
+      82% { opacity: 0.85; }
+      83% { opacity: 0.20; }
+      85% { opacity: var(--base-op, 0.6); }
+    }
+
+    .fronteo-map-svg .map-node-text:nth-child(1)  { animation: bulbFlicker1 4.2s steps(1) infinite; animation-delay: 0s; }
+    .fronteo-map-svg .map-node-text:nth-child(2)  { animation: bulbFlicker2 3.6s steps(1) infinite; animation-delay: -1.4s; }
+    .fronteo-map-svg .map-node-text:nth-child(3)  { animation: bulbFlicker3 5.1s steps(1) infinite; animation-delay: -2.8s; }
+    .fronteo-map-svg .map-node-text:nth-child(4)  { animation: bulbFlicker1 3.3s steps(1) infinite; animation-delay: -0.7s; }
+    .fronteo-map-svg .map-node-text:nth-child(5)  { animation: bulbFlicker2 4.7s steps(1) infinite; animation-delay: -3.2s; }
+    .fronteo-map-svg .map-node-text:nth-child(6)  { animation: bulbFlicker3 3.9s steps(1) infinite; animation-delay: -1.9s; }
+    .fronteo-map-svg .map-node-text:nth-child(7)  { animation: bulbFlicker1 4.8s steps(1) infinite; animation-delay: -0.4s; }
+    .fronteo-map-svg .map-node-text:nth-child(8)  { animation: bulbFlicker2 5.5s steps(1) infinite; animation-delay: -4.1s; }
+    .fronteo-map-svg .map-node-text:nth-child(9)  { animation: bulbFlicker3 3.4s steps(1) infinite; animation-delay: -2.1s; }
+    .fronteo-map-svg .map-node-text:nth-child(10) { animation: bulbFlicker1 4.5s steps(1) infinite; animation-delay: -1.6s; }
+    .fronteo-map-svg .map-node-text:nth-child(11) { animation: bulbFlicker2 5.3s steps(1) infinite; animation-delay: -3.7s; }
+    .fronteo-map-svg .map-node-text:nth-child(12) { animation: bulbFlicker3 3.7s steps(1) infinite; animation-delay: -0.9s; }
+    .fronteo-map-svg .map-node-text:nth-child(13) { animation: bulbFlicker1 4.9s steps(1) infinite; animation-delay: -2.5s; }
+  </style>
+</head>
+
+<body>
+
+  <!-- Ambient Fixed Background for V2 -->
+  <div class="v2-fixed-background" aria-hidden="true"></div>
+
+  <!-- Site Header -->
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="back-link">INICIO</a>
+      <nav class="site-nav" aria-label="Navegación principal">
+        <ul>
+          <li><a href="../index.html" class="nav-link">PROYECTOS</a></li>
+          <li><a href="../about.html" class="nav-link">SOBRE MÍ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content">
+
+    <!-- Module 1: Autonomous 3D Fronteo Object -->
+    <section class="grid-12 reveal" aria-label="3D Fronteo Typography Showcase">
+      <div class="col-12">
+        <div class="project-3d-stage" id="fronteo-3d-wrapper"
+          style="background: transparent !important; border: none !important; box-shadow: none !important; outline: none !important;">
+          <canvas id="fronteo-3d-canvas"
+            style="background: transparent !important; border: none !important; outline: none !important;"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Module 2: Introductory Editorial Statement -->
+    <section class="grid-4 section-block reveal" aria-label="Introduction Statement" style="margin-top: clamp(10px, 2.2vw, 2.5rem); margin-left: var(--page-margin); margin-right: var(--page-margin);">
+      <div class="col-1 project-intro-block">
+        <span class="meta-label" style="display: block; margin-bottom: var(--space-xs);">PROYECTO EDITORIAL</span>
+        <h2 class="project-intro-statement" style="white-space: nowrap; width: max-content; font-size: min(1.5rem, calc((100vw - 2 * var(--page-margin)) / 18.5));">
+          Archivo visual del reggaetón.
+        </h2>
+      </div>
+    </section>
+
+    <!-- Module 3: 4 Closed 3D Magazine Mockups (Full-Width & Pure 3D) -->
+    <section class="section-block reveal" aria-label="Mockups 3D de Revista Cerrada (4 Volúmenes)" id="fronteo-3d-mockups-section" style="width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; margin-top: 0; margin-bottom: 0; padding: 0; overflow: hidden; background: transparent;">
+      <!-- 4-Column Full-Width Seamless 3D Grid -->
+      <div class="mockups-4col-grid" style="width: 100%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;">
+        
+        <!-- Vol 01 -->
+        <div class="mockup-item-card" style="background: transparent; border: none; overflow: visible; display: flex; flex-direction: column; align-items: center; text-align: center;">
+          <div class="mockup-card-canvas-stage" id="proj-mockup-01" style="width: 100%; height: 600px; position: relative; cursor: grab; background: transparent !important; touch-action: none;"></div>
+          <div class="mockup-caption" style="margin-top: -0.5rem; text-align: center;">
+            <div style="font-family: var(--font-primary); font-size: clamp(0.78rem, 1.1vw, 0.92rem); font-weight: 600; letter-spacing: 0.02em; color: var(--color-text);">Fronteo vol. 1</div>
+            <div style="font-family: 'PPSupplySans', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 400; font-size: clamp(0.85rem, 1.18vw, 0.98rem); color: #49bed9; letter-spacing: 0.06em; margin-top: 3px;">2000–2010</div>
+          </div>
+        </div>
+
+        <!-- Vol 02 -->
+        <div class="mockup-item-card" style="background: transparent; border: none; overflow: visible; display: flex; flex-direction: column; align-items: center; text-align: center;">
+          <div class="mockup-card-canvas-stage" id="proj-mockup-02" style="width: 100%; height: 600px; position: relative; cursor: grab; background: transparent !important; touch-action: none;"></div>
+          <div class="mockup-caption" style="margin-top: -0.5rem; text-align: center;">
+            <div style="font-family: var(--font-primary); font-size: clamp(0.78rem, 1.1vw, 0.92rem); font-weight: 600; letter-spacing: 0.02em; color: var(--color-text);">Fronteo vol. 2</div>
+            <div style="font-family: 'PPSupplySans', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 400; font-size: clamp(0.85rem, 1.18vw, 0.98rem); color: #49bed9; letter-spacing: 0.06em; margin-top: 3px;">2000–2010</div>
+          </div>
+        </div>
+
+        <!-- Vol 03 -->
+        <div class="mockup-item-card" style="background: transparent; border: none; overflow: visible; display: flex; flex-direction: column; align-items: center; text-align: center;">
+          <div class="mockup-card-canvas-stage" id="proj-mockup-03" style="width: 100%; height: 600px; position: relative; cursor: grab; background: transparent !important; touch-action: none;"></div>
+          <div class="mockup-caption" style="margin-top: -0.5rem; text-align: center;">
+            <div style="font-family: var(--font-primary); font-size: clamp(0.78rem, 1.1vw, 0.92rem); font-weight: 600; letter-spacing: 0.02em; color: var(--color-text);">Fronteo vol. 3</div>
+            <div style="font-family: 'PPSupplySans', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 400; font-size: clamp(0.85rem, 1.18vw, 0.98rem); color: #49bed9; letter-spacing: 0.06em; margin-top: 3px;">2010–2020</div>
+          </div>
+        </div>
+
+        <!-- Vol 04 -->
+        <div class="mockup-item-card" style="background: transparent; border: none; overflow: visible; display: flex; flex-direction: column; align-items: center; text-align: center;">
+          <div class="mockup-card-canvas-stage" id="proj-mockup-04" style="width: 100%; height: 600px; position: relative; cursor: grab; background: transparent !important; touch-action: none;"></div>
+          <div class="mockup-caption" style="margin-top: -0.5rem; text-align: center;">
+            <div style="font-family: var(--font-primary); font-size: clamp(0.78rem, 1.1vw, 0.92rem); font-weight: 600; letter-spacing: 0.02em; color: var(--color-text);">Fronteo vol. 4</div>
+            <div style="font-family: 'PPSupplySans', -apple-system, BlinkMacSystemFont, sans-serif; font-weight: 400; font-size: clamp(0.85rem, 1.18vw, 0.98rem); color: #49bed9; letter-spacing: 0.06em; margin-top: 3px;">2020–2030</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Module: Red Conceptual / Mapa de Atributos de Fronteo -->
+    <section class="section-block reveal fronteo-map-section" aria-label="Mapa Conceptual Fronteo">
+      <div class="fronteo-map-container">
+        <svg class="fronteo-map-svg" viewBox="-80 -20 1160 690" preserveAspectRatio="xMidYMid meet">
+          <!-- Nodos y Textos -->
+          <g class="map-nodes">
+            <text x="499" y="338" class="map-node-text" text-anchor="middle" dominant-baseline="central" style="font-size: 150px; font-weight: 500; letter-spacing: -0.12em; opacity: 0.58; --base-op: 0.58;">resistencia</text>
+            <text x="838" y="506" class="map-node-text" text-anchor="middle" dominant-baseline="central" style="font-size: 80px; font-weight: 500; letter-spacing: -0.08em; opacity: 0.71; --base-op: 0.71;">identidad</text>
+            <text x="726" y="185" class="map-node-text" text-anchor="middle" dominant-baseline="central" style="font-size: 78px; font-weight: 500; letter-spacing: -0.1em; opacity: 0.8; --base-op: 0.8;">archivo visual</text>
+            <text x="62" y="485" class="map-node-text" text-anchor="middle" dominant-baseline="central" style="font-size: 59px; font-weight: 500; letter-spacing: -0.1em; opacity: 0.7; --base-op: 0.7;">cultura</text>
+            <text x="160" y="211" class="map-node-text" text-anchor="middle" dominant-baseline="central" style="font-size: 54px; font-weight: 500; letter-spacing: -0.1em; opacity: 0.65; --base-op: 0.65;">visibilidad</text>
+            <text x="436" y="103" class="map-node-text" text-anchor="middle" dominant-baseline="central" style="font-size: 32px; letter-spacing: -0.1em; opacity: 0.55; --base-op: 0.55;">historia</text>
+            <text x="316" y="555" class="map-node-text" text-anchor="middle" dominant-baseline="central" style="font-size: 32px; letter-spacing: -0.1em; opacity: 0.75; --base-op: 0.75;">patrimonio</text>
+            <text x="481" y="625" class="map-node-text" text-anchor="middle" dominant-baseline="central" style="font-size: 25px; letter-spacing: -0.1em; opacity: 0.45; --base-op: 0.45;">expansión</text>
+            <text x="941" y="90" class="map-node-text" text-anchor="middle" dominant-baseline="central" style="font-size: 24px; letter-spacing: -0.1em; opacity: 0.72; --base-op: 0.72;">estética</text>
+            <text x="859" y="609" class="map-node-text" text-anchor="middle" dominant-baseline="central" style="font-size: 24px; letter-spacing: -0.09em; opacity: 0.38; --base-op: 0.38;">vanguardia visual</text>
+            <text x="116" y="89" class="map-node-text" text-anchor="middle" dominant-baseline="central" style="font-size: 29px; letter-spacing: -0.09em; opacity: 0.59; --base-op: 0.59;">orígenes</text>
+            <text x="625" y="48" class="map-node-text" text-anchor="middle" dominant-baseline="central" style="font-size: 17px; letter-spacing: -0.1em; opacity: 0.54; --base-op: 0.54;">rescatar</text>
+            <text x="234" y="40" class="map-node-text" text-anchor="middle" dominant-baseline="central" style="font-size: 22px; font-weight: 500; letter-spacing: -0.05em; opacity: 0.77; --base-op: 0.77;">valor</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Module 4: Editorial Magazine & Catalog Lookbook -->
+    <section class="grid-4 section-block reveal" aria-label="Sección Decisión Editorial"
+      style="margin-top: clamp(2.5rem, 5vh, 4.5rem); margin-bottom: clamp(0.5rem, 1.5vh, 1rem); margin-left: var(--page-margin); margin-right: var(--page-margin);">
+      <div class="col-1 project-intro-block">
+        <h2 class="project-intro-statement"
+          style="white-space: nowrap; width: max-content; font-family: 'PPSupplySans', sans-serif; font-size: min(1.5rem, calc((100vw - 2 * var(--page-margin)) / 18.5)); letter-spacing: 0.02em;">
+          <span style="font-weight: 200;">decisión editorial</span><span style="font-weight: 400;">*revista de kiosco</span>
+        </h2>
+        <p class="project-module-desc"
+          style="font-family: var(--font-primary); font-size: clamp(0.85rem, 1.05vw, 0.95rem); font-weight: 400; color: #333333; line-height: 1.55; letter-spacing: -0.005em; margin-top: 0.75rem; margin-bottom: 0; max-width: 620px;">
+          El formato rescata a la revista de kiosco como objeto de consumo popular para homenajear el auge del reggaetón en los 2000, compartiendo su estética saturada y de impacto directo mientras reivindica un soporte impreso en declive.
+        </p>
+      </div>
+    </section>
+
+    <section class="grid-12 section-block magazine-showcase-section reveal"
+      aria-label="Editorial Magazine & Catalog Specimen" style="margin-top: 0;">
+      <div class="col-12">
+
+        <!-- Flipbook 3D Stage (Right-Aligned) -->
+        <div class="magazine-stage-container" id="fronteo-magazine-container" style="align-items: flex-end; padding-left: clamp(0.5rem, 4vw, 5rem); padding-right: clamp(0.5rem, 4vw, 5rem); position: relative;">
+
+          <!-- Editorial Navigation Hint on the Left (Timed 3.5s Fade-In on Arrival when Closed) -->
+          <div class="mag-interaction-hint" id="mag-interaction-hint"
+            style="position: absolute; left: clamp(4rem, 14vw, 20rem); top: 50%; transform: translateY(-50%) translateY(8px); opacity: 0; width: clamp(320px, 38vw, 500px); text-align: center; font-family: 'PPSupplySans', -apple-system, BlinkMacSystemFont, sans-serif; font-size: clamp(1.15rem, 1.65vw, 1.45rem); font-weight: 400; color: #000000; letter-spacing: 0.04em; line-height: 1.55; text-transform: uppercase; transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; z-index: 10;">
+            [presiona en la revista o alguna flecha para navegar en ella]
+          </div>
+
+          <!-- Distinct Element: Special Page 03 Callout (Equidistant between left edge and magazine) -->
+          <div class="mag-special-tag" id="mag-special-page-tag" role="region" aria-label="Página Especial">
+            <h3 class="mag-special-title"><span class="part-pagina">página</span><span class="part-especial">*especial</span></h3>
+            <p class="mag-special-desc">
+              Esta página, a diferencia de la mayoría de la revista, fue generada con una impresión de negro sobre cartulina negra.
+            </p>
+            <button type="button" class="mag-special-link" id="mag-special-more-btn" aria-label="Presiona aquí para ver más">
+              Presiona aquí para ver más &rarr;
+            </button>
+          </div>
+
+          <div class="magazine-viewport" style="margin-left: auto; margin-right: 0;">
+            <div id="heyzine-book" class="heyzine-flipbook"></div>
+          </div>
+
+          <!-- Thumbnail Overview Drawer -->
+          <div class="mag-thumbnail-drawer" id="mag-thumbnail-drawer">
+            <div class="mag-drawer-header">
+              <span>VISTA DE MINIATURAS — SPREADS</span>
+              <button type="button" class="mag-btn" id="mag-drawer-close"
+                style="padding: 0.2rem 0.5rem; font-size: 0.7rem;">Cerrar &times;</button>
+            </div>
+            <div class="mag-thumb-grid" id="mag-thumb-grid">
+              <!-- Dynamically populated via JS -->
+            </div>
+          </div>
+
+          <!-- Interactive Dock Controls (Flush with Right Edge of the Magazine) -->
+          <div class="magazine-dock-aligner" style="width: 100%; max-width: 1140px; margin-left: auto; margin-right: 0; display: flex; justify-content: flex-end; margin-top: clamp(6rem, 11vh, 8.5rem); z-index: 50;">
+            <div class="magazine-dock" style="margin: 0;">
+              <div class="mag-nav-group">
+                <button type="button" class="mag-btn mag-btn-icon" id="mag-btn-prev" aria-label="Página anterior"
+                  title="Página anterior (←)">
+                  &larr;
+                </button>
+                <button type="button" class="mag-btn mag-btn-icon" id="mag-btn-next" aria-label="Página siguiente"
+                  title="Página siguiente (→)">
+                  &rarr;
+                </button>
+              </div>
+
+              <!-- Page indicator -->
+              <div class="mag-page-indicator">
+                <span id="mag-page-indicator-text"><span class="mag-current-page-num">PORTADA • 01</span> / 106</span>
+              </div>
+
+              <!-- Tools (Thumbnails, Fullscreen) -->
+              <div class="mag-nav-group">
+                <button type="button" class="mag-btn" id="mag-btn-thumbs" title="Ver miniaturas de páginas">
+                  <span>Páginas</span>
+                </button>
+                <button type="button" class="mag-btn mag-btn-icon" id="mag-btn-fullscreen" title="Pantalla completa (F)"
+                  aria-label="Pantalla completa">
+                  ⛶
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Zoom Inspection Modal -->
+      <div class="mag-zoom-modal" id="mag-zoom-modal" role="dialog" aria-modal="true"
+        aria-label="Inspección detallada de página">
+        <button type="button" class="mag-zoom-close" id="mag-zoom-close" aria-label="Cerrar inspección">&times;</button>
+        <div class="mag-zoom-content">
+          <img src="../assets/projects/fronteo-lookbook-01.jpg" alt="Zoom Detail" id="mag-zoom-img">
+        </div>
+      </div>
+    </section>
+
+    <!-- Module 5: Project Credits -->
+    <section class="section-block project-credits-block reveal is-visible" aria-label="Project Credits" style="margin-top: clamp(10px, 2.2vw, 2.5rem); margin-bottom: clamp(4rem, 8vh, 6rem); margin-left: var(--page-margin); margin-right: var(--page-margin); padding: 0;">
+      <div class="grid-12">
+        <div class="col-3">
+          <span class="meta-label">CRÉDITOS</span>
+        </div>
+        <div class="col-4 col-start-5 credits-list">
+          <div class="credit-item">
+            <span class="meta-label" style="display: block; margin-bottom: var(--space-2xs); color: #00E5FF;">COLABORADORES</span>
+          </div>
+          <div class="credit-item">
+            <div class="credit-name">Matías Vial</div>
+          </div>
+          <div class="credit-item">
+            <div class="credit-name">Jorge Sepúlveda</div>
+          </div>
+          <div class="credit-item">
+            <div class="credit-name">Paz Donoso</div>
+          </div>
+          <div class="credit-item">
+            <div class="credit-name">Ignacia Gutiérrez</div>
+          </div>
+          <div class="credit-item">
+            <div class="credit-name">Vicente Gutiérrez</div>
+          </div>
+          <div class="credit-item">
+            <div class="credit-name">Maximiliano Ibarra</div>
+          </div>
+          <div class="credit-item">
+            <div class="credit-name">Javiera Pino</div>
+          </div>
+        </div>
+        <div class="col-4 col-start-9 credits-list">
+          <div class="credit-item">
+            <span class="meta-label" style="display: block; margin-bottom: var(--space-2xs); color: #00E5FF;">EDICIÓN Y
+              DISEÑO</span>
+          </div>
+          <div class="credit-item">
+            <div class="credit-name">Juan-Pablo Catalán</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Next Project Navigation Banner -->
+    <section class="section-block next-project-section">
+      <a href="project-05.html" class="next-project-link">
+        <span class="next-label">SIGUIENTE PROYECTO</span>
+        <div class="next-title-row">
+          <h2 class="next-title">Sutil Wines</h2>
+          <span class="next-arrow" aria-hidden="true">&rarr;</span>
+        </div>
+      </a>
+    </section>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">JUAN PABLO</span>
+      <ul class="footer-nav" aria-label="Enlaces de contacto y redes">
+        <li><a href="mailto:juan-pablo.catalan@uc.cl" class="footer-link">EMAIL</a></li>
+        <li><a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer"
+            class="footer-link">LINKED IN</a></li>
+        <li><a href="https://www.instagram.com/jp.catalan/" target="_blank" rel="noopener noreferrer"
+            class="footer-link">INSTAGRAM</a></li>
+      </ul>
+      <span class="footer-copy">&copy; 2026</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/three.min.js"></script>
+  <script src="../js/GLTFLoader.js"></script>
+  <script src="../js/fronteo3d.js?v=22"></script>
+  <script src="../js/mockup-textures.js?v=1"></script>
+  <script src="../js/project-mockups.js?v=3"></script>
+  <script src="../js/page-flip.browser.js?v=13"></script>
+  <script src="../js/magazine.js?v=30"></script>
+  <script src="../js/script.js?v=29"></script>
+</body>
+
+</html>

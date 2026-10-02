@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+  </script>
+  <title>Dialektografía</title>
+  <meta name="description" content="Case study for Dialektografía by Juan Pablo — Editorial & Typography.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="../assets/happy-face.svg">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="../css/style.css?v=106">
+  <link rel="stylesheet" href="../css/magazine.css?v=13">
+
+  <style>
+    :root {
+      --color-accent: #FF6A00;
+    }
+
+    /* Orange Editorial Magazine Dock — Exclusive to Project 02 */
+    .magazine-dock {
+      border: 1.5px solid #FF6A00 !important;
+    }
+
+    .mag-btn {
+      border: 1px solid rgba(255, 106, 0, 0.45) !important;
+      color: #FF6A00 !important;
+    }
+
+    .mag-btn:hover {
+      background: #FF6A00 !important;
+      color: #000000 !important;
+      border-color: #FF6A00 !important;
+    }
+
+    .mag-btn:disabled {
+      border-color: rgba(255, 106, 0, 0.2) !important;
+      color: rgba(255, 106, 0, 0.35) !important;
+    }
+
+    .mag-page-indicator {
+      color: #FF6A00 !important;
+    }
+
+    .mag-current-page-num {
+      color: #FF6A00 !important;
+    }
+
+    .mag-special-link:hover {
+      color: #FF6A00 !important;
+    }
+
+    .mag-thumb-item.active {
+      border-color: #FF6A00 !important;
+      box-shadow: 0 0 0 2px #FF6A00 !important;
+    }
+
+    .mag-drawer-close:hover,
+    .mag-zoom-close:hover {
+      background: #FF6A00 !important;
+      color: #000000 !important;
+      border-color: #FF6A00 !important;
+    }
+
+    /* Orange Image Lightbox Controls matching the dock */
+    .lightbox-counter {
+      border: 1.5px solid #FF6A00 !important;
+      color: #FF6A00 !important;
+    }
+
+    .lightbox-counter .mag-current-page-num {
+      color: #FF6A00 !important;
+    }
+
+    .lightbox-close,
+    .lightbox-nav-btn {
+      border: 1px solid #FF6A00 !important;
+      color: #FF6A00 !important;
+      background: transparent !important;
+    }
+
+    .lightbox-close:hover,
+    .lightbox-nav-btn:hover {
+      background: #FF6A00 !important;
+      color: #000000 !important;
+      border-color: #FF6A00 !important;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="back-link">INICIO</a>
+      <nav class="site-nav" aria-label="Navegación principal">
+        <ul>
+          <li><a href="../sobremi.html" class="nav-link">SOBRE MÍ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content">
+
+    <!-- Project Logo Header -->
+    <section class="project-logo-section reveal" aria-label="Logo del proyecto"
+      style="margin-top: clamp(10px, 2.2vw, 2.5rem);">
+      <img src="../assets/proyecto2/logo.svg" alt="Dialektografía Logo" class="project-brand-logo">
+    </section>
+
+    <!-- Introductory Editorial Statement (Right-Aligned) -->
+    <section class="grid-4 section-block reveal" aria-label="Introduction Statement"
+      style="margin-top: clamp(10px, 2.2vw, 2.5rem); margin-left: var(--page-margin); margin-right: var(--page-margin);">
+      <div class="col-1 col-start-4 project-intro-block"
+        style="grid-column: 4; justify-self: end; text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
+        <span class="meta-label" style="display: block; margin-bottom: 3px; text-align: right;">PROYECTO EDITORIAL
+          COLABORATIVO</span>
+        <h2 class="project-intro-statement"
+          style="white-space: nowrap; width: max-content; text-align: right; font-size: min(1.5rem, calc((100vw - 2 * var(--page-margin)) / 18.5));">
+          Tipografía y Diagramación
+        </h2>
+      </div>
+    </section>
+
+    <!-- Module 1: Hero Image -->
+    <section class="section-module reveal" aria-label="Hero Visual"
+      style="margin-top: clamp(10px, 2.2vw, 2.5rem); margin-bottom: 0; margin-left: 0; margin-right: 0;">
+      <div class="media-frame">
+        <img src="../assets/proyecto2/interior.jpg" alt="Dialektografía Hero" class="ratio-16-9">
+      </div>
+    </section>
+
+    <!-- Module 2: Introductory Editorial Statement (Centered) -->
+    <section class="section-block reveal" aria-label="Introduction Statement"
+      style="margin-top: clamp(10px, 2.2vw, 2.5rem); margin-left: var(--page-margin); margin-right: var(--page-margin); display: flex; justify-content: center; text-align: center;">
+      <div class="project-intro-block"
+        style="display: flex; flex-direction: column; align-items: center; text-align: center; max-width: clamp(520px, 58vw, 840px);">
+        <span class="meta-label pixel-decode" data-text="Dialektografía"
+          style="display: block; font-size: clamp(32px, 4.2vw, 60px); font-family: 'SF Mono', var(--font-mono); font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: var(--space-sm); text-transform: none; text-align: center; color: var(--color-text); cursor: default;">Dialektografía</span>
+        <h2 class="project-intro-statement"
+          style="text-align: center; font-size: min(1.5rem, calc((100vw - 2 * var(--page-margin)) / 18.5)); font-weight: 500; line-height: 1.35; letter-spacing: -0.01em; margin-bottom: var(--space-xs);">
+          Rama de la lingüística que se encarga de registrar y describir de forma gráfica la distribución geográfica de
+          los dialectos y sus variantes.
+        </h2>
+        <div class="project-narrative-body" style="text-align: center;">
+          <p
+            style="font-size: var(--text-base); color: var(--color-muted); line-height: 1.5; margin: 0 auto; text-align: center;">
+            En cada capítulo, un participante desarrolla un tema e integra comentarios de los demás mediante recursos
+            gráficos específicos.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Module 3: Editorial Magazine Flipbook Specimen (29.41 x 21 cm / Spread 58.82 x 21 cm) -->
+    <section class="section-block magazine-showcase-section reveal" aria-label="Editorial Magazine Specimen"
+      style="width: 100%; padding-left: var(--page-margin); padding-right: var(--page-margin); box-sizing: border-box; margin-top: clamp(10px, 2.2vw, 2.5rem);">
+      <div style="width: 100%;">
+
+        <!-- Flipbook 3D Stage (Full-Width & Centered) -->
+        <div class="magazine-stage-container" id="dialektografia-magazine-container"
+          style="align-items: center; justify-content: center; width: 100%; padding: 0; min-height: auto; position: relative;">
+
+          <!-- Editorial Navigation Hint on the Left -->
+          <div class="mag-interaction-hint" id="mag-interaction-hint"
+            style="position: absolute; left: clamp(1.5rem, 5vw, 6rem); top: 50%; transform: translateY(-50%) translateY(8px); opacity: 0; width: clamp(260px, 28vw, 420px); text-align: center; font-family: var(--font-mono); font-size: clamp(0.95rem, 1.35vw, 1.2rem); font-weight: 700; color: #E0E0E0; letter-spacing: 0.04em; line-height: 1.55; text-transform: uppercase; transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; z-index: 10;">
+            [presiona en el libro o alguna flecha para navegar en él]
+          </div>
+
+          <div class="magazine-viewport-landscape" style="width: 100%; max-width: 100%; margin: 0 auto;">
+            <div id="heyzine-book" class="heyzine-flipbook" style="width: 100%; height: 100%;"></div>
+          </div>
+
+          <!-- Thumbnail Overview Drawer -->
+          <div class="mag-thumbnail-drawer" id="mag-thumbnail-drawer">
+            <div class="mag-drawer-header">
+              <span>VISTA DE MINIATURAS — SPREADS</span>
+              <button type="button" class="mag-btn" id="mag-drawer-close"
+                style="padding: 0.2rem 0.5rem; font-size: 0.7rem;">Cerrar &times;</button>
+            </div>
+            <div class="mag-thumb-grid" id="mag-thumb-grid">
+              <!-- Dynamically populated via JS -->
+            </div>
+          </div>
+
+          <!-- Interactive Dock Controls (Centered) -->
+          <div class="magazine-dock-aligner"
+            style="width: 100%; display: flex; justify-content: center; margin-top: clamp(2rem, 4vh, 3.5rem); z-index: 50;">
+            <div class="magazine-dock" style="margin: 0 auto;">
+              <div class="mag-nav-group">
+                <button type="button" class="mag-btn mag-btn-icon" id="mag-btn-prev" aria-label="Página anterior"
+                  title="Página anterior (←)">
+                  &larr;
+                </button>
+                <button type="button" class="mag-btn mag-btn-icon" id="mag-btn-next" aria-label="Página siguiente"
+                  title="Página siguiente (→)">
+                  &rarr;
+                </button>
+              </div>
+
+              <!-- Page indicator -->
+              <div class="mag-page-indicator">
+                <span id="mag-page-indicator-text"><span class="mag-current-page-num">PORTADA • 01</span> / 84</span>
+              </div>
+
+              <!-- Tools (Thumbnails, Fullscreen) -->
+              <div class="mag-nav-group">
+                <button type="button" class="mag-btn" id="mag-btn-thumbs" title="Ver miniaturas de páginas">
+                  <span>Páginas</span>
+                </button>
+                <button type="button" class="mag-btn mag-btn-icon" id="mag-btn-fullscreen" title="Pantalla completa (F)"
+                  aria-label="Pantalla completa">
+                  ⛶
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Zoom Inspection Modal -->
+      <div class="mag-zoom-modal" id="mag-zoom-modal" role="dialog" aria-modal="true"
+        aria-label="Inspección detallada de página">
+        <button type="button" class="mag-zoom-close" id="mag-zoom-close" aria-label="Cerrar inspección">&times;</button>
+        <div class="mag-zoom-content">
+          <img src="../assets/proyecto2/mockup/Sin título-2-01.jpg" alt="Zoom Detail" id="mag-zoom-img">
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Module 4: Physical Prototype Showcase (Label + Alternating 3-Column Grid) -->
+    <section class="section-module reveal alternating-showcase" id="prototype-alternator"
+      aria-label="Physical Prototype Showcase"
+      style="margin-top: clamp(10px, 2.2vw, 2.5rem); margin-bottom: clamp(4rem, 8vh, 6rem); width: 100%; margin-left: 0; margin-right: 0; padding: 0;"
+      data-interval="1000"
+      data-images='["../assets/proyecto2/galeria/1.jpg", "../assets/proyecto2/galeria/2.jpg", "../assets/proyecto2/galeria/3.jpg", "../assets/proyecto2/galeria/4.jpg", "../assets/proyecto2/galeria/5.jpg", "../assets/proyecto2/galeria/6.jpg", "../assets/proyecto2/galeria/7.jpg"]'>
+      <div
+        style="padding-left: var(--page-margin); padding-right: var(--page-margin); margin-bottom: 6px; box-sizing: border-box; width: 100%;">
+        <span class="meta-label" style="display: block; text-align: left;">IMÁGENES PROTOTIPO FÍSICO</span>
+      </div>
+      <div style="width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: 0; padding: 0;">
+        <div style="width: 100%; overflow: hidden;">
+          <div class="media-frame alternating-frame ratio-4-3" data-index="0" title="Click para ampliar imagen">
+            <img src="../assets/proyecto2/galeria/1.jpg" alt="Prototipo Físico 01" class="alt-img alt-img-active">
+            <img src="../assets/proyecto2/galeria/2.jpg" alt="Prototipo Físico 01 Next" class="alt-img alt-img-next">
+          </div>
+        </div>
+        <div style="width: 100%; overflow: hidden;">
+          <div class="media-frame alternating-frame ratio-4-3" data-index="1" title="Click para ampliar imagen">
+            <img src="../assets/proyecto2/galeria/2.jpg" alt="Prototipo Físico 02" class="alt-img alt-img-active">
+            <img src="../assets/proyecto2/galeria/3.jpg" alt="Prototipo Físico 02 Next" class="alt-img alt-img-next">
+          </div>
+        </div>
+        <div style="width: 100%; overflow: hidden;">
+          <div class="media-frame alternating-frame ratio-4-3" data-index="2" title="Click para ampliar imagen">
+            <img src="../assets/proyecto2/galeria/3.jpg" alt="Prototipo Físico 03" class="alt-img alt-img-active">
+            <img src="../assets/proyecto2/galeria/4.jpg" alt="Prototipo Físico 03 Next" class="alt-img alt-img-next">
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- Module 6: Project Credits -->
+    <section class="section-block project-credits-block reveal" aria-label="Project Credits"
+      style="margin-top: clamp(10px, 2.2vw, 2.5rem); margin-bottom: clamp(4rem, 8vh, 6rem); margin-left: var(--page-margin); margin-right: var(--page-margin); padding: 0;">
+      <div class="grid-12">
+        <div class="col-3">
+          <span class="meta-label">CRÉDITOS</span>
+        </div>
+        <div class="col-4 col-start-5 credits-list">
+          <div class="credit-item">
+            <span class="meta-label"
+              style="display: block; margin-bottom: var(--space-2xs); color: var(--color-accent, #FFFF00);">TIPOGRAFÍA</span>
+            <div class="credit-name">FFF Acid Grotesk - Light</div>
+          </div>
+        </div>
+        <div class="col-4 col-start-9 credits-list">
+          <div class="credit-item">
+            <span class="meta-label"
+              style="display: block; margin-bottom: var(--space-2xs); color: var(--color-accent, #FFFF00);">DISEÑO Y
+              DIAGRAMACIÓN</span>
+          </div>
+          <div class="credit-item">
+            <div class="credit-role">Capítulo 1</div>
+            <div class="credit-name">Juan-Pablo Catalán</div>
+          </div>
+          <div class="credit-item">
+            <div class="credit-role">Capítulo 2</div>
+            <div class="credit-name">Sebastian Jacobsen</div>
+          </div>
+          <div class="credit-item">
+            <div class="credit-role">Capítulo 3</div>
+            <div class="credit-name">Josefa Torres</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Next Project Navigation Banner -->
+    <section class="section-block next-project-section">
+      <a href="cycia.html" class="next-project-link">
+        <span class="next-label">SIGUIENTE PROYECTO</span>
+        <div class="next-title-row">
+          <h2 class="next-title">Catalán y Cía.</h2>
+          <span class="next-arrow" aria-hidden="true">&rarr;</span>
+        </div>
+      </a>
+    </section>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">JUAN PABLO</span>
+      <ul class="footer-nav" aria-label="Enlaces de contacto y redes">
+        <li><a href="mailto:juan-pablo.catalan@uc.cl" class="footer-link">EMAIL</a></li>
+        <li><a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer"
+            class="footer-link">LINKED IN</a></li>
+        <li><a href="https://www.instagram.com/jp.catalan/" target="_blank" rel="noopener noreferrer"
+            class="footer-link">INSTAGRAM</a></li>
+      </ul>
+      <span class="footer-copy">&copy; 2026</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/page-flip.browser.js?v=13"></script>
+  <script src="../js/magazine-p2.js?v=5"></script>
+  <script src="../js/script.js?v=103"></script>
+</body>
+
+</html>
