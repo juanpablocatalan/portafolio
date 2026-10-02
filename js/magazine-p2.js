@@ -109,7 +109,7 @@
           if (i === 2) fileIndex = 3;
           else if (i === 3) fileIndex = 2;
           const numStr = String(fileIndex).padStart(2, '0');
-          imageList.push(`${this.baseAssetPath}Sin ti\u0301tulo-2-${numStr}.jpg`);
+          imageList.push(`${this.baseAssetPath}page-${numStr}.jpg`);
         }
         this.totalPages = imageList.length;
       }
@@ -405,7 +405,7 @@
       if (!this.zoomModal) return;
       const zoomSrc = (this.imageList && this.imageList[this.currentPage])
         ? this.imageList[this.currentPage]
-        : (this.imageList ? this.imageList[0] : `${this.baseAssetPath}Sin ti\u0301tulo-2-01.jpg`);
+        : (this.imageList ? this.imageList[0] : `${this.baseAssetPath}page-01.jpg`);
 
       if (this.zoomImg) {
         this.zoomImg.src = zoomSrc;
