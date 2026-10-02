@@ -83,10 +83,58 @@
     });
   }
 
+  let targetRotY = 0;
+  let inputListenersBound = false;
+  let currentAnimId = null;
+  let currentRenderer = null;
+  let currentResizeHandler = null;
+
+  function bindInputListeners() {
+    if (inputListenersBound) return;
+    inputListenersBound = true;
+
+    window.addEventListener('mousemove', (e) => {
+      const progress = Math.min(Math.max(e.clientY / window.innerHeight, 0), 1);
+      targetRotY = progress * (Math.PI * 2);
+    }, { passive: true });
+
+    window.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 0) {
+        const progress = Math.min(Math.max(e.touches[0].clientY / window.innerHeight, 0), 1);
+        targetRotY = progress * (Math.PI * 2);
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        const progress = Math.min(Math.max(e.touches[0].clientY / window.innerHeight, 0), 1);
+        targetRotY = progress * (Math.PI * 2);
+      }
+    }, { passive: true });
+  }
+
   function initSmiley3D() {
     const container = document.getElementById('smiley-3d-wrapper');
     const canvas = document.getElementById('smiley-3d-canvas');
     if (!container || !canvas || typeof THREE === 'undefined') return;
+
+    if (currentAnimId) {
+      cancelAnimationFrame(currentAnimId);
+      currentAnimId = null;
+    }
+    if (currentResizeHandler) {
+      window.removeEventListener('resize', currentResizeHandler);
+      window.removeEventListener('load', currentResizeHandler);
+      currentResizeHandler = null;
+    }
+    if (currentRenderer) {
+      try {
+        currentRenderer.dispose();
+      } catch (e) {}
+      currentRenderer = null;
+    }
+
+    bindInputListeners();
 
     // 1. Scene Setup
     const scene = new THREE.Scene();
@@ -137,6 +185,7 @@
     }
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.18;
+    currentRenderer = renderer;
 
     // Attach Ueno Dark Studio Environment Map
     const studioEnv = createUenoStudioEnvironment(renderer);
@@ -286,31 +335,6 @@
       }
     }
 
-    // 5. Clean, Anchored Y-Axis Rotation: Direct 1:1 Static Mapping (0% to 100% = 0° to 360°)
-    let targetRotY = 0;
-
-    function onMouseMove(e) {
-      // Direct 1:1 static mapping from top (0.0) to bottom (1.0)
-      const progress = Math.min(Math.max(e.clientY / window.innerHeight, 0), 1);
-      targetRotY = progress * (Math.PI * 2);
-    }
-
-    window.addEventListener('mousemove', onMouseMove, { passive: true });
-
-    window.addEventListener('touchstart', (e) => {
-      if (e.touches.length > 0) {
-        const progress = Math.min(Math.max(e.touches[0].clientY / window.innerHeight, 0), 1);
-        targetRotY = progress * (Math.PI * 2);
-      }
-    }, { passive: true });
-
-    window.addEventListener('touchmove', (e) => {
-      if (e.touches.length > 0) {
-        const progress = Math.min(Math.max(e.touches[0].clientY / window.innerHeight, 0), 1);
-        targetRotY = progress * (Math.PI * 2);
-      }
-    }, { passive: true });
-
     // 6. Responsive Resize Handler
     function handleResize() {
       if (!container || !renderer || !camera) return;
@@ -320,6 +344,7 @@
       updateCameraAlignment();
     }
 
+    currentResizeHandler = handleResize;
     handleResize();
     window.addEventListener('resize', handleResize);
     window.addEventListener('load', handleResize);
@@ -332,7 +357,7 @@
     });
 
     function animate() {
-      requestAnimationFrame(animate);
+      currentAnimId = requestAnimationFrame(animate);
 
       if (!isVisible) return;
 
@@ -343,6 +368,8 @@
 
     animate();
   }
+
+  window.initSmiley3D = initSmiley3D;
 
   function start() {
     initSmiley3D();

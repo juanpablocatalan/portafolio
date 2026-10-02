@@ -20,6 +20,7 @@ window.addEventListener('pageshow', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
   window.scrollTo(0, 0);
+  initMobileNotice();
   syncProjectsWithAdminState();
   initProjectSwitcher();
   initPreviewMeshGradient();
@@ -34,6 +35,17 @@ document.addEventListener('DOMContentLoaded', () => {
   initImageLightbox();
   initNextProjectBlink();
 });
+
+function initMobileNotice() {
+  const closeBtn = document.getElementById('mobile-notice-close');
+  const notice = document.getElementById('mobile-notice');
+  if (closeBtn && notice) {
+    closeBtn.onclick = function () {
+      notice.classList.add('is-hidden');
+      document.body.classList.add('notice-dismissed');
+    };
+  }
+}
 
 window.addEventListener('load', () => {
   window.scrollTo(0, 0);
@@ -532,6 +544,16 @@ function initPageTransitions() {
                 document.title = newDoc.title;
                 document.body.className = newDoc.body.className;
 
+                const currentNotice = document.getElementById('mobile-notice');
+                const newNotice = newDoc.getElementById('mobile-notice');
+                if (currentNotice && newNotice) {
+                  currentNotice.replaceWith(newNotice);
+                } else if (!currentNotice && newNotice) {
+                  document.body.insertAdjacentElement('afterbegin', newNotice);
+                } else if (currentNotice && !newNotice) {
+                  currentNotice.remove();
+                }
+
                 const currentNav = document.getElementById('site-header');
                 const newNav = newDoc.getElementById('site-header');
                 if (currentNav && newNav) {
@@ -556,6 +578,7 @@ function initPageTransitions() {
 
                 window.history.pushState({}, '', targetUrl);
 
+                initMobileNotice();
                 initProjectSwitcher();
                 initContactToggle();
                 initScrollReveals();
@@ -564,6 +587,12 @@ function initPageTransitions() {
                 initPixelDecoders();
                 initAlternatingShowcases();
                 initImageLightbox();
+
+                // Re-initialize 3D Smiley Face if canvas is present in newly swapped page
+                if (document.getElementById('smiley-3d-canvas') && typeof window.initSmiley3D === 'function') {
+                  window.initSmiley3D();
+                }
+
                 window.scrollTo(0, 0);
               });
             })
