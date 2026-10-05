@@ -1237,6 +1237,12 @@ body.has-active-project .smiley-3d-wrapper,
   object-fit: cover;
   pointer-events: none;
   z-index: 2;
+  background: radial-gradient(circle at 20% 22%, #f9cee1 0%, transparent 60%),
+              radial-gradient(circle at 80% 20%, #cfda8c 0%, transparent 55%),
+              radial-gradient(circle at 50% 50%, #f9cee1 0%, transparent 50%),
+              radial-gradient(circle at 18% 78%, #f28e0e 0%, transparent 60%),
+              radial-gradient(circle at 82% 78%, #f9cee1 0%, transparent 60%),
+              #0f0812;
 }
 
 .preview-logo-overlay {

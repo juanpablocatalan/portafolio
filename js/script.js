@@ -80,8 +80,8 @@ function syncProjectsWithAdminState() {
     let previewHtml = '';
     visibleProjects.forEach((p, idx) => {
       const targetId = idx + 1;
-      const isProject3 = (p.url && p.url.includes('project-03')) || (p.title && p.title.toLowerCase().includes('catalán'));
-      const hasImage = !!(p.cover && p.cover.trim() !== '');
+      const isProject3 = (p.url && p.url.includes('cycia')) || (p.url && p.url.includes('project-03')) || (p.title && p.title.toLowerCase().includes('catalán'));
+      const hasImage = !isProject3 && !!(p.cover && p.cover.trim() !== '');
       previewHtml += `
         <article class="preview-card" id="preview-${targetId}" data-project-target="${targetId}">
           <a href="${p.url}" class="preview-media-anchor media-frame" aria-label="Ver ${p.title}">
@@ -128,115 +128,123 @@ function syncProjectsWithAdminState() {
 /**
  * 1. Project Switcher (Right list hover -> Left visual stage swap)
  */
-function initProjectSwitcher() {
+function setActiveProject(projectId) {
   const projectItems = document.querySelectorAll('.project-index-item');
   const previewCards = document.querySelectorAll('.preview-card');
-  const projectList = document.getElementById('project-list');
-
   if (!projectItems.length || !previewCards.length) return;
 
-  let currentActiveIndex = null;
-
-  function setActiveProject(projectId) {
-    currentActiveIndex = parseInt(projectId, 10);
-    if (String(projectId) !== '5') {
-      document.body.classList.add('has-active-project');
-    } else {
-      document.body.classList.remove('has-active-project');
-    }
-
-    // Update right list items
-    projectItems.forEach(item => {
-      if (item.getAttribute('data-project') === String(projectId)) {
-        item.classList.add('is-active');
-      } else {
-        item.classList.remove('is-active');
-      }
-    });
-
-    // Update left preview cards
-    previewCards.forEach(card => {
-      if (card.getAttribute('data-project-target') === String(projectId)) {
-        card.classList.add('is-active');
-      } else {
-        card.classList.remove('is-active');
-      }
-    });
-  }
-
-  function clearActiveProject() {
-    currentActiveIndex = null;
+  if (String(projectId) !== '5') {
+    document.body.classList.add('has-active-project');
+  } else {
     document.body.classList.remove('has-active-project');
-    projectItems.forEach(item => item.classList.remove('is-active'));
-    previewCards.forEach(card => card.classList.remove('is-active'));
   }
 
-  // Hover & Focus listeners on each individual project item
+  // Update right list items
   projectItems.forEach(item => {
-    const projectId = item.getAttribute('data-project');
-
-    item.addEventListener('mouseenter', () => {
-      setActiveProject(projectId);
-    });
-
-    item.addEventListener('mouseleave', () => {
-      clearActiveProject();
-    });
-
-    item.addEventListener('focusin', () => {
-      setActiveProject(projectId);
-    });
-
-    item.addEventListener('focusout', () => {
-      clearActiveProject();
-    });
+    if (item.getAttribute('data-project') === String(projectId)) {
+      item.classList.add('is-active');
+    } else {
+      item.classList.remove('is-active');
+    }
   });
 
-  // 3-Blink Yellow Flash upon clicking any project link before navigating
-  const projectLinks = document.querySelectorAll('.project-index-link');
-  projectLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const targetHref = link.getAttribute('href');
-      if (!targetHref) return;
+  // Update left preview cards
+  previewCards.forEach(card => {
+    if (card.getAttribute('data-project-target') === String(projectId)) {
+      card.classList.add('is-active');
+    } else {
+      card.classList.remove('is-active');
+    }
+  });
+}
 
-      const parentItem = link.closest('.project-index-item');
-      if (parentItem) {
-        setActiveProject(parentItem.getAttribute('data-project'));
+function clearActiveProject() {
+  document.body.classList.remove('has-active-project');
+  document.querySelectorAll('.project-index-item').forEach(item => item.classList.remove('is-active'));
+  document.querySelectorAll('.preview-card').forEach(card => card.classList.remove('is-active'));
+}
+
+function initProjectSwitcher() {
+  if (!document.__projectSwitcherDelegated) {
+    document.__projectSwitcherDelegated = true;
+
+    document.addEventListener('mouseover', (e) => {
+      const item = e.target.closest('.project-index-item');
+      if (item) {
+        const projectId = item.getAttribute('data-project');
+        if (projectId) setActiveProject(projectId);
       }
-
-      link.classList.add('is-blinking');
-
-      setTimeout(() => {
-        link.classList.remove('is-blinking');
-        window.location.href = targetHref;
-      }, 680);
     });
-  });
 
-  // Clear when mouse leaves the project list container
-  if (projectList) {
-    projectList.addEventListener('mouseleave', () => {
-      clearActiveProject();
+    document.addEventListener('mouseout', (e) => {
+      const item = e.target.closest('.project-index-item');
+      if (item && !item.contains(e.relatedTarget)) {
+        const projectList = document.getElementById('project-list');
+        if (!projectList || !projectList.contains(e.relatedTarget)) {
+          clearActiveProject();
+        }
+      }
     });
-  }
 
-  // Keyboard navigation support (ArrowUp, ArrowDown)
-  window.addEventListener('keydown', (e) => {
-    if (document.body.classList.contains('home-locked')) {
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        const nextIndex = (currentActiveIndex === null || currentActiveIndex >= projectItems.length) ? 1 : currentActiveIndex + 1;
-        setActiveProject(nextIndex);
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        const prevIndex = (currentActiveIndex === null || currentActiveIndex <= 1) ? projectItems.length : currentActiveIndex - 1;
-        setActiveProject(prevIndex);
-      } else if (e.key === 'Escape') {
+    document.addEventListener('focusin', (e) => {
+      const item = e.target.closest('.project-index-item');
+      if (item) {
+        const projectId = item.getAttribute('data-project');
+        if (projectId) setActiveProject(projectId);
+      }
+    });
+
+    document.addEventListener('focusout', (e) => {
+      const item = e.target.closest('.project-index-item');
+      if (item) {
         clearActiveProject();
       }
-    }
-  });
+    });
+
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('.project-index-link');
+      if (link) {
+        const targetHref = link.getAttribute('href');
+        if (!targetHref || targetHref.startsWith('#')) return;
+
+        e.preventDefault();
+        const parentItem = link.closest('.project-index-item');
+        if (parentItem) {
+          setActiveProject(parentItem.getAttribute('data-project'));
+        }
+
+        link.classList.add('is-blinking');
+
+        setTimeout(() => {
+          link.classList.remove('is-blinking');
+          window.location.href = targetHref;
+        }, 680);
+      }
+    });
+
+    // Keyboard navigation support (ArrowUp, ArrowDown)
+    window.addEventListener('keydown', (e) => {
+      if (document.body.classList.contains('home-locked')) {
+        const projectItems = document.querySelectorAll('.project-index-item');
+        if (!projectItems.length) return;
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          const activeItem = document.querySelector('.project-index-item.is-active');
+          const curId = activeItem ? parseInt(activeItem.getAttribute('data-project'), 10) : 0;
+          const nextIndex = (curId >= projectItems.length) ? 1 : curId + 1;
+          setActiveProject(nextIndex);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          const activeItem = document.querySelector('.project-index-item.is-active');
+          const curId = activeItem ? parseInt(activeItem.getAttribute('data-project'), 10) : 2;
+          const prevIndex = (curId <= 1) ? projectItems.length : curId - 1;
+          setActiveProject(prevIndex);
+        } else if (e.key === 'Escape') {
+          clearActiveProject();
+        }
+      }
+    });
+  }
 }
 
 /**
@@ -749,8 +757,10 @@ function initPageTransitions() {
                 window.history.pushState({}, '', targetUrl);
 
                 initMobileNotice();
+                syncProjectsWithAdminState();
                 initSiteMenuDrawer();
                 initProjectSwitcher();
+                initPreviewMeshGradient();
                 initContactToggle();
                 initScrollReveals();
                 initPageTransitions();
@@ -758,6 +768,7 @@ function initPageTransitions() {
                 initPixelDecoders();
                 initAlternatingShowcases();
                 initImageLightbox();
+                initNextProjectBlink();
 
                 // Re-initialize 3D Smiley Face if canvas is present in newly swapped page
                 if (document.getElementById('smiley-3d-canvas') && typeof window.initSmiley3D === 'function') {
@@ -1303,12 +1314,16 @@ function initNextProjectBlink() {
 /**
  * 12. WebGL Mesh Gradient Animation for Project 03 preview on Home Page
  */
+let _meshAnimFrameId = null;
+
 function initPreviewMeshGradient() {
   const canvas = document.getElementById('preview-3-mesh-canvas') || document.querySelector('.preview-mesh-canvas');
   if (!canvas) return;
 
-  if (canvas.dataset.initialized === 'true') return;
-  canvas.dataset.initialized = 'true';
+  if (_meshAnimFrameId) {
+    cancelAnimationFrame(_meshAnimFrameId);
+    _meshAnimFrameId = null;
+  }
 
   const gl = canvas.getContext('webgl', { antialias: true, powerPreference: 'high-performance' }) ||
     canvas.getContext('experimental-webgl');
@@ -1435,84 +1450,80 @@ function initPreviewMeshGradient() {
   let lastTime = performance.now();
 
   function renderMesh(now) {
-    const parentCard = canvas.closest('.preview-card');
-    if (!parentCard || parentCard.classList.contains('is-active')) {
-      const delta = (now - lastTime) * 0.001;
-      lastTime = now;
+    const delta = (now - lastTime) * 0.001;
+    lastTime = now;
 
-      animTime += delta * config.animationSpeed * 1000;
-      const t = animTime * 0.0011;
+    animTime += delta * config.animationSpeed * 1000;
+    const t = animTime * 0.0011;
 
-      const currentPoints = config.points.map((p, i) => {
-        const bX = p.x;
-        const bY = p.y;
-        const freqX = 0.75 + i * 0.18;
-        const freqY = 0.65 + i * 0.20;
-        const phase = p.animOffset;
+    const currentPoints = config.points.map((p, i) => {
+      const bX = p.x;
+      const bY = p.y;
+      const freqX = 0.75 + i * 0.18;
+      const freqY = 0.65 + i * 0.20;
+      const phase = p.animOffset;
 
-        const ox = Math.sin(t * freqX + phase) * 0.065 + Math.cos(t * 0.55 + phase) * 0.02;
-        const oy = Math.cos(t * freqY + phase) * 0.055 + Math.sin(t * 0.60 + phase) * 0.02;
+      const ox = Math.sin(t * freqX + phase) * 0.065 + Math.cos(t * 0.55 + phase) * 0.02;
+      const oy = Math.cos(t * freqY + phase) * 0.055 + Math.sin(t * 0.60 + phase) * 0.02;
 
-        const px = Math.max(0.06, Math.min(0.94, bX + ox));
-        const py = Math.max(0.06, Math.min(0.94, bY + oy));
-        const r = p.radius * (1.0 + Math.sin(t * 1.2 + phase) * 0.06);
+      const px = Math.max(0.06, Math.min(0.94, bX + ox));
+      const py = Math.max(0.06, Math.min(0.94, bY + oy));
+      const r = p.radius * (1.0 + Math.sin(t * 1.2 + phase) * 0.06);
 
-        return { ...p, curX: px, curY: py, curR: r };
-      });
+      return { ...p, curX: px, curY: py, curR: r };
+    });
 
-      const minDist = 0.18;
-      for (let iter = 0; iter < 2; iter++) {
-        for (let i = 0; i < currentPoints.length; i++) {
-          for (let j = i + 1; j < currentPoints.length; j++) {
-            const p1 = currentPoints[i];
-            const p2 = currentPoints[j];
-            const dx = p2.curX - p1.curX;
-            const dy = p2.curY - p1.curY;
-            const dist = Math.hypot(dx, dy);
+    const minDist = 0.18;
+    for (let iter = 0; iter < 2; iter++) {
+      for (let i = 0; i < currentPoints.length; i++) {
+        for (let j = i + 1; j < currentPoints.length; j++) {
+          const p1 = currentPoints[i];
+          const p2 = currentPoints[j];
+          const dx = p2.curX - p1.curX;
+          const dy = p2.curY - p1.curY;
+          const dist = Math.hypot(dx, dy);
 
-            if (dist < minDist && dist > 0.0001) {
-              const overlap = (minDist - dist) * 0.5;
-              const nx = dx / dist;
-              const ny = dy / dist;
-              p1.curX = Math.max(0.06, Math.min(0.94, p1.curX - nx * overlap));
-              p1.curY = Math.max(0.06, Math.min(0.94, p1.curY - ny * overlap));
-              p2.curX = Math.max(0.06, Math.min(0.94, p2.curX + nx * overlap));
-              p2.curY = Math.max(0.06, Math.min(0.94, p2.curY + ny * overlap));
-            }
+          if (dist < minDist && dist > 0.0001) {
+            const overlap = (minDist - dist) * 0.5;
+            const nx = dx / dist;
+            const ny = dy / dist;
+            p1.curX = Math.max(0.06, Math.min(0.94, p1.curX - nx * overlap));
+            p1.curY = Math.max(0.06, Math.min(0.94, p1.curY - ny * overlap));
+            p2.curX = Math.max(0.06, Math.min(0.94, p2.curX + nx * overlap));
+            p2.curY = Math.max(0.06, Math.min(0.94, p2.curY + ny * overlap));
           }
         }
       }
-
-      const ptsArr = [];
-      const colArr = [];
-      const radArr = [];
-
-      currentPoints.forEach(p => {
-        ptsArr.push(p.curX, 1.0 - p.curY);
-        const rgb = hexToRgb(p.color);
-        colArr.push(rgb[0], rgb[1], rgb[2]);
-        radArr.push(p.curR);
-      });
-
-      gl.uniform2f(uRes, width, height);
-      gl.uniform1f(uFalloff, config.falloff);
-      gl.uniform1f(uGrain, config.grainNoise);
-      gl.uniform1f(uTime, now * 0.001);
-
-      const bgRgb = hexToRgb(config.backgroundColor);
-      gl.uniform3f(uBg, bgRgb[0], bgRgb[1], bgRgb[2]);
-
-      gl.uniform2fv(uPoints, new Float32Array(ptsArr));
-      gl.uniform3fv(uColors, new Float32Array(colArr));
-      gl.uniform1fv(uRadius, new Float32Array(radArr));
-
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
-    } else {
-      lastTime = now;
     }
-    requestAnimationFrame(renderMesh);
+
+    const ptsArr = [];
+    const colArr = [];
+    const radArr = [];
+
+    currentPoints.forEach(p => {
+      ptsArr.push(p.curX, 1.0 - p.curY);
+      const rgb = hexToRgb(p.color);
+      colArr.push(rgb[0], rgb[1], rgb[2]);
+      radArr.push(p.curR);
+    });
+
+    gl.uniform2f(uRes, width, height);
+    gl.uniform1f(uFalloff, config.falloff);
+    gl.uniform1f(uGrain, config.grainNoise);
+    gl.uniform1f(uTime, now * 0.001);
+
+    const bgRgb = hexToRgb(config.backgroundColor);
+    gl.uniform3f(uBg, bgRgb[0], bgRgb[1], bgRgb[2]);
+
+    gl.uniform2fv(uPoints, new Float32Array(ptsArr));
+    gl.uniform3fv(uColors, new Float32Array(colArr));
+    gl.uniform1fv(uRadius, new Float32Array(radArr));
+
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    _meshAnimFrameId = requestAnimationFrame(renderMesh);
   }
-  requestAnimationFrame(renderMesh);
+  _meshAnimFrameId = requestAnimationFrame(renderMesh);
 }
 
 
