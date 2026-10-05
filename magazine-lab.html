@@ -6,9 +6,12 @@
   <title>Magazine Transition Effects Lab — Juan Pablo</title>
   <meta name="description" content="Laboratorio de cinemática y efectos de transición para revistas y catálogos interactivos.">
   
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/happy-face.svg">
+
   <!-- Core & Magazine Stylesheets -->
-  <link rel="stylesheet" href="css/style.css?v=40">
-  <link rel="stylesheet" href="css/magazine.css?v=5">
+  <link rel="stylesheet" href="css/style.css?v=320">
+  <link rel="stylesheet" href="css/magazine.css?v=320">
 
   <style>
     .lab-hero {
@@ -176,16 +179,61 @@
   <!-- Site Header -->
   <header class="site-header" id="site-header">
     <div class="container header-inner">
-      <a href="index.html" class="back-link">INICIO</a>
-      <nav class="site-nav" aria-label="Navegación principal">
+      <!-- Desktop Navigation (Web: Inicio izquierda, Carita centro, Sobre Mí derecha) -->
+      <a href="index.html" class="back-link header-desktop-only">INICIO</a>
+      <a href="index.html" class="header-center-logo header-desktop-only" aria-label="Inicio">
+        <img src="assets/happy-face-bw.svg" alt="Happy Face" class="header-logo-icon">
+      </a>
+      <nav class="site-nav header-desktop-only" aria-label="Navegación principal">
         <ul>
-          <li><a href="index.html" class="nav-link">PROYECTOS</a></li>
           <li><a href="sobremi.html" class="nav-link">SOBRE MÍ</a></li>
-          <li><a href="library-3d.html" class="nav-link">3D LIBRARY</a></li>
         </ul>
       </nav>
+
+      <!-- Mobile Navigation (Carita a la izquierda + Menú hamburguesa a la derecha) -->
+      <a href="index.html" class="header-logo-link header-mobile-only" aria-label="Inicio">
+        <img src="assets/happy-face-bw.svg" alt="Happy Face" class="header-logo-icon">
+      </a>
+      <button type="button" class="menu-toggle-btn header-mobile-only" id="menu-toggle-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="site-menu-drawer" onclick="event.stopPropagation(); window.toggleSiteMenuDrawer && window.toggleSiteMenuDrawer(event);">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
     </div>
   </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <div class="site-menu-drawer" id="site-menu-drawer" aria-hidden="true">
+    <div class="menu-drawer-backdrop" id="menu-drawer-backdrop" onclick="window.closeSiteMenuDrawer && window.closeSiteMenuDrawer()"></div>
+    <div class="menu-drawer-panel">
+      <div class="menu-drawer-top">
+        <span class="menu-drawer-badge">MENÚ</span>
+        <button type="button" class="menu-drawer-close" id="menu-drawer-close" aria-label="Cerrar menú" onclick="window.closeSiteMenuDrawer && window.closeSiteMenuDrawer()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <nav class="menu-drawer-nav" aria-label="Navegación principal">
+        <ul class="menu-drawer-list">
+          <li><a href="index.html" class="menu-drawer-link">INICIO</a></li>
+          <li><a href="sobremi.html" class="menu-drawer-link">SOBRE MÍ</a></li>
+          <li class="menu-drawer-item-contact">
+            <button type="button" class="menu-drawer-link menu-drawer-contact-toggle" id="menu-drawer-contact-toggle" aria-expanded="false" onclick="event.stopPropagation(); window.toggleMenuContactSub && window.toggleMenuContactSub(event);">
+              CONTACTO <span class="contact-chevron">&darr;</span>
+            </button>
+            <div class="menu-drawer-contact-sub" id="menu-drawer-contact-sub">
+              <a href="mailto:juan-pablo.catalan@uc.cl" class="menu-contact-item">EMAIL</a>
+              <a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer" class="menu-contact-item">LINKEDIN</a>
+              <a href="https://www.instagram.com/jp.catalan/" target="_blank" rel="noopener noreferrer" class="menu-contact-item">INSTAGRAM</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+      <div class="menu-drawer-footer">
+        <span>JUAN-PABLO CATALÁN</span>
+        <span>&copy; 2026</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Main Content -->
   <main id="main-content" class="container">
@@ -328,8 +376,8 @@
   </footer>
 
   <!-- Scripts -->
-  <script src="js/page-flip.browser.js?v=13"></script>
-  <script src="js/magazine.js?v=24"></script>
+  <script src="js/page-flip.browser.js?v=320"></script>
+  <script src="js/magazine.js?v=320"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const fxCards = document.querySelectorAll('.fx-card-btn');
@@ -391,5 +439,6 @@
       });
     });
   </script>
+  <script src="js/script.js?v=320"></script>
 </body>
 </html>

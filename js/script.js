@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.scrollTo(0, 0);
   initMobileNotice();
   syncProjectsWithAdminState();
+  initSiteMenuDrawer();
   initProjectSwitcher();
   initPreviewMeshGradient();
   initScrollReveals();
@@ -500,11 +501,178 @@ function initContactToggle() {
 }
 
 /**
+ * Global Top Bar Navigation Drawer (Inicio, Sobre Mí, Contacto)
+ */
+function ensureSiteMenuDrawer() {
+  let drawer = document.getElementById('site-menu-drawer');
+  if (!drawer) {
+    const isInsideProjects = window.location.pathname.includes('/projects/') || document.querySelector('link[href^="../css/"]');
+    const rootPath = isInsideProjects ? '../' : '';
+
+    drawer = document.createElement('div');
+    drawer.className = 'site-menu-drawer';
+    drawer.id = 'site-menu-drawer';
+    drawer.setAttribute('aria-hidden', 'true');
+    drawer.innerHTML = `
+      <div class="menu-drawer-backdrop" id="menu-drawer-backdrop"></div>
+      <div class="menu-drawer-panel">
+        <div class="menu-drawer-top">
+          <span class="menu-drawer-badge">MENÚ</span>
+          <button type="button" class="menu-drawer-close" id="menu-drawer-close" aria-label="Cerrar menú">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <nav class="menu-drawer-nav" aria-label="Navegación principal">
+          <ul class="menu-drawer-list">
+            <li><a href="${rootPath}index.html" class="menu-drawer-link">INICIO</a></li>
+            <li><a href="${rootPath}sobremi.html" class="menu-drawer-link">SOBRE MÍ</a></li>
+            <li class="menu-drawer-item-contact">
+              <button type="button" class="menu-drawer-link menu-drawer-contact-toggle" id="menu-drawer-contact-toggle" aria-expanded="false" onclick="event.stopPropagation(); window.toggleMenuContactSub && window.toggleMenuContactSub(event);">
+                CONTACTO <span class="contact-chevron">&darr;</span>
+              </button>
+              <div class="menu-drawer-contact-sub" id="menu-drawer-contact-sub">
+                <a href="mailto:juan-pablo.catalan@uc.cl" class="menu-contact-item">EMAIL</a>
+                <a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer" class="menu-contact-item">LINKEDIN</a>
+                <a href="https://www.instagram.com/jp.catalan/" target="_blank" rel="noopener noreferrer" class="menu-contact-item">INSTAGRAM</a>
+              </div>
+            </li>
+          </ul>
+        </nav>
+        <div class="menu-drawer-footer">
+          <span>JUAN-PABLO CATALÁN</span>
+          <span>&copy; 2026</span>
+        </div>
+      </div>
+    `;
+    const siteHeader = document.getElementById('site-header');
+    if (siteHeader && siteHeader.nextSibling) {
+      siteHeader.parentNode.insertBefore(drawer, siteHeader.nextSibling);
+    } else if (siteHeader) {
+      siteHeader.parentNode.appendChild(drawer);
+    } else {
+      document.body.appendChild(drawer);
+    }
+  }
+  return drawer;
+}
+
+let _lastMenuToggleTimestamp = 0;
+
+window.openSiteMenuDrawer = function (e) {
+  if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+  _lastMenuToggleTimestamp = Date.now();
+  const drawer = ensureSiteMenuDrawer();
+  drawer.classList.add('is-open');
+  drawer.setAttribute('aria-hidden', 'false');
+  document.querySelectorAll('.menu-toggle-btn').forEach(btn => {
+    btn.classList.add('is-active');
+    btn.setAttribute('aria-expanded', 'true');
+  });
+};
+
+window.closeSiteMenuDrawer = function (e) {
+  if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+  _lastMenuToggleTimestamp = Date.now();
+  const drawer = document.getElementById('site-menu-drawer');
+  if (drawer) {
+    drawer.classList.remove('is-open');
+    drawer.setAttribute('aria-hidden', 'true');
+  }
+  document.querySelectorAll('.menu-toggle-btn').forEach(btn => {
+    btn.classList.remove('is-active');
+    btn.setAttribute('aria-expanded', 'false');
+  });
+};
+
+window.toggleSiteMenuDrawer = function (e) {
+  if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+  const now = Date.now();
+  if (now - _lastMenuToggleTimestamp < 250) {
+    return;
+  }
+  _lastMenuToggleTimestamp = now;
+
+  const drawer = ensureSiteMenuDrawer();
+  if (drawer.classList.contains('is-open')) {
+    window.closeSiteMenuDrawer();
+  } else {
+    window.openSiteMenuDrawer();
+  }
+};
+
+let _lastContactToggleTimestamp = 0;
+
+window.toggleMenuContactSub = function (e) {
+  if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+  const now = Date.now();
+  if (now - _lastContactToggleTimestamp < 250) return;
+  _lastContactToggleTimestamp = now;
+
+  const contactSub = document.getElementById('menu-drawer-contact-sub');
+  const contactToggle = document.getElementById('menu-drawer-contact-toggle') || document.querySelector('.menu-drawer-contact-toggle');
+  if (contactSub) {
+    const isExpanded = contactSub.classList.toggle('is-expanded');
+    if (contactToggle) {
+      contactToggle.classList.toggle('is-expanded', isExpanded);
+      contactToggle.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+    }
+  }
+};
+
+function initSiteMenuDrawer() {
+  ensureSiteMenuDrawer();
+
+  // Document-level delegated listeners (immune to DOM re-renders or timing)
+  if (!document.__siteMenuDelegated) {
+    document.__siteMenuDelegated = true;
+
+    document.addEventListener('click', (e) => {
+      const toggleBtn = e.target.closest('#menu-toggle-btn, .menu-toggle-btn');
+      if (toggleBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.toggleSiteMenuDrawer(e);
+        return;
+      }
+
+      const closeBtn = e.target.closest('#menu-drawer-close, .menu-drawer-close, #menu-drawer-backdrop, .menu-drawer-backdrop');
+      if (closeBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.closeSiteMenuDrawer(e);
+        return;
+      }
+
+      const contactToggle = e.target.closest('#menu-drawer-contact-toggle, .menu-drawer-contact-toggle');
+      if (contactToggle) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.toggleMenuContactSub(e);
+        return;
+      }
+
+      // Close when clicking navigation links inside drawer
+      const navLink = e.target.closest('.menu-drawer-link[href], .menu-contact-item');
+      if (navLink) {
+        window.closeSiteMenuDrawer();
+      }
+    });
+
+    // Close on Escape
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        window.closeSiteMenuDrawer();
+      }
+    });
+  }
+}
+
+/**
  * 6. Seamless View Transitions, 3-Blink Yellow Pulse & Header/Footer Morphing
  */
 function initPageTransitions() {
   const transitionLinks = document.querySelectorAll(
-    'a[href="sobremi.html"], a[href="about.html"], a[href="index.html"], a[href="../sobremi.html"], a[href="../about.html"], a[href="../index.html"], a.static-header-label, .stage-footer-link:not(#contact-trigger), .nav-link, .back-link, .site-header a, .footer-link, .site-footer a'
+    'a[href="sobremi.html"], a[href="about.html"], a[href="index.html"], a[href="../sobremi.html"], a[href="../about.html"], a[href="../index.html"], a.static-header-label, .stage-footer-link:not(#contact-trigger), .nav-link, .back-link, .site-header a, .footer-link, .site-footer a, .menu-drawer-link, .header-logo-link'
   );
 
   transitionLinks.forEach(link => {
@@ -515,20 +683,22 @@ function initPageTransitions() {
       const targetUrl = link.getAttribute('href');
       if (!targetUrl || targetUrl.startsWith('#')) return;
 
+      const isLogoLink = link.classList.contains('header-center-logo') || link.classList.contains('header-logo-link');
+
       // Handle mailto and target="_blank" links with 3-blink feedback
       if (targetUrl.startsWith('mailto:') || link.getAttribute('target') === '_blank') {
-        link.classList.add('is-blinking');
+        if (!isLogoLink) link.classList.add('is-blinking');
         setTimeout(() => {
-          link.classList.remove('is-blinking');
-        }, 680);
+          if (!isLogoLink) link.classList.remove('is-blinking');
+        }, isLogoLink ? 0 : 680);
         return;
       }
 
       e.preventDefault();
-      link.classList.add('is-blinking');
+      if (!isLogoLink) link.classList.add('is-blinking');
 
-      setTimeout(() => {
-        link.classList.remove('is-blinking');
+      const runNavigation = () => {
+        if (!isLogoLink) link.classList.remove('is-blinking');
 
         const currentStaticHeader = document.getElementById('site-header-static');
         const isStandardStaticPage = !!currentStaticHeader && (targetUrl === 'sobremi.html' || targetUrl === 'about.html' || targetUrl === 'index.html');
@@ -579,6 +749,7 @@ function initPageTransitions() {
                 window.history.pushState({}, '', targetUrl);
 
                 initMobileNotice();
+                initSiteMenuDrawer();
                 initProjectSwitcher();
                 initContactToggle();
                 initScrollReveals();
@@ -602,7 +773,13 @@ function initPageTransitions() {
         } else {
           window.location.href = targetUrl;
         }
-      }, 680);
+      };
+
+      if (isLogoLink) {
+        runNavigation();
+      } else {
+        setTimeout(runNavigation, 680);
+      }
     });
   });
 

@@ -11,9 +11,12 @@
   <title>Fronteo — Juan Pablo</title>
   <meta name="description" content="Case study for Fronteo by Juan Pablo — Brand Identity & Direction.">
 
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="../assets/happy-face.svg">
+
   <!-- Core Stylesheet -->
-  <link rel="stylesheet" href="../css/style.css?v=100">
-  <link rel="stylesheet" href="../css/magazine.css?v=10">
+  <link rel="stylesheet" href="../css/style.css?v=320">
+  <link rel="stylesheet" href="../css/magazine.css?v=320">
 
   <style>
     .project-3d-stage,
@@ -508,13 +511,26 @@
   <!-- Site Header -->
   <header class="site-header" id="site-header">
     <div class="container header-inner">
-      <a href="../index.html" class="back-link">INICIO</a>
-      <nav class="site-nav" aria-label="Navegación principal">
+      <!-- Desktop Navigation (Web: Inicio izquierda, Carita centro, Sobre Mí derecha) -->
+      <a href="../index.html" class="back-link header-desktop-only">INICIO</a>
+      <a href="../index.html" class="header-center-logo header-desktop-only" aria-label="Inicio">
+        <img src="../assets/happy-face-bw.svg" alt="Happy Face" class="header-logo-icon">
+      </a>
+      <nav class="site-nav header-desktop-only" aria-label="Navegación principal">
         <ul>
-          <li><a href="../index.html" class="nav-link">PROYECTOS</a></li>
-          <li><a href="../about.html" class="nav-link">SOBRE MÍ</a></li>
+          <li><a href="../sobremi.html" class="nav-link">SOBRE MÍ</a></li>
         </ul>
       </nav>
+
+      <!-- Mobile Navigation (Carita a la izquierda + Menú hamburguesa a la derecha) -->
+      <a href="../index.html" class="header-logo-link header-mobile-only" aria-label="Inicio">
+        <img src="../assets/happy-face-bw.svg" alt="Happy Face" class="header-logo-icon">
+      </a>
+      <button type="button" class="menu-toggle-btn header-mobile-only" id="menu-toggle-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="site-menu-drawer" onclick="event.stopPropagation(); window.toggleSiteMenuDrawer && window.toggleSiteMenuDrawer(event);">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
     </div>
   </header>
 
@@ -835,7 +851,7 @@
   <!-- Site Footer -->
   <footer class="site-footer">
     <div class="container footer-inner">
-      <span class="footer-brand">JUAN PABLO</span>
+      <span class="footer-brand">JUAN-PABLO</span>
       <ul class="footer-nav" aria-label="Enlaces de contacto y redes">
         <li><a href="mailto:juan-pablo.catalan@uc.cl" class="footer-link">EMAIL</a></li>
         <li><a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer"
@@ -850,12 +866,12 @@
   <!-- Scripts -->
   <script src="../js/three.min.js"></script>
   <script src="../js/GLTFLoader.js"></script>
-  <script src="../js/fronteo3d.js?v=22"></script>
-  <script src="../js/mockup-textures.js?v=1"></script>
-  <script src="../js/project-mockups.js?v=3"></script>
-  <script src="../js/page-flip.browser.js?v=13"></script>
-  <script src="../js/magazine.js?v=30"></script>
-  <script src="../js/script.js?v=37"></script>
+  <script src="../js/fronteo3d.js?v=320"></script>
+  <script src="../js/mockup-textures.js?v=320"></script>
+  <script src="../js/project-mockups.js?v=320"></script>
+  <script src="../js/page-flip.browser.js?v=320"></script>
+  <script src="../js/magazine.js?v=320"></script>
+  <script src="../js/script.js?v=320"></script>
 </body>
 
 </html>

@@ -13,7 +13,7 @@
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="../assets/happy-face.svg">
 
-  <link rel="stylesheet" href="../css/style.css?v=106">
+  <link rel="stylesheet" href="../css/style.css?v=320">
 </head>
 
 <body>
@@ -21,19 +21,33 @@
   <!-- Barra superior del portafolio -->
   <header class="site-header" id="site-header">
     <div class="container header-inner">
-      <a href="../index.html" class="back-link">INICIO</a>
-      <nav class="site-nav" aria-label="Navegación principal">
+      <!-- Desktop Navigation (Web: Inicio izquierda, Carita centro, Sobre Mí derecha) -->
+      <a href="../index.html" class="back-link header-desktop-only">INICIO</a>
+      <a href="../index.html" class="header-center-logo header-desktop-only" aria-label="Inicio">
+        <img src="../assets/happy-face-bw.svg" alt="Happy Face" class="header-logo-icon">
+      </a>
+      <nav class="site-nav header-desktop-only" aria-label="Navegación principal">
         <ul>
           <li><a href="../sobremi.html" class="nav-link">SOBRE MÍ</a></li>
         </ul>
       </nav>
+
+      <!-- Mobile Navigation (Carita a la izquierda + Menú hamburguesa a la derecha) -->
+      <a href="../index.html" class="header-logo-link header-mobile-only" aria-label="Inicio">
+        <img src="../assets/happy-face-bw.svg" alt="Happy Face" class="header-logo-icon">
+      </a>
+      <button type="button" class="menu-toggle-btn header-mobile-only" id="menu-toggle-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="site-menu-drawer" onclick="event.stopPropagation(); window.toggleSiteMenuDrawer && window.toggleSiteMenuDrawer(event);">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
     </div>
   </header>
 
   <main id="main-content">
   </main>
 
-  <script src="../js/script.js?v=103"></script>
+  <script src="../js/script.js?v=320"></script>
 </body>
 
 </html>

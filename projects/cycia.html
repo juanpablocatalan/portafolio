@@ -15,7 +15,7 @@
   <link rel="icon" type="image/svg+xml" href="../assets/happy-face.svg">
 
   <!-- Core Stylesheet -->
-  <link rel="stylesheet" href="../css/style.css?v=106">
+  <link rel="stylesheet" href="../css/style.css?v=320">
 
   <!-- Adobe Fonts: TT Commons Pro Oficial -->
   <link rel="stylesheet" href="https://use.typekit.net/dbk8jrt.css">
@@ -2949,12 +2949,26 @@
   <!-- Site Header -->
   <header class="site-header" id="site-header">
     <div class="container header-inner">
-      <a href="../index.html" class="back-link">INICIO</a>
-      <nav class="site-nav" aria-label="Navegación principal">
+      <!-- Desktop Navigation (Web: Inicio izquierda, Carita centro, Sobre Mí derecha) -->
+      <a href="../index.html" class="back-link header-desktop-only">INICIO</a>
+      <a href="../index.html" class="header-center-logo header-desktop-only" aria-label="Inicio">
+        <img src="../assets/happy-face-bw.svg" alt="Happy Face" class="header-logo-icon">
+      </a>
+      <nav class="site-nav header-desktop-only" aria-label="Navegación principal">
         <ul>
           <li><a href="../sobremi.html" class="nav-link">SOBRE MÍ</a></li>
         </ul>
       </nav>
+
+      <!-- Mobile Navigation (Carita a la izquierda + Menú hamburguesa a la derecha) -->
+      <a href="../index.html" class="header-logo-link header-mobile-only" aria-label="Inicio">
+        <img src="../assets/happy-face-bw.svg" alt="Happy Face" class="header-logo-icon">
+      </a>
+      <button type="button" class="menu-toggle-btn header-mobile-only" id="menu-toggle-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="site-menu-drawer" onclick="event.stopPropagation(); window.toggleSiteMenuDrawer && window.toggleSiteMenuDrawer(event);">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
     </div>
   </header>
 
@@ -7237,7 +7251,7 @@
   <!-- Site Footer -->
   <footer class="site-footer">
     <div class="container footer-inner">
-      <span class="footer-brand">JUAN PABLO</span>
+      <span class="footer-brand">JUAN-PABLO</span>
       <ul class="footer-nav" aria-label="Enlaces de contacto y redes">
         <li><a href="mailto:juan-pablo.catalan@uc.cl" class="footer-link">EMAIL</a></li>
         <li><a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer"
@@ -7250,7 +7264,7 @@
   </footer>
 
   <!-- Scripts -->
-  <script src="../js/script.js?v=103"></script>
+  <script src="../js/script.js?v=320"></script>
   <script>
     (function initCatalanLogoEffect() {
       const container = document.getElementById('logo-container');

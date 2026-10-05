@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Editor Visual — Mapa Conceptual Fronteo</title>
   
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="../assets/happy-face.svg">
+
   <!-- Estilos base del proyecto -->
-  <link rel="stylesheet" href="../css/style.css?v=70">
+  <link rel="stylesheet" href="../css/style.css?v=320">
 
   <style>
     /* --------------------------------------------------------------------------
@@ -131,6 +134,21 @@
       position: sticky;
       top: 0;
       z-index: 100;
+    }
+
+    .editor-center-logo {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .editor-center-logo:hover {
+      transform: translate(-50%, -50%) scale(1.15) rotate(10deg);
     }
 
     .editor-title-group {
@@ -708,6 +726,10 @@
       <h1>Editor Visual de Conceptos</h1>
       <span class="badge-editor">Supply Font Activa</span>
     </div>
+
+    <a href="../index.html" class="editor-center-logo" aria-label="Inicio" title="Ir al Inicio">
+      <img src="../assets/happy-face-bw.svg" alt="Happy Face" style="width: 24px; height: 24px; display: block;">
+    </a>
 
     <div class="topbar-actions">
       <button type="button" class="btn" id="btn-reset" title="Restaurar layout por defecto">

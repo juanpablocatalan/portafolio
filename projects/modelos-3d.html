@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+  </script>
+  <title>Modelos 3D — Juan Pablo</title>
+  <meta name="description"
+    content="Exploración de modelado tridimensional, volumetría industrial y shaders WebGL en tiempo real por Juan-Pablo Catalán.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="../assets/happy-face.svg">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="../css/style.css?v=320">
+  <link rel="stylesheet" href="../css/project10.css?v=320">
+
+  <style>
+    .viewer-section-title {
+      font-family: var(--font-primary, -apple-system, sans-serif);
+      font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+      margin-bottom: 0.85rem;
+    }
+
+    .viewer-section-desc {
+      font-family: var(--font-primary, -apple-system, sans-serif);
+      font-size: clamp(0.9rem, 1.1vw, 1rem);
+      color: var(--color-muted, #8e8e8e);
+      line-height: 1.5;
+      max-width: 680px;
+      margin-bottom: 1.5rem;
+    }
+
+    .model-section-divider {
+      margin: clamp(4rem, 8vw, 7rem) 0;
+      border: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .gallery-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(1rem, 2vw, 2rem);
+      margin-top: clamp(2rem, 4vw, 4rem);
+    }
+
+    @media (max-width: 768px) {
+      .gallery-grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .gallery-caption {
+      margin-top: 0.75rem;
+      font-family: var(--font-mono, monospace);
+      font-size: 0.75rem;
+      color: var(--color-muted, #8e8e8e);
+      letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <!-- Desktop Navigation (Web: Inicio izquierda, Carita centro, Sobre Mí derecha) -->
+      <a href="../index.html" class="back-link header-desktop-only">INICIO</a>
+      <a href="../index.html" class="header-center-logo header-desktop-only" aria-label="Inicio">
+        <img src="../assets/happy-face-bw.svg" alt="Happy Face" class="header-logo-icon">
+      </a>
+      <nav class="site-nav header-desktop-only" aria-label="Navegación principal">
+        <ul>
+          <li><a href="../sobremi.html" class="nav-link">SOBRE MÍ</a></li>
+        </ul>
+      </nav>
+
+      <!-- Mobile Navigation (Carita a la izquierda + Menú hamburguesa a la derecha) -->
+      <a href="../index.html" class="header-logo-link header-mobile-only" aria-label="Inicio">
+        <img src="../assets/happy-face-bw.svg" alt="Happy Face" class="header-logo-icon">
+      </a>
+      <button type="button" class="menu-toggle-btn header-mobile-only" id="menu-toggle-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="site-menu-drawer" onclick="event.stopPropagation(); window.toggleSiteMenuDrawer && window.toggleSiteMenuDrawer(event);">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content">
+
+    <!-- Project Header & Meta Grid -->
+    <section class="project-header-section container">
+
+      <!-- Monumental Headline -->
+      <h1 class="project-headline reveal reveal-delay-1">Modelos 3D</h1>
+
+      <!-- Metadata Grid -->
+      <div class="project-meta-grid grid-12 reveal reveal-delay-2">
+        <div class="col-3 meta-item">
+          <span class="meta-label">Categoría</span>
+          <span class="meta-value">Modelado CAD &amp; Spatial WebGL</span>
+        </div>
+        <div class="col-3 meta-item">
+          <span class="meta-label">Softwares</span>
+          <span class="meta-value">Rhinoceros 3D &bull; Blender &bull; Three.js</span>
+        </div>
+        <div class="col-3 meta-item">
+          <span class="meta-label">Año</span>
+          <span class="meta-value">2026</span>
+        </div>
+        <div class="col-3 meta-item">
+          <span class="meta-label">Autor</span>
+          <span class="meta-value">Juan-Pablo Catalán</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Introductory Statement -->
+    <div class="container">
+      <section class="grid-12 section-block reveal" aria-label="Introducción del Proyecto">
+        <div class="col-8 col-start-3 project-intro-block">
+          <h2 class="project-intro-statement">
+            Exploración de modelado paramétrico, volumetría de precisión y texturizado PBR exportados a entornos WebGL interactivos en tiempo real.
+          </h2>
+          <div class="project-narrative-body">
+            <p>
+              Este proyecto reúne investigaciones en torno al modelado de piezas industriales y volumetrías complejas desarrolladas en Rhinoceros 3D y Blender. Mediante optimización de topología poligonal e iluminación de estudio en tiempo real, cada objeto conserva su precisión técnica permitiendo examinar mallas, biseles y acabados materiales directamente en el navegador.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- VISOR 3D #1: PIEZA DE ENSAMBLE CAD                                -->
+    <!-- ================================================================= -->
+    <div class="container">
+      <div class="reveal">
+        <h3 class="viewer-section-title">01 &bull; Pieza CAD de Ensamble</h3>
+        <p class="viewer-section-desc">
+          Geometría modelada en Rhinoceros 3D con tolerancias de encastre y micro-biseles en aristas.
+        </p>
+      </div>
+
+      <section class="p10-stage-container reveal" aria-label="Visor 3D Pieza de Ensamble">
+        <div class="p10-viewport-frame" id="stage-lego-brick">
+
+          <!-- Technical Corner Marks -->
+          <span class="p10-corner p10-corner-tl" aria-hidden="true"></span>
+          <span class="p10-corner p10-corner-tr" aria-hidden="true"></span>
+          <span class="p10-corner p10-corner-bl" aria-hidden="true"></span>
+          <span class="p10-corner p10-corner-br" aria-hidden="true"></span>
+
+          <!-- Loading Indicator -->
+          <div class="p10-loading-overlay" id="loading-lego-brick">
+            Iniciando motor 3D...
+          </div>
+
+          <!-- Top Technical HUD -->
+          <div class="p10-hud-top">
+            <div class="p10-hud-badge">
+              <span class="p10-live-dot"></span>
+              <span>103,510 tris</span> &bull; <span>Pieza CAD Rhinoceros</span>
+            </div>
+            <div class="p10-hud-hint">
+              [Arrastra para rotar 360&deg; &bull; Scroll para zoom]
+            </div>
+          </div>
+
+          <!-- Three.js Canvas -->
+          <canvas id="canvas-lego-brick"></canvas>
+
+          <!-- Floating Studio Controls Toolbar -->
+          <div class="p10-hud-bottom" data-viewer="brick">
+            <!-- Material Selector -->
+            <div class="p10-toolbar-group">
+              <span class="p10-toolbar-label">Material</span>
+              <button type="button" class="p10-btn p10-mat-btn active" data-mat="chrome">
+                <span class="p10-mat-swatch" style="background: #e2e8f0;"></span> Cromo
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="graphite">
+                <span class="p10-mat-swatch" style="background: #27272a;"></span> Grafito
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="ceramic">
+                <span class="p10-mat-swatch" style="background: #f8fafc;"></span> Cerámica
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="legoYellow">
+                <span class="p10-mat-swatch" style="background: #eab308;"></span> Amarillo
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="wireframe">
+                Malla
+              </button>
+            </div>
+
+            <!-- View Camera Presets & Auto Rotate -->
+            <div class="p10-toolbar-group">
+              <span class="p10-toolbar-label">Vista</span>
+              <button type="button" class="p10-btn p10-btn-reset">Reset</button>
+              <button type="button" class="p10-btn p10-btn-top">Superior</button>
+              <button type="button" class="p10-btn p10-btn-front">Frontal</button>
+              <button type="button" class="p10-btn active p10-btn-autorotate">Giro Auto</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </div>
+
+    <hr class="model-section-divider">
+
+    <!-- ================================================================= -->
+    <!-- VISOR 3D #2: MONITO DE LEGO 3D (monitolego2.glb)                  -->
+    <!-- ================================================================= -->
+    <div class="container">
+      <div class="reveal" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <h3 class="viewer-section-title" style="margin-bottom: 0.35rem;">02 &bull; Minifigura Lego Tridimensional</h3>
+          <p class="viewer-section-desc" style="margin-bottom: 0;">
+            Modelo volumétrico articulado completo exportado en formato binario glTF 2.0.
+          </p>
+        </div>
+        <a href="../galeria-lego.html" class="p10-btn active" style="font-family: var(--font-mono, monospace); font-size: 0.8rem; padding: 0.6rem 1.1rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; background: #00f0ff; color: #08090d; font-weight: 600; border-radius: 8px; box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);">
+          <span>🎛️ Abrir Estudio de Luces &amp; Color</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
+
+      <section class="p10-stage-container reveal" aria-label="Visor 3D Minifigura Lego">
+        <div class="p10-viewport-frame" id="stage-lego-figure">
+
+          <!-- Technical Corner Marks -->
+          <span class="p10-corner p10-corner-tl" aria-hidden="true"></span>
+          <span class="p10-corner p10-corner-tr" aria-hidden="true"></span>
+          <span class="p10-corner p10-corner-bl" aria-hidden="true"></span>
+          <span class="p10-corner p10-corner-br" aria-hidden="true"></span>
+
+          <!-- Loading Indicator -->
+          <div class="p10-loading-overlay" id="loading-lego-figure">
+            Iniciando motor 3D...
+          </div>
+
+          <!-- Top Technical HUD -->
+          <div class="p10-hud-top">
+            <div class="p10-hud-badge">
+              <span class="p10-live-dot"></span>
+              <span>Minifigura Lego CAD</span> &bull; <span>glTF 2.0 WebGL</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; pointer-events: auto;">
+              <button type="button" class="p10-btn" id="btn-toggle-tuner-figure" style="background: rgba(0, 240, 255, 0.15); border-color: rgba(0, 240, 255, 0.4); color: #00f0ff;">
+                <span>🎛️ Calibrar Luces</span>
+              </button>
+              <div class="p10-hud-hint">
+                [Arrastra 360&deg; &bull; Zoom]
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Live Lighting & Shader Tuner Drawer -->
+          <div id="p10-figure-tuner" style="display: none; position: absolute; top: 3.5rem; right: 1.2rem; width: 280px; max-width: calc(100% - 2.4rem); background: rgba(12, 14, 20, 0.94); backdrop-filter: blur(16px); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 10px; padding: 1rem; z-index: 20; box-shadow: 0 15px 35px rgba(0,0,0,0.6); font-family: var(--font-mono, monospace); font-size: 0.72rem; color: #fff;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.4rem;">
+              <span style="font-weight: 600; color: #00f0ff; letter-spacing: 0.04em;">CALIBRAR OPCIÓN LIMPIA</span>
+              <button type="button" id="btn-close-tuner" style="background: transparent; border: none; color: #8e8e8e; cursor: pointer; font-size: 0.9rem; padding: 0.1rem 0.3rem;">✕</button>
+            </div>
+
+            <!-- Key Light Slider -->
+            <div style="margin-bottom: 0.6rem;">
+              <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 0.2rem;">
+                <span>Luz Principal (Key)</span>
+                <span id="val-tuner-key" style="color: #00f0ff;">0.00</span>
+              </div>
+              <input type="range" id="slider-tuner-key" min="0.0" max="5.0" step="0.05" value="0.0" style="width: 100%; cursor: pointer;">
+            </div>
+
+            <!-- Fill Light Slider -->
+            <div style="margin-bottom: 0.6rem;">
+              <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 0.2rem;">
+                <span>Luz Relleno (Fill)</span>
+                <span id="val-tuner-fill" style="color: #00f0ff;">0.65</span>
+              </div>
+              <input type="range" id="slider-tuner-fill" min="0.0" max="3.0" step="0.05" value="0.65" style="width: 100%; cursor: pointer;">
+            </div>
+
+            <!-- Rim Light Slider -->
+            <div style="margin-bottom: 0.6rem;">
+              <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 0.2rem;">
+                <span>Luz Silueta (Rim)</span>
+                <span id="val-tuner-rim" style="color: #00f0ff;">3.90</span>
+              </div>
+              <input type="range" id="slider-tuner-rim" min="0.0" max="5.0" step="0.05" value="3.9" style="width: 100%; cursor: pointer;">
+            </div>
+
+            <!-- Ambient Light Slider -->
+            <div style="margin-bottom: 0.6rem;">
+              <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 0.2rem;">
+                <span>Luz Ambiente</span>
+                <span id="val-tuner-ambient" style="color: #00f0ff;">1.10</span>
+              </div>
+              <input type="range" id="slider-tuner-ambient" min="0.0" max="2.0" step="0.05" value="1.1" style="width: 100%; cursor: pointer;">
+            </div>
+
+            <!-- Exposure Slider -->
+            <div style="margin-bottom: 0.6rem;">
+              <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 0.2rem;">
+                <span>Exposición</span>
+                <span id="val-tuner-exposure" style="color: #00f0ff;">0.30</span>
+              </div>
+              <input type="range" id="slider-tuner-exposure" min="0.1" max="2.0" step="0.05" value="0.3" style="width: 100%; cursor: pointer;">
+            </div>
+
+            <!-- Roughness Slider -->
+            <div style="margin-bottom: 0.8rem;">
+              <div style="display: flex; justify-content: space-between; color: #94a3b8; margin-bottom: 0.2rem;">
+                <span>Brillo Plástico (Rugosidad)</span>
+                <span id="val-tuner-roughness" style="color: #00f0ff;">0.16</span>
+              </div>
+              <input type="range" id="slider-tuner-roughness" min="0.05" max="0.80" step="0.02" value="0.16" style="width: 100%; cursor: pointer;">
+            </div>
+
+            <div style="display: flex; gap: 0.4rem; justify-content: flex-end;">
+              <button type="button" id="btn-tuner-reset" class="p10-btn" style="padding: 0.25rem 0.5rem;">Reset</button>
+              <button type="button" id="btn-tuner-save" class="p10-btn active" style="padding: 0.25rem 0.5rem; background: #00f0ff; color: #08090d; border-color: #00f0ff;">Guardar</button>
+            </div>
+          </div>
+
+          <!-- Three.js Canvas -->
+          <canvas id="canvas-lego-figure"></canvas>
+
+          <!-- Floating Studio Controls Toolbar -->
+          <div class="p10-hud-bottom" data-viewer="figure">
+            <!-- Material / Color Selector -->
+            <div class="p10-toolbar-group">
+              <span class="p10-toolbar-label">Acabado</span>
+              <button type="button" class="p10-btn p10-mat-btn active" data-mat="multicolor">
+                <span class="p10-mat-swatch" style="background: linear-gradient(135deg, #2563EB 0%, #FFD000 25%, #F2F3F2 50%, #C91A09 75%, #0055BF 100%);"></span> Calibrado
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="classicLego">
+                <span class="p10-mat-swatch" style="background: #0055BF;"></span> Clásico
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="chrome">
+                <span class="p10-mat-swatch" style="background: #e2e8f0;"></span> Cromo
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="graphite">
+                <span class="p10-mat-swatch" style="background: #27272a;"></span> Grafito
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="ceramic">
+                <span class="p10-mat-swatch" style="background: #f8fafc;"></span> Cerámica
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="wireframe">
+                Malla
+              </button>
+            </div>
+
+            <!-- View Camera Presets & Auto Rotate -->
+            <div class="p10-toolbar-group">
+              <span class="p10-toolbar-label">Vista</span>
+              <button type="button" class="p10-btn p10-btn-reset">Reset</button>
+              <button type="button" class="p10-btn p10-btn-top">Superior</button>
+              <button type="button" class="p10-btn p10-btn-front">Frontal</button>
+              <button type="button" class="p10-btn active p10-btn-autorotate">Giro Auto</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Capas Identificadas del Modelo -->
+        <div style="margin-top: 1.25rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;" aria-label="Capas del modelo">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; padding: 0.3rem 0.7rem; border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; display: inline-flex; align-items: center; gap: 0.4rem; color: #fff;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #2563EB;"></span> Casco</span>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; padding: 0.3rem 0.7rem; border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; display: inline-flex; align-items: center; gap: 0.4rem; color: #fff;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #FFD000;"></span> Cara</span>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; padding: 0.3rem 0.7rem; border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; display: inline-flex; align-items: center; gap: 0.4rem; color: #fff;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #F2F3F2;"></span> Airtank</span>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; padding: 0.3rem 0.7rem; border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; display: inline-flex; align-items: center; gap: 0.4rem; color: #fff;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #C91A09;"></span> Torso</span>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; padding: 0.3rem 0.7rem; border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; display: inline-flex; align-items: center; gap: 0.4rem; color: #fff;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #10B981;"></span> Brazos</span>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; padding: 0.3rem 0.7rem; border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; display: inline-flex; align-items: center; gap: 0.4rem; color: #fff;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #FFD000;"></span> Manos</span>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; padding: 0.3rem 0.7rem; border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; display: inline-flex; align-items: center; gap: 0.4rem; color: #fff;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #8B5CF6;"></span> Coxis</span>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; padding: 0.3rem 0.7rem; border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; display: inline-flex; align-items: center; gap: 0.4rem; color: #fff;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #0055BF;"></span> Piernas</span>
+        </div>
+      </section>
+    </div>
+
+    <hr class="model-section-divider">
+
+    <!-- ================================================================= -->
+    <!-- VISOR 3D #3: BOTELLA INDUSTRIAL CAD (botellade.glb)               -->
+    <!-- ================================================================= -->
+    <div class="container">
+      <div class="reveal">
+        <h3 class="viewer-section-title">03 &bull; Botella Industrial CAD</h3>
+        <p class="viewer-section-desc">
+          Geometría volumétrica de envase con estrías ergonómicas, cuerpo aerodinámico y cuello roscado modelado en Rhinoceros 3D.
+        </p>
+      </div>
+
+      <section class="p10-stage-container reveal" aria-label="Visor 3D Botella Industrial">
+        <div class="p10-viewport-frame" id="stage-bottle">
+
+          <!-- Technical Corner Marks -->
+          <span class="p10-corner p10-corner-tl" aria-hidden="true"></span>
+          <span class="p10-corner p10-corner-tr" aria-hidden="true"></span>
+          <span class="p10-corner p10-corner-bl" aria-hidden="true"></span>
+          <span class="p10-corner p10-corner-br" aria-hidden="true"></span>
+
+          <!-- Loading Indicator -->
+          <div class="p10-loading-overlay" id="loading-bottle">
+            Iniciando motor 3D...
+          </div>
+
+          <!-- Top Technical HUD -->
+          <div class="p10-hud-top">
+            <div class="p10-hud-badge">
+              <span class="p10-live-dot"></span>
+              <span>Botella CAD Rhinoceros</span> &bull; <span>glTF 2.0 WebGL</span>
+            </div>
+            <div class="p10-hud-hint">
+              [Arrastra para rotar 360&deg; &bull; Scroll para zoom]
+            </div>
+          </div>
+
+          <!-- Three.js Canvas -->
+          <canvas id="canvas-bottle"></canvas>
+
+          <!-- Floating Studio Controls Toolbar -->
+          <div class="p10-hud-bottom" data-viewer="bottle">
+            <!-- Material Selector -->
+            <div class="p10-toolbar-group">
+              <span class="p10-toolbar-label">Acabado</span>
+              <button type="button" class="p10-btn p10-mat-btn active" data-mat="emerald">
+                <span class="p10-mat-swatch" style="background: #059669;"></span> Esmeralda
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="amber">
+                <span class="p10-mat-swatch" style="background: #d97706;"></span> Ámbar
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="cobalt">
+                <span class="p10-mat-swatch" style="background: #1d4ed8;"></span> Cobalto
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="frosted">
+                <span class="p10-mat-swatch" style="background: #e2e8f0;"></span> Esmerilado
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="chrome">
+                <span class="p10-mat-swatch" style="background: #f8fafc;"></span> Cromo
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="graphite">
+                <span class="p10-mat-swatch" style="background: #27272a;"></span> Grafito
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="wireframe">
+                Malla
+              </button>
+            </div>
+
+            <!-- View Camera Presets & Auto Rotate -->
+            <div class="p10-toolbar-group">
+              <span class="p10-toolbar-label">Vista</span>
+              <button type="button" class="p10-btn p10-btn-reset">Reset</button>
+              <button type="button" class="p10-btn p10-btn-top">Superior</button>
+              <button type="button" class="p10-btn p10-btn-front">Frontal</button>
+              <button type="button" class="p10-btn active p10-btn-autorotate">Giro Auto</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </div>
+
+    <hr class="model-section-divider">
+
+    <!-- ================================================================= -->
+    <!-- VISOR 3D #4: ENSAMBLE MECÁNICO CAD (ola.glb)                      -->
+    <!-- ================================================================= -->
+    <div class="container">
+      <div class="reveal">
+        <h3 class="viewer-section-title">04 &bull; Ensamble Mecánico &bull; Ola CAD</h3>
+        <p class="viewer-section-desc">
+          Geometría y mecanismo volumétrico industrial de alta precisión modelado en Rhinoceros 3D y Blender, compuesto por subsistemas mecánicos, componentes de corte y guías estructurales.
+        </p>
+      </div>
+
+      <section class="p10-stage-container reveal" aria-label="Visor 3D Ensamble Mecánico">
+        <div class="p10-viewport-frame" id="stage-wave">
+
+          <!-- Technical Corner Marks -->
+          <span class="p10-corner p10-corner-tl" aria-hidden="true"></span>
+          <span class="p10-corner p10-corner-tr" aria-hidden="true"></span>
+          <span class="p10-corner p10-corner-bl" aria-hidden="true"></span>
+          <span class="p10-corner p10-corner-br" aria-hidden="true"></span>
+
+          <!-- Loading Indicator -->
+          <div class="p10-loading-overlay" id="loading-wave">
+            Iniciando motor 3D...
+          </div>
+
+          <!-- Top Technical HUD -->
+          <div class="p10-hud-top">
+            <div class="p10-hud-badge">
+              <span class="p10-live-dot"></span>
+              <span>Ensamble Mecánico CAD</span> &bull; <span>glTF 2.0 WebGL</span>
+            </div>
+            <div class="p10-hud-hint">
+              [Arrastra para rotar 360&deg; &bull; Scroll para zoom]
+            </div>
+          </div>
+
+          <!-- Three.js Canvas -->
+          <canvas id="canvas-wave"></canvas>
+
+          <!-- Floating Studio Controls Toolbar -->
+          <div class="p10-hud-bottom" data-viewer="wave">
+            <!-- Material Selector -->
+            <div class="p10-toolbar-group">
+              <span class="p10-toolbar-label">Acabado</span>
+              <button type="button" class="p10-btn p10-mat-btn active" data-mat="graphite">
+                <span class="p10-mat-swatch" style="background: #27272a;"></span> Grafito
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="chrome">
+                <span class="p10-mat-swatch" style="background: #f8fafc;"></span> Cromo
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="gold">
+                <span class="p10-mat-swatch" style="background: #d4af37;"></span> Latón / Oro
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="cobalt">
+                <span class="p10-mat-swatch" style="background: #1d4ed8;"></span> Cobalto
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="ceramic">
+                <span class="p10-mat-swatch" style="background: #f4f4f8;"></span> Cerámica
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="emerald">
+                <span class="p10-mat-swatch" style="background: #059669;"></span> Esmeralda
+              </button>
+              <button type="button" class="p10-btn p10-mat-btn" data-mat="wireframe">
+                Malla
+              </button>
+            </div>
+
+            <!-- View Camera Presets & Auto Rotate -->
+            <div class="p10-toolbar-group">
+              <span class="p10-toolbar-label">Vista</span>
+              <button type="button" class="p10-btn p10-btn-reset">Reset</button>
+              <button type="button" class="p10-btn p10-btn-top">Superior</button>
+              <button type="button" class="p10-btn p10-btn-front">Frontal</button>
+              <button type="button" class="p10-btn active p10-btn-autorotate">Giro Auto</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </div>
+
+    <!-- Technical Specifications & Credits Grid -->
+    <div class="container">
+      <section class="grid-12 section-block p10-narrative-grid reveal" aria-label="Especificaciones Técnicas">
+        <div class="col-5 col-start-2">
+          <span class="meta-label" style="display: block; margin-bottom: 0.5rem;">Ficha Técnica CAD</span>
+          <table class="p10-spec-table">
+            <tbody>
+              <tr>
+                <td>Software CAD / 3D</td>
+                <td>Rhinoceros 3D &bull; Blender</td>
+              </tr>
+              <tr>
+                <td>Pipeline WebGL</td>
+                <td>Three.js &bull; glTF 2.0 Binary (.glb)</td>
+              </tr>
+              <tr>
+                <td>Modelos Interactivos</td>
+                <td>Pieza CAD de Ensamble &bull; Minifigura Lego &bull; Botella Industrial CAD &bull; Ensamble Mecánico</td>
+              </tr>
+              <tr>
+                <td>Materiales</td>
+                <td>Shaders PBR con mapas de entorno de estudio</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col-4 col-start-8">
+          <span class="meta-label" style="display: block; margin-bottom: 0.5rem;">Créditos &bull; Disciplina</span>
+          <table class="p10-spec-table">
+            <tbody>
+              <tr>
+                <td>Modelado Tridimensional</td>
+                <td>Juan-Pablo Catalán</td>
+              </tr>
+              <tr>
+                <td>Iluminación &amp; Shading</td>
+                <td>Three.js Custom Studio Pipeline</td>
+              </tr>
+              <tr>
+                <td>Año</td>
+                <td>2026</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">JUAN-PABLO CATALÁN</span>
+      <span class="footer-copy">&copy; 2026</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/three.min.js"></script>
+  <script src="../js/GLTFLoader.js"></script>
+  <script src="../js/model-p10-data.js"></script>
+  <script src="../js/modelos3d-viewer.js?v=320"></script>
+  <script src="../js/script.js?v=320"></script>
+</body>
+
+</html>

@@ -1,0 +1,2428 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estudio de Luces &amp; Color 3D — Minifigura Lego — Juan Pablo Catalán</title>
+  <meta name="description"
+    content="Estudio y galería interactiva 3D para calibrar iluminación, materiales PBR y paleta de color de la minifigura Lego en tiempo real con WebGL y Three.js.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/happy-face.svg">
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Core Styles -->
+  <link rel="stylesheet" href="css/style.css?v=320">
+
+  <style>
+    :root {
+      --studio-bg: #0b0c10;
+      --studio-panel-bg: rgba(18, 20, 26, 0.88);
+      --studio-panel-border: rgba(255, 255, 255, 0.09);
+      --studio-panel-border-glow: rgba(0, 240, 255, 0.35);
+      --studio-accent: #00f0ff;
+      --studio-accent-hover: #38f4ff;
+      --studio-accent-rgb: 0, 240, 255;
+      --studio-yellow: #ffd000;
+      --studio-card-bg: #14161f;
+      --studio-card-hover: #1b1e2b;
+      --studio-text: #f0f2f8;
+      --studio-text-muted: #8a90a2;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--studio-bg);
+      color: var(--studio-text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Navigation Header */
+    .studio-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 12, 16, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--studio-panel-border);
+      padding: 0.9rem 1.5rem;
+    }
+
+    .studio-header-inner {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--studio-text);
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 100px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      color: var(--studio-accent);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .live-pulse {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--studio-accent);
+      box-shadow: 0 0 8px var(--studio-accent);
+      animation: pulse-dot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.6; }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .studio-top-btn {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid var(--studio-panel-border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--studio-text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      text-decoration: none;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .studio-top-btn:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.22);
+      transform: translateY(-1px);
+    }
+
+    .studio-top-btn.primary {
+      background: var(--studio-accent);
+      color: #050508;
+      font-weight: 600;
+      border-color: var(--studio-accent);
+    }
+
+    .studio-top-btn.primary:hover {
+      background: var(--studio-accent-hover);
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+    }
+
+    /* Main Studio Grid Layout */
+    .studio-container {
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem 3rem;
+      display: grid;
+      grid-template-columns: 1fr 440px;
+      gap: 1.5rem;
+      flex: 1;
+    }
+
+    @media (max-width: 1120px) {
+      .studio-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Stage Viewport */
+    .viewport-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .stage-card {
+      position: relative;
+      background: radial-gradient(circle at center, #151824 0%, #0c0d12 100%);
+      border: 1px solid var(--studio-panel-border);
+      border-radius: 16px;
+      overflow: hidden;
+      height: 640px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      .stage-card {
+        height: 480px;
+      }
+    }
+
+    .stage-canvas-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      cursor: grab;
+    }
+
+    .stage-canvas-container:active {
+      cursor: grabbing;
+    }
+
+    .stage-canvas-container canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* HUD Elements on Viewport */
+    .stage-hud-top {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      right: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .hud-chip {
+      background: rgba(10, 12, 18, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--studio-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      pointer-events: auto;
+    }
+
+    .hud-chip strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Stage Bottom Camera / View Controls Bar */
+    .stage-hud-bottom {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .hud-btn-group {
+      background: rgba(10, 12, 18, 0.85);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 0.3rem;
+      display: flex;
+      gap: 0.25rem;
+      pointer-events: auto;
+    }
+
+    .hud-control-btn {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      background: transparent;
+      border: none;
+      color: var(--studio-text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
+    }
+
+    .hud-control-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .hud-control-btn.active {
+      background: var(--studio-accent);
+      color: #050508;
+      font-weight: 600;
+    }
+
+    /* Loading Overlay */
+    .stage-loader {
+      position: absolute;
+      inset: 0;
+      background: rgba(11, 12, 16, 0.95);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      z-index: 50;
+      transition: opacity 0.4s ease;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--studio-accent);
+    }
+
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border: 3px solid rgba(0, 240, 255, 0.15);
+      border-top-color: var(--studio-accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Right Control Deck (Inspector Panel) */
+    .inspector-card {
+      background: var(--studio-panel-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--studio-panel-border);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      max-height: 850px;
+    }
+
+    /* Inspector Navigation Tabs */
+    .inspector-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--studio-panel-border);
+      background: rgba(14, 16, 22, 0.75);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 0.85rem 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      background: transparent;
+      border: none;
+      color: var(--studio-text-muted);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .tab-btn.active {
+      color: var(--studio-accent);
+      background: rgba(0, 240, 255, 0.05);
+      border-bottom-color: var(--studio-accent);
+      font-weight: 600;
+    }
+
+    /* Tab Content Area */
+    .inspector-body {
+      padding: 1.25rem;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .inspector-body::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .inspector-body::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .inspector-body::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+
+    .tab-pane {
+      display: none;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .tab-pane.active {
+      display: flex;
+    }
+
+    /* Control Groups & Cards */
+    .control-section {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--studio-text-muted);
+    }
+
+    /* Slider / Input Rows */
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .control-row-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.76rem;
+      color: var(--studio-text-muted);
+    }
+
+    .control-val {
+      font-family: var(--font-mono);
+      color: var(--studio-accent);
+      font-weight: 500;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 5px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.12);
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--studio-accent);
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+      transition: transform 0.1s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+
+    /* Color Pickers & Swatches */
+    .color-picker-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    input[type="color"] {
+      -webkit-appearance: none;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      background: transparent;
+      padding: 0;
+    }
+
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    input[type="color"]::-webkit-color-swatch {
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 8px;
+    }
+
+    .hex-input {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      padding: 0.35rem 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: #fff;
+      width: 85px;
+      text-transform: uppercase;
+    }
+
+    .hex-input:focus {
+      outline: none;
+      border-color: var(--studio-accent);
+    }
+
+    /* Quick Swatches Bar */
+    .quick-swatches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.2rem;
+    }
+
+    .swatch-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .swatch-btn:hover {
+      transform: scale(1.2);
+      border-color: #fff;
+    }
+
+    /* Lighting Presets Grid */
+    .lighting-preset-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+    }
+
+    .preset-chip-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      color: var(--studio-text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .preset-chip-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .preset-chip-btn.active {
+      background: rgba(0, 240, 255, 0.12);
+      border-color: var(--studio-accent);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Parts Selector for Color Painting */
+    .parts-selector-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+    }
+
+    .part-select-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.55rem 0.65rem;
+      font-family: var(--font-mono);
+      font-size: 0.73rem;
+      color: var(--studio-text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+
+    .part-select-btn:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .part-select-btn.active {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: var(--studio-accent);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .part-mini-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      display: inline-block;
+    }
+
+    /* Full Comparative Gallery Cards Section */
+    .gallery-showcase-section {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .showcase-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid var(--studio-panel-border);
+      padding-bottom: 0.75rem;
+    }
+
+    .showcase-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .showcase-desc {
+      font-size: 0.85rem;
+      color: var(--studio-text-muted);
+    }
+
+    .gallery-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .preset-card {
+      background: var(--studio-card-bg);
+      border: 1px solid var(--studio-panel-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preset-card:hover {
+      background: var(--studio-card-hover);
+      border-color: rgba(0, 240, 255, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    .preset-card.active-card {
+      border-color: var(--studio-accent);
+      background: rgba(0, 240, 255, 0.04);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+    }
+
+    .card-palette-strip {
+      height: 38px;
+      border-radius: 8px;
+      display: flex;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-palette-strip span {
+      flex: 1;
+      height: 100%;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .card-desc {
+      font-size: 0.78rem;
+      color: var(--studio-text-muted);
+      line-height: 1.4;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 0.6rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--studio-accent);
+    }
+
+    /* Modal / Code Exporter */
+    .studio-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 6, 9, 0.85);
+      backdrop-filter: blur(16px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .studio-modal.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #12141c;
+      border: 1px solid var(--studio-panel-border);
+      border-radius: 16px;
+      max-width: 680px;
+      width: 100%;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-code-area {
+      background: #08090d;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #c9d1d9;
+      height: 240px;
+      overflow-y: auto;
+      white-space: pre;
+    }
+
+    /* Notification Toast */
+    .toast-msg {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: rgba(10, 12, 18, 0.95);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--studio-accent);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 100px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      box-shadow: 0 10px 30px rgba(0, 240, 255, 0.25);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .toast-msg.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Studio Navigation Header -->
+  <header class="studio-header">
+    <div class="studio-header-inner">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <a href="projects/modelos-3d.html" class="studio-top-btn" title="Volver al caso de Modelos 3D">
+          <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i>
+          <span>Modelos 3D</span>
+        </a>
+        <div class="header-brand">
+          <span class="header-badge">
+            <span class="live-pulse"></span>
+            Lego Studio Calibrator
+          </span>
+          <span style="font-size: 0.88rem; font-weight: 500; color: #fff;">Calibración de Luces &amp; Paletas PBR</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="studio-top-btn" id="btn-reset-defaults" title="Restaurar valores de estudio">
+          <i data-lucide="rotate-ccw" style="width: 14px; height: 14px;"></i>
+          <span>Reset</span>
+        </button>
+        <button type="button" class="studio-top-btn" id="btn-export-code" title="Ver código JS generado">
+          <i data-lucide="code" style="width: 14px; height: 14px;"></i>
+          <span>Exportar Código</span>
+        </button>
+        <button type="button" class="studio-top-btn" id="btn-take-snapshot" title="Descargar captura PNG en alta definición">
+          <i data-lucide="camera" style="width: 14px; height: 14px;"></i>
+          <span>Captura HD</span>
+        </button>
+        <button type="button" class="studio-top-btn primary" id="btn-save-applied" title="Guardar ajustes para el visor principal">
+          <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+          <span>Guardar Cambios</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Studio Workspace -->
+  <main class="studio-container">
+
+    <!-- Left Column: 3D Live Viewport -->
+    <div class="viewport-column">
+      <div class="stage-card">
+
+        <!-- Loading Overlay -->
+        <div class="stage-loader" id="stage-loader">
+          <div class="spinner"></div>
+          <span>Cargando geometría monitolego2.glb...</span>
+        </div>
+
+        <!-- Top HUD -->
+        <div class="stage-hud-top">
+          <div class="hud-chip">
+            <i data-lucide="box" style="width: 13px; height: 13px; color: var(--studio-accent);"></i>
+            <span>Pieza: <strong>Minifigura Lego CAD</strong></span>
+            <span>&bull;</span>
+            <span id="hud-stats-poly">154 Submallas</span>
+          </div>
+          <div class="hud-chip">
+            <span>Motor: <strong>Three.js WebGL</strong></span>
+            <span>&bull;</span>
+            <span id="hud-render-time">60 FPS</span>
+          </div>
+        </div>
+
+        <!-- Three.js Canvas Container -->
+        <div class="stage-canvas-container" id="stage-canvas-wrapper">
+          <canvas id="studio-canvas"></canvas>
+        </div>
+
+        <!-- Bottom HUD Controls -->
+        <div class="stage-hud-bottom">
+          <!-- View Angles -->
+          <div class="hud-btn-group" aria-label="Ángulos de Cámara">
+            <button type="button" class="hud-control-btn" data-angle="front">Frontal</button>
+            <button type="button" class="hud-control-btn active" data-angle="iso">3/4 Persp</button>
+            <button type="button" class="hud-control-btn" data-angle="top">Superior</button>
+            <button type="button" class="hud-control-btn" data-angle="side">Lateral</button>
+            <button type="button" class="hud-control-btn" data-angle="hero">Hero Zoom</button>
+          </div>
+
+          <!-- Studio Toggles -->
+          <div class="hud-btn-group" aria-label="Opciones de Visualización">
+            <button type="button" class="hud-control-btn active" id="btn-toggle-autorotate" title="Giro automático 360°">
+              <i data-lucide="refresh-cw" style="width: 12px; height: 12px;"></i>
+              <span>Giro Auto</span>
+            </button>
+            <button type="button" class="hud-control-btn" id="btn-toggle-wireframe" title="Malla wireframe">
+              <i data-lucide="grid" style="width: 12px; height: 12px;"></i>
+              <span>Malla</span>
+            </button>
+            <button type="button" class="hud-control-btn active" id="btn-toggle-ground" title="Sombra de piso de estudio">
+              <i data-lucide="sun" style="width: 12px; height: 12px;"></i>
+              <span>Suelo</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Info Bar below Viewport -->
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--studio-text-muted); font-family: var(--font-mono); padding: 0 0.5rem;">
+        <span>[ Click + Arrastre: Rotar &bull; Clic Derecho: Desplazar &bull; Rueda: Zoom ]</span>
+        <span>Ajusta las luces y paletas en el panel derecho en tiempo real &rarr;</span>
+      </div>
+    </div>
+
+    <!-- Right Column: Inspector Deck -->
+    <div class="inspector-card">
+
+      <!-- Navigation Tabs -->
+      <div class="inspector-tabs">
+        <button type="button" class="tab-btn active" data-tab="tab-lights">
+          <i data-lucide="sun-medium" style="width: 16px; height: 16px;"></i>
+          <span>Luces</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="tab-parts">
+          <i data-lucide="palette" style="width: 16px; height: 16px;"></i>
+          <span>Pintar Piezas</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="tab-materials">
+          <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+          <span>Acabados PBR</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="tab-presets">
+          <i data-lucide="layout-grid" style="width: 16px; height: 16px;"></i>
+          <span>Galería</span>
+        </button>
+      </div>
+
+      <!-- Inspector Body Scrollable -->
+      <div class="inspector-body">
+
+        <!-- ============================================================ -->
+        <!-- TAB 1: ILUMINACIÓN DE ESTUDIO                                 -->
+        <!-- ============================================================ -->
+        <div class="tab-pane active" id="tab-lights">
+
+          <!-- Studio Lighting Presets -->
+          <div class="control-section">
+            <div class="section-header">
+              <span class="section-title"><i data-lucide="flame" style="width: 13px; height: 13px; color: var(--studio-accent);"></i> Presets de Atmósfera</span>
+              <span class="section-tag">Rig Rápido</span>
+            </div>
+            <div class="lighting-preset-grid">
+              <button type="button" class="preset-chip-btn active" data-light-preset="studioClean">
+                <span>⚪ Estudio Limpio</span>
+              </button>
+              <button type="button" class="preset-chip-btn" data-light-preset="warmSun">
+                <span>🌅 Sol Cálido</span>
+              </button>
+              <button type="button" class="preset-chip-btn" data-light-preset="cyberNeon">
+                <span>⚡ Cyber Neon</span>
+              </button>
+              <button type="button" class="preset-chip-btn" data-light-preset="darkDrama">
+                <span>🌑 Drama Noir</span>
+              </button>
+              <button type="button" class="preset-chip-btn" data-light-preset="neutralCad">
+                <span>📐 CAD Neutral</span>
+              </button>
+              <button type="button" class="preset-chip-btn" data-light-preset="highKey">
+                <span>✨ High Key White</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Luz Principal (Key Light) -->
+          <div class="control-section">
+            <div class="section-header">
+              <span class="section-title">Luz Principal (Key Light)</span>
+              <div class="color-picker-wrap">
+                <input type="color" id="key-color" value="#ffffff">
+              </div>
+            </div>
+
+            <div class="control-row">
+              <div class="control-row-header">
+                <span>Intensidad</span>
+                <span class="control-val" id="val-key-intensity">0.00</span>
+              </div>
+              <input type="range" id="key-intensity" min="0" max="6" step="0.05" value="0.0">
+            </div>
+
+            <div class="control-row">
+              <div class="control-row-header">
+                <span>Ángulo Horizontal (X)</span>
+                <span class="control-val" id="val-key-x">-7.0</span>
+              </div>
+              <input type="range" id="key-x" min="-10" max="10" step="0.5" value="-7">
+            </div>
+
+            <div class="control-row">
+              <div class="control-row-header">
+                <span>Altura (Y)</span>
+                <span class="control-val" id="val-key-y">-2.5</span>
+              </div>
+              <input type="range" id="key-y" min="-5" max="10" step="0.5" value="-2.5">
+            </div>
+          </div>
+
+          <!-- Luz de Relleno (Fill Light) -->
+          <div class="control-section">
+            <div class="section-header">
+              <span class="section-title">Luz de Relleno (Fill Light)</span>
+              <div class="color-picker-wrap">
+                <input type="color" id="fill-color" value="#cbd5e1">
+              </div>
+            </div>
+
+            <div class="control-row">
+              <div class="control-row-header">
+                <span>Intensidad</span>
+                <span class="control-val" id="val-fill-intensity">0.65</span>
+              </div>
+              <input type="range" id="fill-intensity" min="0" max="4" step="0.05" value="0.65">
+            </div>
+
+            <div class="control-row">
+              <div class="control-row-header">
+                <span>Posición Horizontal (X)</span>
+                <span class="control-val" id="val-fill-x">10.0</span>
+              </div>
+              <input type="range" id="fill-x" min="-10" max="10" step="0.5" value="10">
+            </div>
+          </div>
+
+          <!-- Luz de Borde / Silueta (Rim Light) -->
+          <div class="control-section">
+            <div class="section-header">
+              <span class="section-title">Luz Trasera / Silueta (Rim Light)</span>
+              <div class="color-picker-wrap">
+                <input type="color" id="rim-color" value="#ffffff">
+              </div>
+            </div>
+
+            <div class="control-row">
+              <div class="control-row-header">
+                <span>Intensidad</span>
+                <span class="control-val" id="val-rim-intensity">3.90</span>
+              </div>
+              <input type="range" id="rim-intensity" min="0" max="5" step="0.05" value="3.9">
+            </div>
+          </div>
+
+          <!-- Luz Ambiente & Exposición -->
+          <div class="control-section">
+            <div class="section-header">
+              <span class="section-title">Ambiente &amp; Exposición</span>
+              <div class="color-picker-wrap">
+                <input type="color" id="ambient-color" value="#ffffff">
+              </div>
+            </div>
+
+            <div class="control-row">
+              <div class="control-row-header">
+                <span>Luz Ambiental</span>
+                <span class="control-val" id="val-ambient-intensity">1.10</span>
+              </div>
+              <input type="range" id="ambient-intensity" min="0" max="2" step="0.02" value="1.1">
+            </div>
+
+            <div class="control-row">
+              <div class="control-row-header">
+                <span>Exposición (Tone Mapping)</span>
+                <span class="control-val" id="val-exposure">0.30</span>
+              </div>
+              <input type="range" id="tone-exposure" min="0.1" max="2.5" step="0.05" value="0.3">
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TAB 2: PINTAR PIEZAS (PALETA POR PARTE)                       -->
+        <!-- ============================================================ -->
+        <div class="tab-pane" id="tab-parts">
+
+          <div class="control-section">
+            <div class="section-header">
+              <span class="section-title">Seleccionar Pieza Activa</span>
+              <span class="section-tag" id="active-part-name">Casco</span>
+            </div>
+
+            <!-- Parts Grid -->
+            <div class="parts-selector-grid">
+              <button type="button" class="part-select-btn active" data-part="casco">
+                <span>🪖 Casco</span>
+                <span class="part-mini-indicator" id="dot-casco" style="background: #2563EB;"></span>
+              </button>
+              <button type="button" class="part-select-btn" data-part="cara">
+                <span>🙂 Cara / Cabeza</span>
+                <span class="part-mini-indicator" id="dot-cara" style="background: #FFD000;"></span>
+              </button>
+              <button type="button" class="part-select-btn" data-part="airtank">
+                <span>🎒 Airtank</span>
+                <span class="part-mini-indicator" id="dot-airtank" style="background: #06B6D4;"></span>
+              </button>
+              <button type="button" class="part-select-btn" data-part="torso">
+                <span>🥋 Torso</span>
+                <span class="part-mini-indicator" id="dot-torso" style="background: #EF4444;"></span>
+              </button>
+              <button type="button" class="part-select-btn" data-part="brazos">
+                <span>💪 Brazos</span>
+                <span class="part-mini-indicator" id="dot-brazos" style="background: #10B981;"></span>
+              </button>
+              <button type="button" class="part-select-btn" data-part="manos">
+                <span>🧤 Manos</span>
+                <span class="part-mini-indicator" id="dot-manos" style="background: #FFD000;"></span>
+              </button>
+              <button type="button" class="part-select-btn" data-part="coxis">
+                <span>🩲 Coxis / Cintura</span>
+                <span class="part-mini-indicator" id="dot-coxis" style="background: #8B5CF6;"></span>
+              </button>
+              <button type="button" class="part-select-btn" data-part="piernas">
+                <span>🦵 Piernas</span>
+                <span class="part-mini-indicator" id="dot-piernas" style="background: #F97316;"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Paint Tool For Active Part -->
+          <div class="control-section">
+            <div class="section-header">
+              <span class="section-title">Color de la Pieza</span>
+              <div class="color-picker-wrap">
+                <input type="color" id="part-color-picker" value="#2563EB">
+                <input type="text" id="part-hex-input" class="hex-input" value="#2563EB">
+              </div>
+            </div>
+
+            <!-- Lego Official Swatches -->
+            <div style="font-size: 0.73rem; color: var(--studio-text-muted); margin-top: 0.4rem;">Paleta Lego Oficial:</div>
+            <div class="quick-swatches">
+              <button type="button" class="swatch-btn" style="background: #0055BF;" data-color="#0055BF" title="Azul Clásico Lego"></button>
+              <button type="button" class="swatch-btn" style="background: #C91A09;" data-color="#C91A09" title="Rojo Clásico"></button>
+              <button type="button" class="swatch-btn" style="background: #FFD000;" data-color="#FFD000" title="Amarillo Lego"></button>
+              <button type="button" class="swatch-btn" style="background: #237841;" data-color="#237841" title="Verde Clásico"></button>
+              <button type="button" class="swatch-btn" style="background: #FE8A18;" data-color="#FE8A18" title="Naranja"></button>
+              <button type="button" class="swatch-btn" style="background: #06B6D4;" data-color="#06B6D4" title="Cyan / Turquesa"></button>
+              <button type="button" class="swatch-btn" style="background: #8B5CF6;" data-color="#8B5CF6" title="Púrpura"></button>
+              <button type="button" class="swatch-btn" style="background: #E4CD9E;" data-color="#E4CD9E" title="Arena / Tan"></button>
+              <button type="button" class="swatch-btn" style="background: #F2F3F2;" data-color="#F2F3F2" title="Blanco Puro"></button>
+              <button type="button" class="swatch-btn" style="background: #6C6E68;" data-color="#6C6E68" title="Gris Piedra"></button>
+              <button type="button" class="swatch-btn" style="background: #1B2A34;" data-color="#1B2A34" title="Azul Oscuro"></button>
+              <button type="button" class="swatch-btn" style="background: #141414;" data-color="#141414" title="Negro"></button>
+              <button type="button" class="swatch-btn" style="background: #E2E8F0;" data-color="#E2E8F0" title="Plata"></button>
+              <button type="button" class="swatch-btn" style="background: #EAB308;" data-color="#EAB308" title="Dorado"></button>
+            </div>
+
+            <div style="margin-top: 0.6rem; display: flex; gap: 0.5rem;">
+              <button type="button" class="studio-top-btn" id="btn-apply-all-parts" style="width: 100%; justify-content: center;">
+                <i data-lucide="paint-bucket" style="width: 13px; height: 13px;"></i>
+                <span>Pintar Todo el Monito</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TAB 3: ACABADOS & SHADING PBR                                -->
+        <!-- ============================================================ -->
+        <div class="tab-pane" id="tab-materials">
+
+          <div class="control-section">
+            <div class="section-header">
+              <span class="section-title">Acabados Predefinidos</span>
+              <span class="section-tag">Shader PBR</span>
+            </div>
+            <div class="lighting-preset-grid">
+              <button type="button" class="preset-chip-btn active" data-mat-preset="legoGlossy">
+                <span>✨ Plástico Lego Pulido</span>
+              </button>
+              <button type="button" class="preset-chip-btn" data-mat-preset="softMatte">
+                <span>☁️ Mate Soft Touch</span>
+              </button>
+              <button type="button" class="preset-chip-btn" data-mat-preset="chromeMirror">
+                <span>🪞 Cromo Espejo</span>
+              </button>
+              <button type="button" class="preset-chip-btn" data-mat-preset="graphite">
+                <span>⚫ Grafito Satinado</span>
+              </button>
+              <button type="button" class="preset-chip-btn" data-mat-preset="ceramic">
+                <span>🏺 Cerámica Esmaltada</span>
+              </button>
+              <button type="button" class="preset-chip-btn" data-mat-preset="gold">
+                <span>👑 Oro Puro Metálico</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="control-section">
+            <div class="section-header">
+              <span class="section-title">Parámetros de Superficie</span>
+            </div>
+
+            <div class="control-row">
+              <div class="control-row-header">
+                <span>Rugosidad (Roughness)</span>
+                <span class="control-val" id="val-mat-roughness">0.18</span>
+              </div>
+              <input type="range" id="mat-roughness" min="0" max="1" step="0.02" value="0.18">
+            </div>
+
+            <div class="control-row">
+              <div class="control-row-header">
+                <span>Metalicidad (Metalness)</span>
+                <span class="control-val" id="val-mat-metalness">0.05</span>
+              </div>
+              <input type="range" id="mat-metalness" min="0" max="1" step="0.02" value="0.05">
+            </div>
+
+            <div class="control-row">
+              <div class="control-row-header">
+                <span>Intensidad de Reflejos (Clearcoat)</span>
+                <span class="control-val" id="val-mat-reflectivity">0.90</span>
+              </div>
+              <input type="range" id="mat-reflectivity" min="0" max="2" step="0.05" value="0.9">
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TAB 4: GALERÍA DE PRESETS COMPLETOS                           -->
+        <!-- ============================================================ -->
+        <div class="tab-pane" id="tab-presets">
+
+          <div style="font-size: 0.78rem; color: var(--studio-text-muted); line-height: 1.5;">
+            Selecciona cualquiera de las paletas icónicas para cargar instantáneamente su configuración de color, luces y acabado:
+          </div>
+
+          <!-- Presets List -->
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+
+            <div class="preset-card active-card" data-full-preset="classicSpaceBlue">
+              <div class="card-palette-strip">
+                <span style="background: #0055BF;"></span>
+                <span style="background: #FFD000;"></span>
+                <span style="background: #0055BF;"></span>
+                <span style="background: #0055BF;"></span>
+              </div>
+              <div>
+                <div class="card-title">01 &bull; Classic Spaceman 1978 (Azul)</div>
+                <div class="card-desc">El astronauta vintage original de Lego con traje azul cobalto, tanque de oxígeno y rostro amarillo clásico.</div>
+              </div>
+            </div>
+
+            <div class="preset-card" data-full-preset="multicolorPop">
+              <div class="card-palette-strip">
+                <span style="background: #2563EB;"></span>
+                <span style="background: #FFD000;"></span>
+                <span style="background: #EF4444;"></span>
+                <span style="background: #10B981;"></span>
+                <span style="background: #F97316;"></span>
+              </div>
+              <div>
+                <div class="card-title">02 &bull; Pop Art Bauhaus Multicolor</div>
+                <div class="card-desc">Cada extremidad y componente con un color primario contrastante y balance lumínico de alta definición.</div>
+              </div>
+            </div>
+
+            <div class="preset-card" data-full-preset="classicRed">
+              <div class="card-palette-strip">
+                <span style="background: #C91A09;"></span>
+                <span style="background: #FFD000;"></span>
+                <span style="background: #C91A09;"></span>
+                <span style="background: #C91A09;"></span>
+              </div>
+              <div>
+                <div class="card-title">03 &bull; Red Spaceman Vintage</div>
+                <div class="card-desc">Traje rojo vivo de explorador espacial de los años 80 con iluminación cálida de estudio.</div>
+              </div>
+            </div>
+
+            <div class="preset-card" data-full-preset="iconicYellow">
+              <div class="card-palette-strip">
+                <span style="background: #FFD000;"></span>
+                <span style="background: #FFD000;"></span>
+                <span style="background: #FFD000;"></span>
+                <span style="background: #141414;"></span>
+              </div>
+              <div>
+                <div class="card-title">04 &bull; Iconic Lego Yellow Mono</div>
+                <div class="card-desc">Monocromía total en el inconfundible amarillo Lego con toques oscuros en articulaciones.</div>
+              </div>
+            </div>
+
+            <div class="preset-card" data-full-preset="stealthBlack">
+              <div class="card-palette-strip">
+                <span style="background: #16181e;"></span>
+                <span style="background: #0f1015;"></span>
+                <span style="background: #222530;"></span>
+                <span style="background: #00f0ff;"></span>
+              </div>
+              <div>
+                <div class="card-title">05 &bull; Stealth Obsidian Noir</div>
+                <div class="card-desc">Estética táctica oscura con sutiles reflejos de borde azul cian en las aristas.</div>
+              </div>
+            </div>
+
+            <div class="preset-card" data-full-preset="stormtrooperWhite">
+              <div class="card-palette-strip">
+                <span style="background: #F8FAFC;"></span>
+                <span style="background: #1E293B;"></span>
+                <span style="background: #F8FAFC;"></span>
+                <span style="background: #0EA5E9;"></span>
+              </div>
+              <div>
+                <div class="card-title">06 &bull; Cyber Stormtrooper Blanco</div>
+                <div class="card-desc">Blanco cerámico ultra limpio con contrastes oscuros y luz difusa suave.</div>
+              </div>
+            </div>
+
+            <div class="preset-card" data-full-preset="cyberpunkNeon">
+              <div class="card-palette-strip">
+                <span style="background: #06B6D4;"></span>
+                <span style="background: #EC4899;"></span>
+                <span style="background: #8B5CF6;"></span>
+                <span style="background: #10B981;"></span>
+              </div>
+              <div>
+                <div class="card-title">07 &bull; Neon Cyberpunk 2077</div>
+                <div class="card-desc">Espectro ultravioleta con luces magenta y cian iluminando las facetas de la malla.</div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Bottom Showcase / Comparison Section -->
+  <section class="gallery-showcase-section container">
+    <div class="showcase-header">
+      <div>
+        <h2 class="showcase-title">Galería de Muestras &bull; Paletas de Color</h2>
+        <p class="showcase-desc">Explora las combinaciones cromáticas guardadas y aplícalas directamente al visor 3D.</p>
+      </div>
+      <a href="projects/modelos-3d.html" class="studio-top-btn primary">
+        <span>Ir a Modelos 3D</span>
+        <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+      </a>
+    </div>
+
+    <div class="gallery-cards-grid">
+
+      <div class="preset-card" onclick="applyPresetAndScroll('classicSpaceBlue')">
+        <div class="card-palette-strip">
+          <span style="background: #0055BF;"></span>
+          <span style="background: #FFD000;"></span>
+          <span style="background: #0055BF;"></span>
+        </div>
+        <div class="card-title">Classic Space Blue</div>
+        <div class="card-desc">Casco azul, rostro amarillo, traje azul cobalto original de la serie espacial.</div>
+        <div class="card-footer">
+          <span>Click para cargar &rarr;</span>
+          <i data-lucide="play" style="width: 12px; height: 12px;"></i>
+        </div>
+      </div>
+
+      <div class="preset-card" onclick="applyPresetAndScroll('multicolorPop')">
+        <div class="card-palette-strip">
+          <span style="background: #2563EB;"></span>
+          <span style="background: #FFD000;"></span>
+          <span style="background: #EF4444;"></span>
+          <span style="background: #10B981;"></span>
+        </div>
+        <div class="card-title">Multicolor Pop Art</div>
+        <div class="card-desc">Diferenciación geométrica de cada componente articulado en tonos vivos.</div>
+        <div class="card-footer">
+          <span>Click para cargar &rarr;</span>
+          <i data-lucide="play" style="width: 12px; height: 12px;"></i>
+        </div>
+      </div>
+
+      <div class="preset-card" onclick="applyPresetAndScroll('classicRed')">
+        <div class="card-palette-strip">
+          <span style="background: #C91A09;"></span>
+          <span style="background: #FFD000;"></span>
+          <span style="background: #C91A09;"></span>
+        </div>
+        <div class="card-title">Vintage Red Explorer</div>
+        <div class="card-desc">Equipamiento carmesí clásico con iluminación cálida direccional.</div>
+        <div class="card-footer">
+          <span>Click para cargar &rarr;</span>
+          <i data-lucide="play" style="width: 12px; height: 12px;"></i>
+        </div>
+      </div>
+
+      <div class="preset-card" onclick="applyPresetAndScroll('stealthBlack')">
+        <div class="card-palette-strip">
+          <span style="background: #181A20;"></span>
+          <span style="background: #2B2F3D;"></span>
+          <span style="background: #00f0ff;"></span>
+        </div>
+        <div class="card-title">Obsidian Stealth</div>
+        <div class="card-desc">Grafito pulido con iluminación lateral de silueta de estudio.</div>
+        <div class="card-footer">
+          <span>Click para cargar &rarr;</span>
+          <i data-lucide="play" style="width: 12px; height: 12px;"></i>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Modal: Code Exporter -->
+  <div class="studio-modal" id="code-modal">
+    <div class="modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 1.1rem; color: #fff; font-weight: 600;">Código Three.js Generado</h3>
+        <button type="button" class="studio-top-btn" id="btn-close-modal">
+          <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+        </button>
+      </div>
+      <p style="font-size: 0.8rem; color: var(--studio-text-muted);">
+        Copia este fragmento con los valores exactos de luces, intensidades y colores para integrarlo en cualquier visor Three.js:
+      </p>
+      <div class="modal-code-area" id="modal-code-content">// Generando configuración...</div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button type="button" class="studio-top-btn primary" id="btn-copy-code-clipboard">
+          <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+          <span>Copiar al Portapapeles</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-msg" id="toast-msg">
+    <i data-lucide="check-circle" style="width: 16px; height: 16px; color: var(--studio-accent);"></i>
+    <span id="toast-text">Ajustes aplicados correctamente</span>
+  </div>
+
+  <!-- Footer -->
+  <footer style="margin-top: 4rem; padding: 2rem 1.5rem; border-top: 1px solid var(--studio-panel-border); text-align: center; font-family: var(--font-mono); font-size: 0.76rem; color: var(--studio-text-muted);">
+    <div>Juan-Pablo Catalán &bull; 3D Real-time WebGL Studio &bull; 2026</div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/three.min.js"></script>
+  <script src="js/GLTFLoader.js"></script>
+
+  <script>
+    // Initialize Lucide Icons
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+
+    /* ==========================================================================
+       THREE.JS STUDIO ENGINE & REAL-TIME CALIBRATION CONTROLLER
+       ========================================================================== */
+    (function () {
+      'use strict';
+
+      // 1. Studio State Configuration (Exact Calibrated Defaults)
+      const state = {
+        // Lighting
+        lights: {
+          key: { color: '#ffffff', intensity: 0.0, x: -7, y: -2.5, z: 4 },
+          fill: { color: '#cbd5e1', intensity: 0.65, x: 10, y: -2, z: 3 },
+          rim: { color: '#ffffff', intensity: 3.9, x: 0, y: 4, z: -4 },
+          under: { color: '#334455', intensity: 0.0, x: 0, y: -4, z: 0 },
+          ambient: { color: '#ffffff', intensity: 1.1 },
+          exposure: 0.3
+        },
+        // Materials PBR
+        material: {
+          roughness: 0.16,
+          metalness: 0.12,
+          reflectivity: 0.9,
+          wireframe: false
+        },
+        // Body Parts Colors
+        parts: {
+          casco: '#2563EB',
+          cara: '#FFD000',
+          airtank: '#F2F3F2',
+          torso: '#C91A09',
+          brazos: '#10B981',
+          manos: '#FFD000',
+          coxis: '#8B5CF6',
+          piernas: '#0055BF',
+          other: '#cccccc'
+        },
+        activePart: 'casco',
+        autoRotate: true,
+        groundVisible: true
+      };
+
+      // Preset Palettes Library
+      const PRESETS = {
+        classicSpaceBlue: {
+          name: 'Classic Spaceman Blue',
+          parts: {
+            casco: '#0055BF',
+            cara: '#FFD000',
+            airtank: '#0055BF',
+            torso: '#0055BF',
+            brazos: '#0055BF',
+            manos: '#FFD000',
+            coxis: '#0055BF',
+            piernas: '#0055BF',
+            other: '#0055BF'
+          },
+          material: { roughness: 0.16, metalness: 0.12 },
+          lights: {
+            key: { color: '#ffffff', intensity: 0.0, x: -7, y: -2.5, z: 4 },
+            fill: { color: '#cbd5e1', intensity: 0.65, x: 10, y: -2, z: 3 },
+            rim: { color: '#ffffff', intensity: 3.9, x: 0, y: 4, z: -4 },
+            ambient: { color: '#ffffff', intensity: 1.1 },
+            exposure: 0.3
+          }
+        },
+        multicolorPop: {
+          name: 'Multicolor Pop Art Calibrado',
+          parts: {
+            casco: '#2563EB',
+            cara: '#FFD000',
+            airtank: '#F2F3F2',
+            torso: '#C91A09',
+            brazos: '#10B981',
+            manos: '#FFD000',
+            coxis: '#8B5CF6',
+            piernas: '#0055BF',
+            other: '#cccccc'
+          },
+          material: { roughness: 0.16, metalness: 0.12 },
+          lights: {
+            key: { color: '#ffffff', intensity: 0.0, x: -7, y: -2.5, z: 4 },
+            fill: { color: '#cbd5e1', intensity: 0.65, x: 10, y: -2, z: 3 },
+            rim: { color: '#ffffff', intensity: 3.9, x: 0, y: 4, z: -4 },
+            ambient: { color: '#ffffff', intensity: 1.1 },
+            exposure: 0.3
+          }
+        },
+        classicRed: {
+          name: 'Red Spaceman Vintage',
+          parts: {
+            casco: '#C91A09',
+            cara: '#FFD000',
+            airtank: '#C91A09',
+            torso: '#C91A09',
+            brazos: '#C91A09',
+            manos: '#FFD000',
+            coxis: '#C91A09',
+            piernas: '#C91A09',
+            other: '#C91A09'
+          },
+          material: { roughness: 0.18, metalness: 0.05 },
+          lights: {
+            key: { color: '#fff5ea', intensity: 2.4, x: -4, y: 5, z: 4 },
+            fill: { color: '#ffd6cc', intensity: 1.0, x: 4, y: -2, z: 3 },
+            rim: { color: '#ffffff', intensity: 2.0, x: 0, y: 4, z: -4 },
+            ambient: { color: '#ffffff', intensity: 0.45 },
+            exposure: 1.2
+          }
+        },
+        iconicYellow: {
+          name: 'Iconic Lego Yellow',
+          parts: {
+            casco: '#FFD000',
+            cara: '#FFD000',
+            airtank: '#FFD000',
+            torso: '#FFD000',
+            brazos: '#FFD000',
+            manos: '#FFD000',
+            coxis: '#18181b',
+            piernas: '#FFD000',
+            other: '#FFD000'
+          },
+          material: { roughness: 0.18, metalness: 0.05 },
+          lights: {
+            key: { color: '#ffffff', intensity: 2.2, x: -4, y: 5, z: 4 },
+            fill: { color: '#e2e8f0', intensity: 1.1, x: 4, y: -2, z: 3 },
+            rim: { color: '#ffffff', intensity: 1.8, x: 0, y: 4, z: -4 },
+            ambient: { color: '#ffffff', intensity: 0.45 },
+            exposure: 1.15
+          }
+        },
+        stealthBlack: {
+          name: 'Stealth Obsidian',
+          parts: {
+            casco: '#181A20',
+            cara: '#242833',
+            airtank: '#181A20',
+            torso: '#181A20',
+            brazos: '#181A20',
+            manos: '#00F0FF',
+            coxis: '#111217',
+            piernas: '#181A20',
+            other: '#181A20'
+          },
+          material: { roughness: 0.28, metalness: 0.4 },
+          lights: {
+            key: { color: '#e2e8f0', intensity: 2.8, x: -5, y: 6, z: 4 },
+            fill: { color: '#1e293b', intensity: 0.8, x: 4, y: -2, z: 3 },
+            rim: { color: '#00f0ff', intensity: 3.5, x: 0, y: 4, z: -4 },
+            ambient: { color: '#182030', intensity: 0.35 },
+            exposure: 1.3
+          }
+        },
+        stormtrooperWhite: {
+          name: 'Cyber Stormtrooper White',
+          parts: {
+            casco: '#F8FAFC',
+            cara: '#0F172A',
+            airtank: '#F8FAFC',
+            torso: '#F8FAFC',
+            brazos: '#F8FAFC',
+            manos: '#0F172A',
+            coxis: '#0F172A',
+            piernas: '#F8FAFC',
+            other: '#0F172A'
+          },
+          material: { roughness: 0.15, metalness: 0.04 },
+          lights: {
+            key: { color: '#ffffff', intensity: 2.0, x: -4, y: 5, z: 4 },
+            fill: { color: '#94a3b8', intensity: 1.2, x: 4, y: -2, z: 3 },
+            rim: { color: '#38bdf8', intensity: 2.2, x: 0, y: 4, z: -4 },
+            ambient: { color: '#ffffff', intensity: 0.5 },
+            exposure: 1.1
+          }
+        },
+        cyberpunkNeon: {
+          name: 'Neon Cyberpunk',
+          parts: {
+            casco: '#06B6D4',
+            cara: '#EC4899',
+            airtank: '#8B5CF6',
+            torso: '#3B82F6',
+            brazos: '#10B981',
+            manos: '#F59E0B',
+            coxis: '#111827',
+            piernas: '#6366F1',
+            other: '#06B6D4'
+          },
+          material: { roughness: 0.22, metalness: 0.25 },
+          lights: {
+            key: { color: '#00f0ff', intensity: 3.2, x: -4, y: 5, z: 4 },
+            fill: { color: '#ec4899', intensity: 2.2, x: 4, y: -2, z: 3 },
+            rim: { color: '#a855f7', intensity: 3.5, x: 0, y: 4, z: -4 },
+            ambient: { color: '#160c28', intensity: 0.4 },
+            exposure: 1.35
+          }
+        }
+      };
+
+      // Load saved state from localStorage if available
+      try {
+        const saved = localStorage.getItem('lego_studio_config_v2');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.parts) Object.assign(state.parts, parsed.parts);
+          if (parsed.lights) Object.assign(state.lights, parsed.lights);
+          if (parsed.material) Object.assign(state.material, parsed.material);
+        }
+      } catch (e) {
+        console.warn('Could not read saved lego studio config:', e);
+      }
+
+      // 2. Three.js Core Variables
+      let scene, camera, renderer, modelGroup, groundGrid;
+      let lightObjects = {};
+      let isDragging = false;
+      let prevPointer = { x: 0, y: 0 };
+      let targetRotation = { x: 0.18, y: -0.45 };
+      let currentRotation = { x: 0.18, y: -0.45 };
+      let targetDistance = 3.6;
+      let currentDistance = 3.6;
+      let autoRotateSpeed = 0.0035;
+
+      const stageWrapper = document.getElementById('stage-canvas-wrapper');
+      const canvas = document.getElementById('studio-canvas');
+      const loaderOverlay = document.getElementById('stage-loader');
+
+      // 3. Initialize Scene, Camera, Renderer
+      function initThree() {
+        scene = new THREE.Scene();
+        scene.background = null;
+
+        const w = stageWrapper.clientWidth || 800;
+        const h = stageWrapper.clientHeight || 600;
+
+        camera = new THREE.PerspectiveCamera(38, w / h, 0.1, 100);
+        camera.position.set(0, 0, currentDistance);
+
+        renderer = new THREE.WebGLRenderer({
+          canvas: canvas,
+          alpha: true,
+          antialias: true,
+          powerPreference: 'high-performance',
+          preserveDrawingBuffer: true
+        });
+        renderer.setSize(w, h);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setClearColor(0x000000, 0);
+
+        if (renderer.outputColorSpace) {
+          renderer.outputColorSpace = THREE.SRGBColorSpace;
+        } else if (renderer.outputEncoding) {
+          renderer.outputEncoding = THREE.sRGBEncoding;
+        }
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = state.lights.exposure;
+
+        // Lighting Rig
+        initLights();
+
+        // Studio Floor Grid & Shadow Disc
+        initGround();
+
+        // Model Group
+        modelGroup = new THREE.Group();
+        scene.add(modelGroup);
+
+        // Load 3D GLTF Model
+        loadLegoModel();
+
+        // Setup User Interactions
+        setupInteraction();
+
+        // Animation Loop
+        animate();
+      }
+
+      function initLights() {
+        // Ambient Light
+        lightObjects.ambient = new THREE.AmbientLight(state.lights.ambient.color, state.lights.ambient.intensity);
+        scene.add(lightObjects.ambient);
+
+        // Key Light
+        lightObjects.key = new THREE.DirectionalLight(state.lights.key.color, state.lights.key.intensity);
+        lightObjects.key.position.set(state.lights.key.x, state.lights.key.y, state.lights.key.z);
+        scene.add(lightObjects.key);
+
+        // Fill Light
+        lightObjects.fill = new THREE.DirectionalLight(state.lights.fill.color, state.lights.fill.intensity);
+        lightObjects.fill.position.set(state.lights.fill.x, state.lights.fill.y, state.lights.fill.z);
+        scene.add(lightObjects.fill);
+
+        // Rim Light
+        lightObjects.rim = new THREE.DirectionalLight(state.lights.rim.color, state.lights.rim.intensity);
+        lightObjects.rim.position.set(state.lights.rim.x, state.lights.rim.y, state.lights.rim.z);
+        scene.add(lightObjects.rim);
+
+        // Under Light
+        lightObjects.under = new THREE.DirectionalLight(state.lights.under.color, state.lights.under.intensity);
+        lightObjects.under.position.set(state.lights.under.x, state.lights.under.y, state.lights.under.z);
+        scene.add(lightObjects.under);
+      }
+
+      function initGround() {
+        const gridGeo = new THREE.PlaneGeometry(8, 8, 24, 24);
+        const gridMat = new THREE.MeshBasicMaterial({
+          color: 0x00f0ff,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.08,
+          side: THREE.DoubleSide
+        });
+        groundGrid = new THREE.Mesh(gridGeo, gridMat);
+        groundGrid.rotation.x = Math.PI / 2;
+        groundGrid.position.y = -1.15;
+        scene.add(groundGrid);
+
+        // Radial Soft Shadow Disc
+        const shadowGeo = new THREE.CircleGeometry(1.2, 32);
+        const shadowMat = new THREE.MeshBasicMaterial({
+          color: 0x000000,
+          transparent: true,
+          opacity: 0.45,
+          side: THREE.DoubleSide
+        });
+        const shadowDisc = new THREE.Mesh(shadowGeo, shadowMat);
+        shadowDisc.rotation.x = Math.PI / 2;
+        shadowDisc.position.y = -1.14;
+        scene.add(shadowDisc);
+      }
+
+      function getPartCategory(mesh) {
+        let cur = mesh;
+        while (cur && cur !== modelGroup && cur !== scene) {
+          const name = (cur.name || '').toLowerCase();
+          if (name.includes('casco')) return 'casco';
+          if (name.includes('cara') || name.includes('head') || name.includes('cabeza')) return 'cara';
+          if (name.includes('airtank') || name.includes('tank') || name.includes('mochila')) return 'airtank';
+          if (name.includes('torso') || name.includes('chest') || name.includes('cuerpo')) return 'torso';
+          if (name.includes('brazo') || name.includes('arm')) return 'brazos';
+          if (name.includes('mano') || name.includes('hand')) return 'manos';
+          if (name.includes('coxis') || name.includes('cadera') || name.includes('hip') || name.includes('waist')) return 'coxis';
+          if (name.includes('pierna') || name.includes('leg')) return 'piernas';
+          cur = cur.parent;
+        }
+        return 'other';
+      }
+
+      function applyShading() {
+        if (!modelGroup) return;
+
+        modelGroup.traverse((child) => {
+          if (child.isMesh) {
+            const cat = getPartCategory(child);
+            const hexColor = state.parts[cat] || state.parts.other || '#cccccc';
+
+            if (state.material.wireframe) {
+              child.material = new THREE.MeshBasicMaterial({
+                color: new THREE.Color(hexColor),
+                wireframe: true,
+                side: THREE.DoubleSide
+              });
+            } else {
+              child.material = new THREE.MeshStandardMaterial({
+                color: new THREE.Color(hexColor),
+                roughness: state.material.roughness,
+                metalness: state.material.metalness,
+                side: THREE.DoubleSide
+              });
+            }
+            child.material.needsUpdate = true;
+          }
+        });
+
+        // Update UI Dots & Indicators
+        updateColorIndicators();
+      }
+
+      function loadLegoModel() {
+        const loader = new THREE.GLTFLoader();
+        const primaryUrl = 'assets/models/monitolego2.glb';
+        const altUrl = 'assets/modelos 3d/monitolego2.glb';
+
+        function onLoaded(gltf) {
+          const rawScene = gltf.scene;
+
+          const box = new THREE.Box3().setFromObject(rawScene);
+          const center = new THREE.Vector3();
+          const size = new THREE.Vector3();
+          box.getCenter(center);
+          box.getSize(size);
+
+          rawScene.position.x = -center.x;
+          rawScene.position.y = -center.y;
+          rawScene.position.z = -center.z;
+
+          const maxDim = Math.max(size.x, size.y, size.z) || 1;
+          const scale = 2.3 / maxDim;
+          modelGroup.scale.set(scale, scale, scale);
+
+          modelGroup.add(rawScene);
+          applyShading();
+
+          if (loaderOverlay) {
+            loaderOverlay.style.opacity = '0';
+            setTimeout(() => { loaderOverlay.style.display = 'none'; }, 400);
+          }
+        }
+
+        function onError(err) {
+          console.warn('Trying alt model path...', err);
+          loader.load(altUrl, onLoaded, undefined, () => {
+            if (loaderOverlay) loaderOverlay.innerHTML = '<span style="color:#ef4444;">Error cargando modelo 3D</span>';
+          });
+        }
+
+        loader.load(primaryUrl, onLoaded, undefined, onError);
+      }
+
+      function setupInteraction() {
+        stageWrapper.addEventListener('pointerdown', (e) => {
+          isDragging = true;
+          prevPointer.x = e.clientX;
+          prevPointer.y = e.clientY;
+          stageWrapper.setPointerCapture(e.pointerId);
+        });
+
+        stageWrapper.addEventListener('pointermove', (e) => {
+          if (!isDragging) return;
+          const deltaX = e.clientX - prevPointer.x;
+          const deltaY = e.clientY - prevPointer.y;
+          prevPointer.x = e.clientX;
+          prevPointer.y = e.clientY;
+
+          targetRotation.y += deltaX * 0.0085;
+          targetRotation.x += deltaY * 0.0085;
+          targetRotation.x = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, targetRotation.x));
+        });
+
+        function endDrag(e) {
+          if (isDragging) {
+            isDragging = false;
+            try { stageWrapper.releasePointerCapture(e.pointerId); } catch (err) {}
+          }
+        }
+
+        stageWrapper.addEventListener('pointerup', endDrag);
+        stageWrapper.addEventListener('pointercancel', endDrag);
+
+        stageWrapper.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const zoom = e.deltaY * 0.0025;
+          targetDistance = Math.max(1.5, Math.min(7.0, targetDistance + zoom));
+        }, { passive: false });
+
+        window.addEventListener('resize', () => {
+          if (!stageWrapper || !renderer || !camera) return;
+          const w = stageWrapper.clientWidth;
+          const h = stageWrapper.clientHeight;
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          renderer.setSize(w, h);
+        });
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        if (state.autoRotate && !isDragging) {
+          targetRotation.y += autoRotateSpeed;
+        }
+
+        currentRotation.x += (targetRotation.x - currentRotation.x) * 0.085;
+        currentRotation.y += (targetRotation.y - currentRotation.y) * 0.085;
+        currentDistance += (targetDistance - currentDistance) * 0.085;
+
+        camera.position.z = currentDistance;
+        modelGroup.rotation.x = currentRotation.x;
+        modelGroup.rotation.y = currentRotation.y;
+
+        renderer.render(scene, camera);
+      }
+
+      // 4. UI Hookups & Syncing
+      function syncUI() {
+        // Sync Lighting Inputs
+        document.getElementById('key-color').value = state.lights.key.color;
+        document.getElementById('key-intensity').value = state.lights.key.intensity;
+        document.getElementById('val-key-intensity').textContent = Number(state.lights.key.intensity).toFixed(2);
+        document.getElementById('key-x').value = state.lights.key.x;
+        document.getElementById('val-key-x').textContent = state.lights.key.x;
+        document.getElementById('key-y').value = state.lights.key.y;
+        document.getElementById('val-key-y').textContent = state.lights.key.y;
+
+        document.getElementById('fill-color').value = state.lights.fill.color;
+        document.getElementById('fill-intensity').value = state.lights.fill.intensity;
+        document.getElementById('val-fill-intensity').textContent = Number(state.lights.fill.intensity).toFixed(2);
+        document.getElementById('fill-x').value = state.lights.fill.x;
+        document.getElementById('val-fill-x').textContent = state.lights.fill.x;
+
+        document.getElementById('rim-color').value = state.lights.rim.color;
+        document.getElementById('rim-intensity').value = state.lights.rim.intensity;
+        document.getElementById('val-rim-intensity').textContent = Number(state.lights.rim.intensity).toFixed(2);
+
+        document.getElementById('ambient-color').value = state.lights.ambient.color;
+        document.getElementById('ambient-intensity').value = state.lights.ambient.intensity;
+        document.getElementById('val-ambient-intensity').textContent = Number(state.lights.ambient.intensity).toFixed(2);
+
+        document.getElementById('tone-exposure').value = state.lights.exposure;
+        document.getElementById('val-exposure').textContent = Number(state.lights.exposure).toFixed(2);
+
+        // Sync Material Inputs
+        document.getElementById('mat-roughness').value = state.material.roughness;
+        document.getElementById('val-mat-roughness').textContent = Number(state.material.roughness).toFixed(2);
+        document.getElementById('mat-metalness').value = state.material.metalness;
+        document.getElementById('val-mat-metalness').textContent = Number(state.material.metalness).toFixed(2);
+        document.getElementById('mat-reflectivity').value = state.material.reflectivity;
+        document.getElementById('val-mat-reflectivity').textContent = Number(state.material.reflectivity).toFixed(2);
+
+        // Sync Active Part
+        const curColor = state.parts[state.activePart] || '#2563EB';
+        document.getElementById('part-color-picker').value = curColor;
+        document.getElementById('part-hex-input').value = curColor.toUpperCase();
+
+        updateColorIndicators();
+      }
+
+      function updateColorIndicators() {
+        Object.keys(state.parts).forEach((part) => {
+          const dot = document.getElementById('dot-' + part);
+          if (dot) dot.style.background = state.parts[part];
+        });
+      }
+
+      function updateLightsFromState() {
+        if (!lightObjects.key) return;
+
+        lightObjects.key.color.set(state.lights.key.color);
+        lightObjects.key.intensity = parseFloat(state.lights.key.intensity);
+        lightObjects.key.position.set(parseFloat(state.lights.key.x), parseFloat(state.lights.key.y), parseFloat(state.lights.key.z));
+
+        lightObjects.fill.color.set(state.lights.fill.color);
+        lightObjects.fill.intensity = parseFloat(state.lights.fill.intensity);
+        lightObjects.fill.position.set(parseFloat(state.lights.fill.x), parseFloat(state.lights.fill.y), parseFloat(state.lights.fill.z));
+
+        lightObjects.rim.color.set(state.lights.rim.color);
+        lightObjects.rim.intensity = parseFloat(state.lights.rim.intensity);
+
+        lightObjects.ambient.color.set(state.lights.ambient.color);
+        lightObjects.ambient.intensity = parseFloat(state.lights.ambient.intensity);
+
+        renderer.toneMappingExposure = parseFloat(state.lights.exposure);
+      }
+
+      // Event Listeners for Sliders & Controls
+      function bindEventListeners() {
+        // Tab Switcher
+        document.querySelectorAll('.tab-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach((p) => p.classList.remove('active'));
+            btn.classList.add('active');
+            const target = btn.getAttribute('data-tab');
+            const pane = document.getElementById(target);
+            if (pane) pane.classList.add('active');
+          });
+        });
+
+        // Camera Angles
+        document.querySelectorAll('[data-angle]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-angle]').forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            const angle = btn.getAttribute('data-angle');
+            if (angle === 'front') { targetRotation.x = 0; targetRotation.y = 0; targetDistance = 3.6; }
+            else if (angle === 'iso') { targetRotation.x = 0.18; targetRotation.y = -0.45; targetDistance = 3.6; }
+            else if (angle === 'top') { targetRotation.x = Math.PI / 2 - 0.05; targetRotation.y = 0; targetDistance = 4.0; }
+            else if (angle === 'side') { targetRotation.x = 0; targetRotation.y = -Math.PI / 2; targetDistance = 3.6; }
+            else if (angle === 'hero') { targetRotation.x = -0.22; targetRotation.y = -0.3; targetDistance = 2.2; }
+          });
+        });
+
+        // AutoRotate Toggle
+        const btnAutoRotate = document.getElementById('btn-toggle-autorotate');
+        btnAutoRotate.addEventListener('click', () => {
+          state.autoRotate = !state.autoRotate;
+          btnAutoRotate.classList.toggle('active', state.autoRotate);
+        });
+
+        // Wireframe Toggle
+        const btnWireframe = document.getElementById('btn-toggle-wireframe');
+        btnWireframe.addEventListener('click', () => {
+          state.material.wireframe = !state.material.wireframe;
+          btnWireframe.classList.toggle('active', state.material.wireframe);
+          applyShading();
+        });
+
+        // Ground Toggle
+        const btnGround = document.getElementById('btn-toggle-ground');
+        btnGround.addEventListener('click', () => {
+          state.groundVisible = !state.groundVisible;
+          btnGround.classList.toggle('active', state.groundVisible);
+          if (groundGrid) groundGrid.visible = state.groundVisible;
+        });
+
+        // Lighting Inputs
+        function linkSlider(id, targetObj, prop, valId) {
+          const el = document.getElementById(id);
+          el.addEventListener('input', (e) => {
+            targetObj[prop] = parseFloat(e.target.value);
+            document.getElementById(valId).textContent = Number(e.target.value).toFixed(2);
+            updateLightsFromState();
+          });
+        }
+
+        linkSlider('key-intensity', state.lights.key, 'intensity', 'val-key-intensity');
+        linkSlider('key-x', state.lights.key, 'x', 'val-key-x');
+        linkSlider('key-y', state.lights.key, 'y', 'val-key-y');
+
+        linkSlider('fill-intensity', state.lights.fill, 'intensity', 'val-fill-intensity');
+        linkSlider('fill-x', state.lights.fill, 'x', 'val-fill-x');
+
+        linkSlider('rim-intensity', state.lights.rim, 'intensity', 'val-rim-intensity');
+        linkSlider('ambient-intensity', state.lights.ambient, 'intensity', 'val-ambient-intensity');
+
+        document.getElementById('tone-exposure').addEventListener('input', (e) => {
+          state.lights.exposure = parseFloat(e.target.value);
+          document.getElementById('val-exposure').textContent = Number(e.target.value).toFixed(2);
+          updateLightsFromState();
+        });
+
+        // Light Colors
+        ['key', 'fill', 'rim', 'ambient'].forEach((type) => {
+          const colorInput = document.getElementById(`${type}-color`);
+          colorInput.addEventListener('input', (e) => {
+            state.lights[type].color = e.target.value;
+            updateLightsFromState();
+          });
+        });
+
+        // Material Sliders
+        document.getElementById('mat-roughness').addEventListener('input', (e) => {
+          state.material.roughness = parseFloat(e.target.value);
+          document.getElementById('val-mat-roughness').textContent = Number(e.target.value).toFixed(2);
+          applyShading();
+        });
+
+        document.getElementById('mat-metalness').addEventListener('input', (e) => {
+          state.material.metalness = parseFloat(e.target.value);
+          document.getElementById('val-mat-metalness').textContent = Number(e.target.value).toFixed(2);
+          applyShading();
+        });
+
+        document.getElementById('mat-reflectivity').addEventListener('input', (e) => {
+          state.material.reflectivity = parseFloat(e.target.value);
+          document.getElementById('val-mat-reflectivity').textContent = Number(e.target.value).toFixed(2);
+          applyShading();
+        });
+
+        // Part Selector
+        document.querySelectorAll('.part-select-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.part-select-btn').forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            const part = btn.getAttribute('data-part');
+            state.activePart = part;
+            document.getElementById('active-part-name').textContent = part.charAt(0).toUpperCase() + part.slice(1);
+            const curColor = state.parts[part] || '#2563EB';
+            document.getElementById('part-color-picker').value = curColor;
+            document.getElementById('part-hex-input').value = curColor.toUpperCase();
+          });
+        });
+
+        // Paint Picker for Active Part
+        const partPicker = document.getElementById('part-color-picker');
+        const hexInput = document.getElementById('part-hex-input');
+
+        partPicker.addEventListener('input', (e) => {
+          const hex = e.target.value;
+          state.parts[state.activePart] = hex;
+          hexInput.value = hex.toUpperCase();
+          applyShading();
+        });
+
+        hexInput.addEventListener('change', (e) => {
+          let val = e.target.value.trim();
+          if (!val.startsWith('#')) val = '#' + val;
+          if (/^#[0-9A-F]{6}$/i.test(val)) {
+            state.parts[state.activePart] = val;
+            partPicker.value = val;
+            applyShading();
+          }
+        });
+
+        // Quick Swatches
+        document.querySelectorAll('.swatch-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const color = btn.getAttribute('data-color');
+            if (color) {
+              state.parts[state.activePart] = color;
+              partPicker.value = color;
+              hexInput.value = color.toUpperCase();
+              applyShading();
+            }
+          });
+        });
+
+        // Apply Color to All Parts
+        document.getElementById('btn-apply-all-parts').addEventListener('click', () => {
+          const col = state.parts[state.activePart] || '#FFD000';
+          Object.keys(state.parts).forEach((k) => {
+            state.parts[k] = col;
+          });
+          applyShading();
+          showToast(`Color ${col} aplicado a toda la minifigura`);
+        });
+
+        // Lighting Atmosphere Presets
+        document.querySelectorAll('[data-light-preset]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-light-preset]').forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            const presetName = btn.getAttribute('data-light-preset');
+            applyLightingPreset(presetName);
+          });
+        });
+
+        // Material Preset Shaders
+        document.querySelectorAll('[data-mat-preset]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-mat-preset]').forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            const matType = btn.getAttribute('data-mat-preset');
+            applyMaterialPreset(matType);
+          });
+        });
+
+        // Full Presets (Tab 4 Cards)
+        document.querySelectorAll('[data-full-preset]').forEach((card) => {
+          card.addEventListener('click', () => {
+            document.querySelectorAll('[data-full-preset]').forEach((c) => c.classList.remove('active-card'));
+            card.classList.add('active-card');
+            const presetKey = card.getAttribute('data-full-preset');
+            loadFullPreset(presetKey);
+          });
+        });
+
+        // Save Applied Settings
+        document.getElementById('btn-save-applied').addEventListener('click', saveStateToStorage);
+
+        // Reset to Defaults
+        document.getElementById('btn-reset-defaults').addEventListener('click', () => {
+          loadFullPreset('multicolorPop');
+          showToast('Configuración restaurada a valores por defecto');
+        });
+
+        // Export Code Modal
+        document.getElementById('btn-export-code').addEventListener('click', openExportModal);
+        document.getElementById('btn-close-modal').addEventListener('click', () => {
+          document.getElementById('code-modal').classList.remove('open');
+        });
+        document.getElementById('btn-copy-code-clipboard').addEventListener('click', copyCodeToClipboard);
+
+        // HD Snapshot Download
+        document.getElementById('btn-take-snapshot').addEventListener('click', takeHdSnapshot);
+      }
+
+      function applyLightingPreset(name) {
+        if (name === 'studioClean') {
+          state.lights.key = { color: '#ffffff', intensity: 0.0, x: -7, y: -2.5, z: 4 };
+          state.lights.fill = { color: '#cbd5e1', intensity: 0.65, x: 10, y: -2, z: 3 };
+          state.lights.rim = { color: '#ffffff', intensity: 3.9, x: 0, y: 4, z: -4 };
+          state.lights.ambient = { color: '#ffffff', intensity: 1.1 };
+          state.lights.exposure = 0.3;
+        } else if (name === 'warmSun') {
+          state.lights.key = { color: '#ffe8c2', intensity: 2.8, x: -5, y: 6, z: 4 };
+          state.lights.fill = { color: '#ffcca8', intensity: 0.9, x: 4, y: -2, z: 3 };
+          state.lights.rim = { color: '#ffd000', intensity: 2.2, x: 0, y: 4, z: -4 };
+          state.lights.ambient = { color: '#4a3020', intensity: 0.5 };
+          state.lights.exposure = 1.25;
+        } else if (name === 'cyberNeon') {
+          state.lights.key = { color: '#00f0ff', intensity: 3.2, x: -4, y: 5, z: 4 };
+          state.lights.fill = { color: '#ec4899', intensity: 2.2, x: 4, y: -2, z: 3 };
+          state.lights.rim = { color: '#a855f7', intensity: 3.5, x: 0, y: 4, z: -4 };
+          state.lights.ambient = { color: '#160c28', intensity: 0.4 };
+          state.lights.exposure = 1.35;
+        } else if (name === 'darkDrama') {
+          state.lights.key = { color: '#ffffff', intensity: 3.0, x: -6, y: 6, z: 3 };
+          state.lights.fill = { color: '#0f172a', intensity: 0.3, x: 4, y: -2, z: 3 };
+          state.lights.rim = { color: '#00f0ff', intensity: 3.8, x: 0, y: 4, z: -5 };
+          state.lights.ambient = { color: '#05070d', intensity: 0.2 };
+          state.lights.exposure = 1.4;
+        } else if (name === 'neutralCad') {
+          state.lights.key = { color: '#ffffff', intensity: 1.6, x: -3, y: 4, z: 4 };
+          state.lights.fill = { color: '#ffffff', intensity: 1.4, x: 3, y: -1, z: 3 };
+          state.lights.rim = { color: '#ffffff', intensity: 1.2, x: 0, y: 4, z: -4 };
+          state.lights.ambient = { color: '#ffffff', intensity: 0.7 };
+          state.lights.exposure = 1.0;
+        } else if (name === 'highKey') {
+          state.lights.key = { color: '#ffffff', intensity: 2.6, x: -4, y: 6, z: 4 };
+          state.lights.fill = { color: '#f1f5f9', intensity: 1.8, x: 4, y: -1, z: 3 };
+          state.lights.rim = { color: '#ffffff', intensity: 2.4, x: 0, y: 4, z: -4 };
+          state.lights.ambient = { color: '#ffffff', intensity: 0.65 };
+          state.lights.exposure = 1.2;
+        }
+        syncUI();
+        updateLightsFromState();
+        showToast(`Preset de luz: ${name}`);
+      }
+
+      function applyMaterialPreset(matType) {
+        if (matType === 'legoGlossy') {
+          state.material.roughness = 0.18;
+          state.material.metalness = 0.05;
+        } else if (matType === 'softMatte') {
+          state.material.roughness = 0.75;
+          state.material.metalness = 0.0;
+        } else if (matType === 'chromeMirror') {
+          state.material.roughness = 0.10;
+          state.material.metalness = 0.95;
+        } else if (matType === 'graphite') {
+          state.material.roughness = 0.35;
+          state.material.metalness = 0.75;
+        } else if (matType === 'ceramic') {
+          state.material.roughness = 0.22;
+          state.material.metalness = 0.08;
+        } else if (matType === 'gold') {
+          state.material.roughness = 0.15;
+          state.material.metalness = 0.90;
+        }
+        syncUI();
+        applyShading();
+        showToast(`Acabado PBR: ${matType}`);
+      }
+
+      function loadFullPreset(key) {
+        const p = PRESETS[key];
+        if (!p) return;
+
+        Object.assign(state.parts, p.parts);
+        if (p.material) Object.assign(state.material, p.material);
+        if (p.lights) Object.assign(state.lights, p.lights);
+
+        syncUI();
+        updateLightsFromState();
+        applyShading();
+        showToast(`Cargado: ${p.name}`);
+      }
+
+      window.applyPresetAndScroll = function (key) {
+        loadFullPreset(key);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+
+      function saveStateToStorage() {
+        try {
+          localStorage.setItem('lego_studio_config_v2', JSON.stringify(state));
+          showToast('✅ Configuración guardada (sincronizada con el visor principal)');
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      function openExportModal() {
+        const modal = document.getElementById('code-modal');
+        const codeArea = document.getElementById('modal-code-content');
+
+        const codeString = `// ============================================================================
+// CONFIGURACIÓN DE LUCES Y PALETA PBR CALIBRADA (Three.js)
+// Generado desde el Estudio de Calibración 3D Lego
+// ============================================================================
+
+const legoStudioLighting = {
+  ambient: new THREE.AmbientLight(${JSON.stringify(state.lights.ambient.color)}, ${state.lights.ambient.intensity}),
+  keyLight: (() => {
+    const l = new THREE.DirectionalLight(${JSON.stringify(state.lights.key.color)}, ${state.lights.key.intensity});
+    l.position.set(${state.lights.key.x}, ${state.lights.key.y}, ${state.lights.key.z});
+    return l;
+  })(),
+  fillLight: (() => {
+    const l = new THREE.DirectionalLight(${JSON.stringify(state.lights.fill.color)}, ${state.lights.fill.intensity});
+    l.position.set(${state.lights.fill.x}, ${state.lights.fill.y}, ${state.lights.fill.z});
+    return l;
+  })(),
+  rimLight: (() => {
+    const l = new THREE.DirectionalLight(${JSON.stringify(state.lights.rim.color)}, ${state.lights.rim.intensity});
+    l.position.set(${state.lights.rim.x}, ${state.lights.rim.y}, ${state.lights.rim.z});
+    return l;
+  })(),
+  exposure: ${state.lights.exposure}
+};
+
+const legoMaterialsPBR = {
+  casco:   new THREE.MeshStandardMaterial({ color: '${state.parts.casco}', roughness: ${state.material.roughness}, metalness: ${state.material.metalness}, side: THREE.DoubleSide }),
+  cara:    new THREE.MeshStandardMaterial({ color: '${state.parts.cara}', roughness: ${state.material.roughness}, metalness: ${state.material.metalness}, side: THREE.DoubleSide }),
+  airtank: new THREE.MeshStandardMaterial({ color: '${state.parts.airtank}', roughness: ${state.material.roughness}, metalness: ${state.material.metalness}, side: THREE.DoubleSide }),
+  torso:   new THREE.MeshStandardMaterial({ color: '${state.parts.torso}', roughness: ${state.material.roughness}, metalness: ${state.material.metalness}, side: THREE.DoubleSide }),
+  brazos:  new THREE.MeshStandardMaterial({ color: '${state.parts.brazos}', roughness: ${state.material.roughness}, metalness: ${state.material.metalness}, side: THREE.DoubleSide }),
+  manos:   new THREE.MeshStandardMaterial({ color: '${state.parts.manos}', roughness: ${state.material.roughness}, metalness: ${state.material.metalness}, side: THREE.DoubleSide }),
+  coxis:   new THREE.MeshStandardMaterial({ color: '${state.parts.coxis}', roughness: ${state.material.roughness}, metalness: ${state.material.metalness}, side: THREE.DoubleSide }),
+  piernas: new THREE.MeshStandardMaterial({ color: '${state.parts.piernas}', roughness: ${state.material.roughness}, metalness: ${state.material.metalness}, side: THREE.DoubleSide })
+};`;
+
+        codeArea.textContent = codeString;
+        modal.classList.add('open');
+      }
+
+      function copyCodeToClipboard() {
+        const text = document.getElementById('modal-code-content').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('Código copiado al portapapeles');
+        });
+      }
+
+      function takeHdSnapshot() {
+        if (!renderer || !scene || !camera) return;
+        renderer.render(scene, camera);
+        const dataUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = `lego-render-studio-${Date.now()}.png`;
+        link.href = dataUrl;
+        link.click();
+        showToast('📸 Captura HD descargada');
+      }
+
+      function showToast(msg) {
+        const toast = document.getElementById('toast-msg');
+        const text = document.getElementById('toast-text');
+        text.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 2800);
+      }
+
+      // Initialize on DOM Ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          initThree();
+          bindEventListeners();
+          syncUI();
+        });
+      } else {
+        initThree();
+        bindEventListeners();
+        syncUI();
+      }
+
+    })();
+  </script>
+</body>
+
+</html>
