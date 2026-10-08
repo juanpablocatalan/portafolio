@@ -578,6 +578,15 @@
       color: var(--cd-text-muted);
     }
 
+    .stage-title-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
     .stage-project-title {
       font-family: var(--font-primary, -apple-system, sans-serif);
       font-size: clamp(1.8rem, 2.8vw, 2.6rem);
@@ -586,6 +595,31 @@
       line-height: 1.1;
       margin: 0;
       color: var(--cd-text-main);
+    }
+
+    .stage-ig-link {
+      font-family: var(--font-mono, monospace);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--cd-text-main);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: color 0.15s ease, opacity 0.15s ease;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    body.has-feuc-bg .stage-ig-link,
+    body.has-sutil-bg .stage-ig-link,
+    body.has-respuestas-bg .stage-ig-link {
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    .stage-ig-link:hover {
+      color: var(--cd-accent-yellow, rgb(255, 255, 0)) !important;
     }
 
     .stage-project-desc {
@@ -1066,10 +1100,10 @@
         <div class="sidebar-inner-card">
           <div class="sidebar-header-label">
             <span>ÍNDICE DE Gráficas</span>
-            <span>24 PROYECTOS</span>
+            <span>23 PROYECTOS</span>
           </div>
 
-          <!-- Cliente 01: FEUC (11 Proyectos) -->
+          <!-- Cliente 01: FEUC (10 Proyectos) -->
           <div class="sidebar-client-group" id="group-feuc">
             <button type="button" class="sidebar-client-btn" aria-expanded="false" data-client-group="group-feuc">
               <span class="sidebar-client-toggle-icon">▾</span>
@@ -1077,7 +1111,7 @@
             </button>
             <div class="sidebar-items-list" role="list">
 
-              <!-- Sub-sección: Instagram (01 - 09) -->
+              <!-- Sub-sección: Instagram (01 - 08) -->
               <div class="sidebar-sub-section">
                 <button type="button" class="sidebar-sub-heading">Instagram</button>
                 <ul class="sidebar-sub-list">
@@ -1100,64 +1134,58 @@
                     </button>
                   </li>
                   <li>
-                    <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-4">
-                      <span class="sidebar-item-num">04</span>
-                      <span class="sidebar-item-name">Convocatoria CNA</span>
-                    </button>
-                  </li>
-                  <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-5">
-                      <span class="sidebar-item-num">05</span>
+                      <span class="sidebar-item-num">04</span>
                       <span class="sidebar-item-name">Actualización FUAS 2024</span>
                     </button>
                   </li>
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-6">
-                      <span class="sidebar-item-num">06</span>
+                      <span class="sidebar-item-num">05</span>
                       <span class="sidebar-item-name">Presupuestos Participativos</span>
                     </button>
                   </li>
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-7">
-                      <span class="sidebar-item-num">07</span>
+                      <span class="sidebar-item-num">06</span>
                       <span class="sidebar-item-name">Elecciones FEUC 2024</span>
                     </button>
                   </li>
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-8">
-                      <span class="sidebar-item-num">08</span>
+                      <span class="sidebar-item-num">07</span>
                       <span class="sidebar-item-name">Beneficio Banner</span>
                     </button>
                   </li>
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-9">
-                      <span class="sidebar-item-num">09</span>
+                      <span class="sidebar-item-num">08</span>
                       <span class="sidebar-item-name">Carta al director</span>
                     </button>
                   </li>
                 </ul>
               </div>
 
-              <!-- Sub-sección: Mailing (10) -->
+              <!-- Sub-sección: Mailing (09) -->
               <div class="sidebar-sub-section">
                 <button type="button" class="sidebar-sub-heading">Mailing</button>
                 <ul class="sidebar-sub-list">
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-11">
-                      <span class="sidebar-item-num">10</span>
+                      <span class="sidebar-item-num">09</span>
                       <span class="sidebar-item-name">Listas elecciones FEUC 2024</span>
                     </button>
                   </li>
                 </ul>
               </div>
 
-              <!-- Sub-sección: Físicos (11) -->
+              <!-- Sub-sección: Físicos (10) -->
               <div class="sidebar-sub-section">
                 <button type="button" class="sidebar-sub-heading">Físicos</button>
                 <ul class="sidebar-sub-list">
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-feuc-12">
-                      <span class="sidebar-item-num">11</span>
+                      <span class="sidebar-item-num">10</span>
                       <span class="sidebar-item-name">Paloma Publicitaria</span>
                     </button>
                   </li>
@@ -1175,38 +1203,38 @@
             </button>
             <div class="sidebar-items-list" role="list">
 
-              <!-- Sub-sección: Merch (12 - 14) -->
+              <!-- Sub-sección: Merch (11 - 13) -->
               <div class="sidebar-sub-section">
                 <button type="button" class="sidebar-sub-heading">Merch</button>
                 <ul class="sidebar-sub-list">
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-respuestas-1">
-                      <span class="sidebar-item-num">12</span>
+                      <span class="sidebar-item-num">11</span>
                       <span class="sidebar-item-name">Polera</span>
                     </button>
                   </li>
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-respuestas-3">
-                      <span class="sidebar-item-num">13</span>
+                      <span class="sidebar-item-num">12</span>
                       <span class="sidebar-item-name">Totebag</span>
                     </button>
                   </li>
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-respuestas-2">
-                      <span class="sidebar-item-num">14</span>
+                      <span class="sidebar-item-num">13</span>
                       <span class="sidebar-item-name">Objetos</span>
                     </button>
                   </li>
                 </ul>
               </div>
 
-              <!-- Sub-sección: GIF (15) -->
+              <!-- Sub-sección: GIF (14) -->
               <div class="sidebar-sub-section">
                 <button type="button" class="sidebar-sub-heading">GIF</button>
                 <ul class="sidebar-sub-list">
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-respuestas-4">
-                      <span class="sidebar-item-num">15</span>
+                      <span class="sidebar-item-num">14</span>
                       <span class="sidebar-item-name">Inauguración</span>
                     </button>
                   </li>
@@ -1224,75 +1252,75 @@
             </button>
             <div class="sidebar-items-list" role="list">
 
-              <!-- Sub-sección: Web (16 - 19) -->
+              <!-- Sub-sección: Web (15 - 18) -->
               <div class="sidebar-sub-section">
                 <button type="button" class="sidebar-sub-heading">Web</button>
                 <ul class="sidebar-sub-list">
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-1">
-                      <span class="sidebar-item-num">16</span>
+                      <span class="sidebar-item-num">15</span>
                       <span class="sidebar-item-name">Año Nuevo Chino</span>
                     </button>
                   </li>
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-2">
-                      <span class="sidebar-item-num">17</span>
+                      <span class="sidebar-item-num">16</span>
                       <span class="sidebar-item-name">Banner Booz</span>
                     </button>
                   </li>
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-3">
-                      <span class="sidebar-item-num">18</span>
+                      <span class="sidebar-item-num">17</span>
                       <span class="sidebar-item-name">Lanzamiento Espumante La Playa</span>
                     </button>
                   </li>
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-5">
-                      <span class="sidebar-item-num">19</span>
+                      <span class="sidebar-item-num">18</span>
                       <span class="sidebar-item-name">Oferta Template Nacional</span>
                     </button>
                   </li>
                 </ul>
               </div>
 
-              <!-- Sub-sección: Mailing (20 - 22) -->
+              <!-- Sub-sección: Mailing (19 - 21) -->
               <div class="sidebar-sub-section">
                 <button type="button" class="sidebar-sub-heading">Mailing</button>
                 <ul class="sidebar-sub-list">
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-6">
-                      <span class="sidebar-item-num">20</span>
+                      <span class="sidebar-item-num">19</span>
                       <span class="sidebar-item-name">Lanzamiento Espumante La Playa</span>
                     </button>
                   </li>
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-4">
-                      <span class="sidebar-item-num">21</span>
+                      <span class="sidebar-item-num">20</span>
                       <span class="sidebar-item-name">Oferta Espumante Socios</span>
                     </button>
                   </li>
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-7">
-                      <span class="sidebar-item-num">22</span>
+                      <span class="sidebar-item-num">21</span>
                       <span class="sidebar-item-name">Liquidación Top Wine Group</span>
                     </button>
                   </li>
                 </ul>
               </div>
 
-              <!-- Sub-sección: Instagram (23 - 24) -->
+              <!-- Sub-sección: Instagram (22 - 23) -->
               <div class="sidebar-sub-section">
                 <button type="button" class="sidebar-sub-heading">Instagram</button>
                 <ul class="sidebar-sub-list">
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-8">
-                      <span class="sidebar-item-num">23</span>
+                      <span class="sidebar-item-num">22</span>
                       <span class="sidebar-item-name">Lanzamiento Espumante La Playa</span>
                     </button>
                   </li>
                   <li>
                     <button type="button" class="sidebar-item-link" data-project-id="panel-sutil-9">
-                      <span class="sidebar-item-num">24</span>
+                      <span class="sidebar-item-num">23</span>
                       <span class="sidebar-item-name">Oferta laboral</span>
                     </button>
                   </li>
@@ -1309,7 +1337,7 @@
       <section class="campaigns-stage-area" id="campaigns-stage" aria-label="Visualizador de proyecto seleccionado">
 
         <!-- ===============================================================
-             PROYECTOS FEUC (01 - 12)
+             PROYECTOS FEUC (01 - 10)
              =============================================================== -->
 
         <!-- 01. Portada Reel: Dirigencia Social -->
@@ -1319,7 +1347,10 @@
               <span class="stage-client-tag">Portada Reel</span>
               <span class="stage-format-badge">2023</span>
             </div>
-            <h2 class="stage-project-title">Escuela de Dirigencia Social</h2>
+            <div class="stage-title-row">
+              <h2 class="stage-project-title">Escuela de Dirigencia Social</h2>
+              <a href="https://www.instagram.com/p/Cx_7WDLN2Yn/" target="_blank" rel="noopener noreferrer" class="stage-ig-link" aria-label="Ver Escuela de Dirigencia Social en Instagram">Ver publicación ↗</a>
+            </div>
           </div>
           <div class="stage-media-card aspect-story" style="background: #003366;">
             <img src="../assets/RRSS-graficas/primer-reel.jpg" alt="Portada Reel Escuela de Dirigencia Social"
@@ -1334,7 +1365,10 @@
               <span class="stage-client-tag">Carrusel</span>
               <span class="stage-format-badge">2023</span>
             </div>
-            <h2 class="stage-project-title">TRICEL 2023</h2>
+            <div class="stage-title-row">
+              <h2 class="stage-project-title">TRICEL 2023</h2>
+              <a href="https://www.instagram.com/p/CyE7EPBtUJj/" target="_blank" rel="noopener noreferrer" class="stage-ig-link" aria-label="Ver TRICEL 2023 en Instagram">Ver publicación ↗</a>
+            </div>
           </div>
           <div class="stage-media-card">
             <div class="ig-carousel-container" data-slides-count="8">
@@ -1377,7 +1411,10 @@
               <span class="stage-client-tag">Carrusel</span>
               <span class="stage-format-badge">2023</span>
             </div>
-            <h2 class="stage-project-title">Acto de homenaje CEREN</h2>
+            <div class="stage-title-row">
+              <h2 class="stage-project-title">Acto de homenaje CEREN</h2>
+              <a href="https://www.instagram.com/p/CyOR8gduUgl/" target="_blank" rel="noopener noreferrer" class="stage-ig-link" aria-label="Ver Acto de homenaje CEREN en Instagram">Ver publicación ↗</a>
+            </div>
           </div>
           <div class="stage-media-card">
             <div class="ig-carousel-container" data-slides-count="5">
@@ -1406,48 +1443,17 @@
           </div>
         </article>
 
-        <!-- 04. Convocatoria de Proyectos (Carrusel 4 slides) -->
-        <article class="project-panel" id="panel-feuc-4" data-project-index="4">
+        <!-- 04. Guía FUAS / Becas (Carrusel 3 slides) -->
+        <article class="project-panel" id="panel-feuc-5" data-project-index="4">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">Carrusel</span>
               <span class="stage-format-badge">2023</span>
             </div>
-            <h2 class="stage-project-title">Convocatoria CNA</h2>
-          </div>
-          <div class="stage-media-card">
-            <div class="ig-carousel-container" data-slides-count="4">
-              <button type="button" class="ig-nav-btn prev" aria-label="Anterior">&larr;</button>
-              <button type="button" class="ig-nav-btn next" aria-label="Siguiente">&rarr;</button>
-              <div class="ig-counter-pill"><span class="ig-curr-slide">1</span> / 4</div>
-              <div class="ig-carousel-viewport">
-                <div class="ig-carousel-track">
-                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/3CONVP.jpg"
-                      alt="Slide 1 Convocatoria" class="ig-slide-img" loading="lazy"></div>
-                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/3_1CONVP.jpg"
-                      alt="Slide 2 Convocatoria" class="ig-slide-img" loading="lazy"></div>
-                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/3_2CONVP.jpg"
-                      alt="Slide 3 Convocatoria" class="ig-slide-img" loading="lazy"></div>
-                  <div class="ig-slide-img-wrap"><img src="../assets/RRSS-graficas/1x/3_3CONVP.jpg"
-                      alt="Slide 4 Convocatoria" class="ig-slide-img" loading="lazy"></div>
-                </div>
-              </div>
-              <div class="ig-pagination-dots">
-                <span class="ig-dot active"></span><span class="ig-dot"></span><span class="ig-dot"></span><span
-                  class="ig-dot"></span>
-              </div>
+            <div class="stage-title-row">
+              <h2 class="stage-project-title">Actualización FUAS 2024</h2>
+              <a href="https://www.instagram.com/p/CylYLxEOGI0/?img_index=1" target="_blank" rel="noopener noreferrer" class="stage-ig-link" aria-label="Ver Actualización FUAS 2024 en Instagram">Ver publicación ↗</a>
             </div>
-          </div>
-        </article>
-
-        <!-- 05. Guía FUAS / Becas (Carrusel 3 slides) -->
-        <article class="project-panel" id="panel-feuc-5" data-project-index="5">
-          <div class="stage-project-header">
-            <div class="stage-meta-row">
-              <span class="stage-client-tag">Carrusel</span>
-              <span class="stage-format-badge">2023</span>
-            </div>
-            <h2 class="stage-project-title">Actualización FUAS 2024</h2>
           </div>
           <div class="stage-media-card">
             <div class="ig-carousel-container" data-slides-count="3">
@@ -1471,14 +1477,17 @@
           </div>
         </article>
 
-        <!-- 06. Presupuestos Participativos (Carrusel 5 slides) -->
-        <article class="project-panel" id="panel-feuc-6" data-project-index="6">
+        <!-- 05. Presupuestos Participativos (Carrusel 5 slides) -->
+        <article class="project-panel" id="panel-feuc-6" data-project-index="5">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">Carrusel</span>
               <span class="stage-format-badge">2023</span>
             </div>
-            <h2 class="stage-project-title">Presupuestos Participativos</h2>
+            <div class="stage-title-row">
+              <h2 class="stage-project-title">Presupuestos Participativos</h2>
+              <a href="https://www.instagram.com/p/Cyq_91tpfVF/?img_index=1" target="_blank" rel="noopener noreferrer" class="stage-ig-link" aria-label="Ver Presupuestos Participativos en Instagram">Ver publicación ↗</a>
+            </div>
           </div>
           <div class="stage-media-card">
             <div class="ig-carousel-container" data-slides-count="5">
@@ -1507,14 +1516,17 @@
           </div>
         </article>
 
-        <!-- 07. Escuela de Formación FEUC (Carrusel 5 slides) -->
-        <article class="project-panel" id="panel-feuc-7" data-project-index="7">
+        <!-- 06. Escuela de Formación FEUC (Carrusel 5 slides) -->
+        <article class="project-panel" id="panel-feuc-7" data-project-index="6">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">Carrusel</span>
               <span class="stage-format-badge">2023</span>
             </div>
-            <h2 class="stage-project-title">Elecciones FEUC 2024</h2>
+            <div class="stage-title-row">
+              <h2 class="stage-project-title">Elecciones FEUC 2024</h2>
+              <a href="https://www.instagram.com/p/CyuBuA5Jg_M/?img_index=1" target="_blank" rel="noopener noreferrer" class="stage-ig-link" aria-label="Ver Elecciones FEUC 2024 en Instagram">Ver publicación ↗</a>
+            </div>
           </div>
           <div class="stage-media-card">
             <div class="ig-carousel-container" data-slides-count="5">
@@ -1543,14 +1555,17 @@
           </div>
         </article>
 
-        <!-- 08. Mapa de Campus & Guía (Carrusel 4 slides) -->
-        <article class="project-panel" id="panel-feuc-8" data-project-index="8">
+        <!-- 07. Mapa de Campus & Guía (Carrusel 4 slides) -->
+        <article class="project-panel" id="panel-feuc-8" data-project-index="7">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">Carrusel</span>
               <span class="stage-format-badge">2023</span>
             </div>
-            <h2 class="stage-project-title">Beneficio Banner</h2>
+            <div class="stage-title-row">
+              <h2 class="stage-project-title">Beneficio Banner</h2>
+              <a href="https://www.instagram.com/p/CzCyL6DNulS/?img_index=1" target="_blank" rel="noopener noreferrer" class="stage-ig-link" aria-label="Ver Beneficio Banner en Instagram">Ver publicación ↗</a>
+            </div>
           </div>
           <div class="stage-media-card">
             <div class="ig-carousel-container" data-slides-count="4">
@@ -1577,14 +1592,17 @@
           </div>
         </article>
 
-        <!-- 09. Consejo Directivo FEUC (Carrusel 2 slides) -->
-        <article class="project-panel" id="panel-feuc-9" data-project-index="9">
+        <!-- 08. Consejo Directivo FEUC (Carrusel 2 slides) -->
+        <article class="project-panel" id="panel-feuc-9" data-project-index="8">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">Carrusel</span>
               <span class="stage-format-badge">2023</span>
             </div>
-            <h2 class="stage-project-title">Carta al director</h2>
+            <div class="stage-title-row">
+              <h2 class="stage-project-title">Carta al director</h2>
+              <a href="https://www.instagram.com/p/C0SlVt9N0wu/?img_index=1" target="_blank" rel="noopener noreferrer" class="stage-ig-link" aria-label="Ver Carta al director en Instagram">Ver publicación ↗</a>
+            </div>
           </div>
           <div class="stage-media-card">
             <div class="ig-carousel-container" data-slides-count="2">
@@ -1606,8 +1624,8 @@
           </div>
         </article>
 
-        <!-- 10. Mailing Institucional -->
-        <article class="project-panel" id="panel-feuc-11" data-project-index="10">
+        <!-- 09. Mailing Institucional -->
+        <article class="project-panel" id="panel-feuc-11" data-project-index="9">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">Mailing</span>
@@ -1621,8 +1639,8 @@
           </div>
         </article>
 
-        <!-- 11. Campaña Paloma Territorial -->
-        <article class="project-panel" id="panel-feuc-12" data-project-index="11">
+        <!-- 10. Campaña Paloma Territorial -->
+        <article class="project-panel" id="panel-feuc-12" data-project-index="10">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">Afiche</span>
@@ -1643,11 +1661,11 @@
 
 
         <!-- ===============================================================
-             PROYECTOS FUNDACIÓN RESPUESTAS (12 - 15)
+             PROYECTOS FUNDACIÓN RESPUESTAS (11 - 14)
              =============================================================== -->
 
-        <!-- 12. Respuestas: Polera -->
-        <article class="project-panel" id="panel-respuestas-1" data-project-index="12">
+        <!-- 11. Respuestas: Polera -->
+        <article class="project-panel" id="panel-respuestas-1" data-project-index="11">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">Mock up</span>
@@ -1675,8 +1693,8 @@
           </div>
         </article>
 
-        <!-- 13. Respuestas: Totebag -->
-        <article class="project-panel" id="panel-respuestas-3" data-project-index="13">
+        <!-- 12. Respuestas: Totebag -->
+        <article class="project-panel" id="panel-respuestas-3" data-project-index="12">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">Mock up</span>
@@ -1704,8 +1722,8 @@
           </div>
         </article>
 
-        <!-- 14. Respuestas: Objetos -->
-        <article class="project-panel" id="panel-respuestas-2" data-project-index="14">
+        <!-- 13. Respuestas: Objetos -->
+        <article class="project-panel" id="panel-respuestas-2" data-project-index="13">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">Mock up</span>
@@ -1733,8 +1751,8 @@
           </div>
         </article>
 
-        <!-- 15. Respuestas: Inauguración -->
-        <article class="project-panel" id="panel-respuestas-4" data-project-index="15">
+        <!-- 14. Respuestas: Inauguración -->
+        <article class="project-panel" id="panel-respuestas-4" data-project-index="14">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">ANIMACIÓN</span>
@@ -1750,11 +1768,11 @@
         </article>
 
         <!-- ===============================================================
-             PROYECTOS SUTIL WINES (16 - 24)
+             PROYECTOS SUTIL WINES (15 - 23)
              =============================================================== -->
 
-        <!-- 16. Sutil: Año Nuevo Chino -->
-        <article class="project-panel" id="panel-sutil-1" data-project-index="16">
+        <!-- 15. Sutil: Año Nuevo Chino -->
+        <article class="project-panel" id="panel-sutil-1" data-project-index="15">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">WEB ASIA</span>
@@ -1768,8 +1786,8 @@
           </div>
         </article>
 
-        <!-- 17. Sutil: Banner Booz -->
-        <article class="project-panel" id="panel-sutil-2" data-project-index="17">
+        <!-- 16. Sutil: Banner Booz -->
+        <article class="project-panel" id="panel-sutil-2" data-project-index="16">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">BANNER BOOZ.CL</span>
@@ -1797,8 +1815,8 @@
           </div>
         </article>
 
-        <!-- 18. Sutil: Lanzamiento espumante la playa -->
-        <article class="project-panel" id="panel-sutil-3" data-project-index="18">
+        <!-- 17. Sutil: Lanzamiento espumante la playa -->
+        <article class="project-panel" id="panel-sutil-3" data-project-index="17">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">BANNER BOOZ.CL</span>
@@ -1828,8 +1846,8 @@
           </div>
         </article>
 
-        <!-- 19. Sutil: Oferta Template Nacional -->
-        <article class="project-panel" id="panel-sutil-5" data-project-index="19">
+        <!-- 18. Sutil: Oferta Template Nacional -->
+        <article class="project-panel" id="panel-sutil-5" data-project-index="18">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">TEMPLATE</span>
@@ -1843,8 +1861,8 @@
           </div>
         </article>
 
-        <!-- 20. Sutil: Mailing Espumante -->
-        <article class="project-panel" id="panel-sutil-6" data-project-index="20">
+        <!-- 19. Sutil: Mailing Espumante -->
+        <article class="project-panel" id="panel-sutil-6" data-project-index="19">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">MAILING</span>
@@ -1858,8 +1876,8 @@
           </div>
         </article>
 
-        <!-- 21. Sutil: Oferta Espumante Socios -->
-        <article class="project-panel" id="panel-sutil-4" data-project-index="21">
+        <!-- 20. Sutil: Oferta Espumante Socios -->
+        <article class="project-panel" id="panel-sutil-4" data-project-index="20">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">MAILING</span>
@@ -1873,8 +1891,8 @@
           </div>
         </article>
 
-        <!-- 22. Sutil: Liquidación Top Wine Group -->
-        <article class="project-panel" id="panel-sutil-7" data-project-index="22">
+        <!-- 21. Sutil: Liquidación Top Wine Group -->
+        <article class="project-panel" id="panel-sutil-7" data-project-index="21">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">MAILING</span>
@@ -1903,8 +1921,8 @@
           </div>
         </article>
 
-        <!-- 23. Sutil: Lanzamiento Espumante La Playa -->
-        <article class="project-panel" id="panel-sutil-8" data-project-index="23">
+        <!-- 22. Sutil: Lanzamiento Espumante La Playa -->
+        <article class="project-panel" id="panel-sutil-8" data-project-index="22">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">Story</span>
@@ -1934,8 +1952,8 @@
           </div>
         </article>
 
-        <!-- 24. Sutil: Oferta laboral -->
-        <article class="project-panel" id="panel-sutil-9" data-project-index="24">
+        <!-- 23. Sutil: Oferta laboral -->
+        <article class="project-panel" id="panel-sutil-9" data-project-index="23">
           <div class="stage-project-header">
             <div class="stage-meta-row">
               <span class="stage-client-tag">Story</span>

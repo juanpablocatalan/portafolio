@@ -39,7 +39,7 @@ const DEFAULT_PROJECTS = [
   {
     id: "3",
     num: "03",
-    title: "Fronteo",
+    title: "fronteo",
     category: "Editorial",
     categoryFull: "Edición y Diseño",
     year: "2026",
@@ -67,7 +67,21 @@ const DEFAULT_PROJECTS = [
   {
     id: "5",
     num: "05",
-    title: "RRSS",
+    title: "MALPORTE",
+    category: "Moda",
+    categoryFull: "Moda y Dirección de Arte",
+    year: "2024",
+    cover: "assets/MALPORTE/DSCF0022.8.jpg",
+    url: "projects/malporte.html",
+    description: "Propuesta de moda y vestuario experimental, dirección de arte e identidad visual contemporánea.",
+    tags: ["Fashion", "Moda", "Editorial", "Direction"],
+    visible: true,
+    order: 5
+  },
+  {
+    id: "6",
+    num: "06",
+    title: "Piezas gráficas",
     category: "Social Content",
     categoryFull: "Social & Digital Content",
     year: "2023",
@@ -76,7 +90,7 @@ const DEFAULT_PROJECTS = [
     description: "Sistemas gráficos para redes sociales, micro-animaciones y contenido editorial digital.",
     tags: ["Social", "Digital", "Animation"],
     visible: true,
-    order: 5
+    order: 6
   },
 ];
 

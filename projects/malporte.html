@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+  </script>
+  <title>MALPORTE</title>
+  <meta name="description" content="Case study for MALPORTE by Juan Pablo — Moda 2024.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="../assets/happy-face.svg">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="../css/style.css?v=350">
+
+  <style>
+    .malporte-crop-container {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      background-color: #000000;
+    }
+
+    .malporte-stage-inner {
+      position: relative;
+      width: 100%;
+      line-height: 0;
+      margin-top: -30vw;
+    }
+
+    .malporte-bg-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .malporte-center-overlay {
+      position: absolute;
+      top: 39vw;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1.1);
+      width: clamp(240px, 48vw, 880px);
+      height: clamp(80px, 18vw, 320px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 10;
+      mix-blend-mode: multiply;
+    }
+
+    .malporte-seq-item {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+      display: none;
+    }
+
+    .malporte-seq-item.is-active {
+      display: block;
+    }
+
+    .chfw-showcase-container {
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      line-height: 0;
+      background-color: #000000;
+    }
+
+    .chfw-seq-item {
+      width: 100%;
+      height: auto;
+      display: none;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .chfw-seq-item.is-active {
+      display: block;
+    }
+
+    .chfw-gallery-section {
+      width: 100%;
+      padding-left: var(--page-margin);
+      padding-right: var(--page-margin);
+      margin-top: clamp(2.5rem, 5vw, 5.5rem);
+      margin-bottom: clamp(3rem, 6vw, 6.5rem);
+      box-sizing: border-box;
+    }
+
+    .chfw-gallery-header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: clamp(1.25rem, 2.5vw, 2.25rem);
+    }
+
+    .chfw-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(0.75rem, 1.5vw, 1.5rem);
+      width: 100%;
+    }
+
+    .chfw-gallery-item {
+      position: relative;
+      overflow: hidden;
+      background-color: #0b0b0d;
+      cursor: pointer;
+      border-radius: 0;
+      line-height: 0;
+      aspect-ratio: var(--gallery-aspect, 2 / 3);
+    }
+
+    .chfw-gallery-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: var(--obj-pos-x, 50%) var(--obj-pos-y, 20%);
+      transform: scale(var(--obj-zoom, 1));
+      transform-origin: var(--obj-pos-x, 50%) var(--obj-pos-y, 20%);
+      display: block;
+    }
+
+    .chfw-solarize-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: var(--obj-pos-x, 50%) var(--obj-pos-y, 20%);
+      transform: scale(var(--obj-zoom, 1));
+      transform-origin: var(--obj-pos-x, 50%) var(--obj-pos-y, 20%);
+      filter: url(#photoshop-curve-solarize);
+      opacity: 1;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .chfw-gallery-item:hover .chfw-gallery-img {
+      object-fit: cover;
+      object-position: center center;
+      transform: scale(1);
+      transform-origin: center center;
+    }
+
+    .chfw-gallery-item:hover .chfw-solarize-layer {
+      opacity: 0;
+    }
+
+    @media (max-width: 900px) {
+      .chfw-gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .chfw-gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+      }
+    }
+
+    .look-showcase-section,
+    .cristi-showcase-section {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: clamp(0.65rem, 1.35vw, 1.35rem);
+      margin-top: clamp(2.5rem, 5vw, 6rem);
+      margin-bottom: clamp(2.5rem, 5vw, 6rem);
+      overflow: hidden;
+      padding-left: clamp(0.65rem, 1.35vw, 1.35rem);
+      padding-right: var(--page-margin);
+      box-sizing: border-box;
+    }
+
+    .look-anim-frame,
+    .cristi-frame,
+    .look2-frame,
+    .look3-frame {
+      height: clamp(450px, 80vh, 920px);
+      width: clamp(340px, 58vw, 880px);
+      min-width: 0;
+      position: relative;
+      margin-left: auto;
+      margin-right: 0;
+      cursor: pointer;
+    }
+
+    .look-anim-slide,
+    .cristi-slide-img,
+    .look2-slide-img,
+    .look3-slide-img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      right: auto;
+      transform: translate(-50%, -50%);
+      height: 100%;
+      width: auto;
+      max-width: 100%;
+      object-fit: contain;
+      display: none;
+    }
+
+    .cristi-slide-img.cristi-img-v1 {
+      transform: translate(calc(-50% - 2.8vw), -50%);
+    }
+
+    .cristi-slide-img.cristi-img-v2 {
+      transform: translate(calc(-50% + 2.5vw), -50%) scale(0.95);
+    }
+
+    .look-anim-slide.is-active,
+    .cristi-slide-img.is-active,
+    .look2-slide-img.is-active,
+    .look3-slide-img.is-active {
+      display: block;
+    }
+
+    .look-more-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'SF Mono', var(--font-mono);
+      font-size: clamp(0.68rem, 0.84vw, 0.8rem);
+      font-weight: 700;
+      color: var(--color-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      width: fit-content;
+      margin-top: 0.35rem;
+      transition: color var(--transition-fast, 0.2s ease);
+    }
+
+    .look-more-link:hover {
+      color: var(--color-foreground);
+      text-decoration: none;
+    }
+
+    @media (max-width: 860px) {
+      .look-showcase-section,
+      .cristi-showcase-section {
+        flex-direction: column;
+        align-items: stretch;
+        padding-left: var(--page-margin);
+        padding-right: var(--page-margin);
+        gap: clamp(1.25rem, 3.5vw, 2rem);
+        margin-top: clamp(2rem, 5vw, 3.5rem);
+        margin-bottom: clamp(2rem, 5vw, 3.5rem);
+      }
+
+      .look-sidebar-col {
+        display: contents !important;
+      }
+
+      .look-btn-item {
+        order: 1;
+        width: 100% !important;
+        max-width: clamp(240px, 70vw, 360px) !important;
+        margin: 0 !important;
+      }
+
+      .look-anim-frame,
+      .cristi-frame,
+      .look2-frame,
+      .look3-frame {
+        order: 2;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: clamp(360px, 60vh, 540px) !important;
+        margin: 0 auto !important;
+      }
+
+      .cristi-slide-img.cristi-img-v1,
+      .cristi-slide-img.cristi-img-v2 {
+        transform: translate(-50%, -50%) !important;
+      }
+
+      .look-text-block {
+        order: 3;
+        width: 100% !important;
+        padding-left: 0 !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <!-- Desktop Navigation (Web: Inicio izquierda, Carita centro, Sobre Mí derecha) -->
+      <a href="../index.html" class="back-link header-desktop-only">INICIO</a>
+      <a href="../index.html" class="header-center-logo header-desktop-only" aria-label="Inicio">
+        <img src="../assets/happy-face-bw.svg" alt="Happy Face" class="header-logo-icon">
+      </a>
+      <nav class="site-nav header-desktop-only" aria-label="Navegación principal">
+        <ul>
+          <li><a href="../sobremi.html" class="nav-link">SOBRE MÍ</a></li>
+        </ul>
+      </nav>
+
+      <!-- Mobile Navigation (Carita a la izquierda + Menú hamburguesa a la derecha) -->
+      <a href="../index.html" class="header-logo-link header-mobile-only" aria-label="Inicio">
+        <img src="../assets/happy-face-bw.svg" alt="Happy Face" class="header-logo-icon">
+      </a>
+      <button type="button" class="menu-toggle-btn header-mobile-only" id="menu-toggle-btn" aria-label="Abrir menú"
+        aria-expanded="false" aria-controls="site-menu-drawer"
+        onclick="event.stopPropagation(); window.toggleSiteMenuDrawer && window.toggleSiteMenuDrawer(event);">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content">
+    <div class="malporte-crop-container">
+      <div class="malporte-stage-inner">
+        <img src="../assets/MALPORTE/banner-titulo.jpg" alt="MALPORTE" class="malporte-bg-img">
+
+        <!-- Overlaid Cycling Sequence -->
+        <div class="malporte-center-overlay" id="malporte-sequence-wrapper" aria-hidden="true">
+          <img src="../assets/MALPORTE/malporte_.png" alt="MALPORTE Variant 1" class="malporte-seq-item is-active">
+          <img src="../assets/MALPORTE/malporte1.png" alt="MALPORTE Variant 2" class="malporte-seq-item">
+          <img src="../assets/MALPORTE/malporte2.png" alt="MALPORTE Variant 3" class="malporte-seq-item">
+        </div>
+      </div>
+    </div>
+
+    <!-- Editorial Statement -->
+    <section class="grid-4 section-block reveal is-visible" aria-label="Introduction Statement"
+      style="margin-top: clamp(6px, 1.2vw, 1.25rem); margin-bottom: clamp(2rem, 4vw, 4.5rem); margin-left: var(--page-margin); margin-right: var(--page-margin);">
+      <div class="col-3 col-start-1 project-intro-block"
+        style="grid-column: 1 / span 3; justify-self: start; text-align: left; display: flex; flex-direction: column; align-items: flex-start; max-width: clamp(320px, 70vw, 980px);">
+        <span class="meta-label" style="display: block; margin-bottom: 3px; text-align: left;">diseño de Vestuario
+          y Dirección de arte</span>
+        <h2 class="project-intro-statement"
+          style="text-align: left; font-size: min(1.5rem, calc((100vw - 2 * var(--page-margin)) / 18.5)); font-weight: 700; line-height: 1.25;">
+          Colección de indumentaria desarrollada íntegramente desde cero, concebida a partir de la experimentación material con diversos tejidos de punto, fibras y técnicas de ensamblaje en paneles.
+        </h2>
+      </div>
+    </section>
+
+    <!-- Visual Section -->
+    <section class="media-frame" style="width: 100%; margin: 0; padding: 0;" aria-label="MALPORTE Visual">
+      <img src="../assets/MALPORTE/Catalán,-Juan-Pablo-1.jpg" alt="MALPORTE Visual" style="width: 100%; height: auto; display: block;">
+    </section>
+
+    <!-- Alternating Showcase: Look 01 -->
+    <section class="look-showcase-section cristi-showcase-section reveal is-visible" aria-label="Galería Look 1">
+      <div class="look-sidebar-col" style="flex: 0 0 auto; width: clamp(280px, 34vw, 480px); display: flex; flex-direction: column; gap: clamp(1.25rem, 2vw, 2rem); justify-content: center;">
+        <div class="look-btn-item" style="width: 100%; max-width: 450px; margin-top: 0;">
+          <img src="../assets/MALPORTE/look1b.png" alt="Look 1" style="width: 100%; height: auto; display: block;">
+        </div>
+        <div class="look-text-block" style="display: flex; flex-direction: column; gap: 0.85rem; width: 100%; padding-left: 8.1%; box-sizing: border-box;">
+          <p class="look-description" style="font-family: 'SF Mono', var(--font-mono); font-size: clamp(0.68rem, 0.84vw, 0.8rem); line-height: 1.6; color: var(--color-foreground); letter-spacing: -0.01em;">
+            Top y pantalón confeccionados mediante ensamblaje de tejido de punto en desuso. Propuesta deconstructiva con costuras expuestas al derecho, hilachas visibles y terminaciones desestructuradas que valorizan la materia prima recuperada.
+          </p>
+          <p class="look-description" style="font-family: 'SF Mono', var(--font-mono); font-size: clamp(0.68rem, 0.84vw, 0.8rem); line-height: 1.6; color: var(--color-foreground); letter-spacing: -0.01em;">
+            El conjunto se complementa con accesorios de manufactura propia: un collar construido con carros de cierre y un cinturón modular de mosquetones.
+          </p>
+          <button type="button" class="look-more-link" id="look1-more-btn" data-fig="../assets/MALPORTE/fig2.jpg" data-title="Look 01 — Figura">
+            <span>CONOCE MÁS</span>
+            <span aria-hidden="true">&rarr;</span>
+          </button>
+        </div>
+      </div>
+      <div class="cristi-frame look-anim-frame">
+        <img src="../assets/MALPORTE/cristi2.png" alt="Cristi 01" class="cristi-slide-img cristi-img-v1 is-active">
+        <img src="../assets/MALPORTE/cristi3.jpg" alt="Cristi 02" class="cristi-slide-img cristi-img-v2">
+        <img src="../assets/MALPORTE/cristi-4" alt="Cristi 03" class="cristi-slide-img">
+      </div>
+    </section>
+
+    <!-- Alternating Showcase: Look 02 -->
+    <section class="look-showcase-section reveal is-visible" aria-label="Galería Look 2">
+      <div class="look-sidebar-col" style="flex: 0 0 auto; width: clamp(280px, 34vw, 480px); display: flex; flex-direction: column; gap: clamp(1.25rem, 2vw, 2rem); justify-content: center;">
+        <div class="look-btn-item" style="width: 100%; max-width: 450px; margin-top: 0;">
+          <img src="../assets/MALPORTE/look2b.png" alt="Look 2" style="width: 100%; height: auto; display: block;">
+        </div>
+        <div class="look-text-block" style="display: flex; flex-direction: column; gap: 0.85rem; width: 100%; padding-left: 10.4%; box-sizing: border-box;">
+          <p class="look-description" style="font-family: 'SF Mono', var(--font-mono); font-size: clamp(0.68rem, 0.84vw, 0.8rem); line-height: 1.6; color: var(--color-foreground); letter-spacing: -0.01em;">
+            Top y falda tejidos con trapillo de denim reciclado (tiras de 1 cm) mediante punto elástico con palillos de 20 mm. El top utiliza dos paneles rectangulares que aprovechan la flexibilidad propia del tejido para adaptarse a distintos cuerpos, mientras que la falda se resuelve en un solo panel de calce ajustable a la cadera. Como complemento, el estilismo incorpora un alfiler de gancho a gran escala que reinterpreta la función de una cartera.
+          </p>
+          <button type="button" class="look-more-link" id="look2-more-btn" data-fig="../assets/MALPORTE/fig1.jpg" data-title="Look 02 — Figura">
+            <span>CONOCE MÁS</span>
+            <span aria-hidden="true">&rarr;</span>
+          </button>
+        </div>
+      </div>
+      <div class="look2-frame look-anim-frame">
+        <img src="../assets/MALPORTE/DSCF0022.jpg" alt="Look 2 - 01" class="look2-slide-img is-active">
+        <img src="../assets/MALPORTE/DSCF0022.2.jpg" alt="Look 2 - 02" class="look2-slide-img">
+        <img src="../assets/MALPORTE/DSCF0022.3.jpg" alt="Look 2 - 03" class="look2-slide-img">
+        <img src="../assets/MALPORTE/DSCF0022.4.jpg" alt="Look 2 - 04" class="look2-slide-img">
+        <img src="../assets/MALPORTE/DSCF0022.5.jpg" alt="Look 2 - 05" class="look2-slide-img">
+        <img src="../assets/MALPORTE/DSCF0022.6.jpg" alt="Look 2 - 06" class="look2-slide-img">
+        <img src="../assets/MALPORTE/DSCF0022.8.jpg" alt="Look 2 - 07" class="look2-slide-img">
+      </div>
+    </section>
+
+    <!-- Alternating Showcase: Look 03 -->
+    <section class="look-showcase-section reveal is-visible" aria-label="Galería Look 3">
+      <div class="look-sidebar-col" style="flex: 0 0 auto; width: clamp(280px, 34vw, 480px); display: flex; flex-direction: column; gap: clamp(1.25rem, 2vw, 2rem); justify-content: center;">
+        <div class="look-btn-item" style="width: 100%; max-width: 450px; margin-top: 0;">
+          <img src="../assets/MALPORTE/look3b.png" alt="Look 3" style="width: 100%; height: auto; display: block;">
+        </div>
+        <div class="look-text-block" style="display: flex; flex-direction: column; gap: 0.85rem; width: 100%; padding-left: 12.5%; box-sizing: border-box;">
+          <p class="look-description" style="font-family: 'SF Mono', var(--font-mono); font-size: clamp(0.68rem, 0.84vw, 0.8rem); line-height: 1.6; color: var(--color-foreground); letter-spacing: -0.01em;">
+            Top y falda confeccionados a partir de hilado obtenido del corte manual de bolsas plásticas de basura negras, en calibres de 5 mm y 10 mm respectivamente. Ambas piezas fueron resueltas en un único panel tejido en punto elástico. Para el caso del top mediante palillos de 3 mm con cierre posterior estilo corsé, y la falda en palillos de 10 mm asegurada mediante un botón.
+          </p>
+          <p class="look-description" style="font-family: 'SF Mono', var(--font-mono); font-size: clamp(0.68rem, 0.84vw, 0.8rem); line-height: 1.6; color: var(--color-foreground); letter-spacing: -0.01em;">
+            Como detalle ornamental, la falda incorpora cadenas metálicas entrelazadas a la estructura del tejido.
+          </p>
+          <button type="button" class="look-more-link" id="look3-more-btn" data-fig="../assets/MALPORTE/fig3.jpg" data-title="Look 03 — Figura">
+            <span>CONOCE MÁS</span>
+            <span aria-hidden="true">&rarr;</span>
+          </button>
+        </div>
+      </div>
+      <div class="look3-frame look-anim-frame">
+        <img src="../assets/MALPORTE/vale5.jpg" alt="Look 3 - 01" class="look3-slide-img is-active">
+        <img src="../assets/MALPORTE/vale2.jpg" alt="Look 3 - 02" class="look3-slide-img">
+        <img src="../assets/MALPORTE/vale4.jpg" alt="Look 3 - 03" class="look3-slide-img">
+        <img src="../assets/MALPORTE/vale3.jpg" alt="Look 3 - 04" class="look3-slide-img">
+        <img src="../assets/MALPORTE/vale1" alt="Look 3 - 05" class="look3-slide-img">
+      </div>
+    </section>
+
+    <!-- Full Width Visual Sequence: CHFW24 -->
+    <section class="chfw-showcase-container reveal is-visible" aria-label="MALPORTE CHFW24 Visual">
+      <img src="../assets/MALPORTE/chfw1.jpg" alt="MALPORTE CHFW24 1" class="chfw-seq-item is-active">
+      <img src="../assets/MALPORTE/chfw2.jpg" alt="MALPORTE CHFW24 2" class="chfw-seq-item">
+      <img src="../assets/MALPORTE/chfw3.jpg" alt="MALPORTE CHFW24 3" class="chfw-seq-item">
+    </section>
+
+    <!-- Runway Photo Gallery: Chile Fashion Week 2024 -->
+    <section class="chfw-gallery-section reveal is-visible" aria-label="Galería Chile Fashion Week 2024">
+      <div class="chfw-gallery-grid" id="chfw-gallery-grid" style="--gallery-aspect: 2 / 3;">
+        <div class="chfw-gallery-item" data-index="0" role="button" tabindex="0" aria-label="Foto 03 — Look 01 (Pasarela)" style="--obj-pos-x: 69%; --obj-pos-y: 69%; --obj-zoom: 1.5;">
+          <img src="../assets/MALPORTE/CHFW/3.JPG" alt="Foto 03 — Look 01 (Pasarela)" class="chfw-gallery-img chfw-base-img" loading="lazy">
+          <img src="../assets/MALPORTE/CHFW/3.JPG" alt="" class="chfw-gallery-img chfw-solarize-layer" aria-hidden="true" loading="lazy">
+        </div>
+        <div class="chfw-gallery-item" data-index="1" role="button" tabindex="0" aria-label="Foto 01 — Look 02 (Pasarela)" style="--obj-pos-x: 53%; --obj-pos-y: 15%; --obj-zoom: 6;">
+          <img src="../assets/MALPORTE/CHFW/1.JPG" alt="Foto 01 — Look 02 (Pasarela)" class="chfw-gallery-img chfw-base-img" loading="lazy">
+          <img src="../assets/MALPORTE/CHFW/1.JPG" alt="" class="chfw-gallery-img chfw-solarize-layer" aria-hidden="true" loading="lazy">
+        </div>
+        <div class="chfw-gallery-item" data-index="2" role="button" tabindex="0" aria-label="Foto 05 — Look 03 (Frontal Completo)" style="--obj-pos-x: 51%; --obj-pos-y: 53%; --obj-zoom: 2.55;">
+          <img src="../assets/MALPORTE/CHFW/5.JPG" alt="Foto 05 — Look 03 (Frontal Completo)" class="chfw-gallery-img chfw-base-img" loading="lazy">
+          <img src="../assets/MALPORTE/CHFW/5.JPG" alt="" class="chfw-gallery-img chfw-solarize-layer" aria-hidden="true" loading="lazy">
+        </div>
+        <div class="chfw-gallery-item" data-index="3" role="button" tabindex="0" aria-label="Foto 04 — Look 02 (Detalle Alfiler)" style="--obj-pos-x: 50%; --obj-pos-y: 50%; --obj-zoom: 1;">
+          <img src="../assets/MALPORTE/CHFW/4.jpg" alt="Foto 04 — Look 02 (Detalle Alfiler)" class="chfw-gallery-img chfw-base-img" loading="lazy">
+          <img src="../assets/MALPORTE/CHFW/4.jpg" alt="" class="chfw-gallery-img chfw-solarize-layer" aria-hidden="true" loading="lazy">
+        </div>
+        <div class="chfw-gallery-item" data-index="4" role="button" tabindex="0" aria-label="Foto 06 — Look 02 (Torso)" style="--obj-pos-x: 49%; --obj-pos-y: 36%; --obj-zoom: 2.45;">
+          <img src="../assets/MALPORTE/CHFW/6.jpg" alt="Foto 06 — Look 02 (Torso)" class="chfw-gallery-img chfw-base-img" loading="lazy">
+          <img src="../assets/MALPORTE/CHFW/6.jpg" alt="" class="chfw-gallery-img chfw-solarize-layer" aria-hidden="true" loading="lazy">
+        </div>
+        <div class="chfw-gallery-item" data-index="5" role="button" tabindex="0" aria-label="Foto 08 — Look 03 (Pasarela)" style="--obj-pos-x: 57%; --obj-pos-y: 44%; --obj-zoom: 1.1;">
+          <img src="../assets/MALPORTE/CHFW/8.jpg" alt="Foto 08 — Look 03 (Pasarela)" class="chfw-gallery-img chfw-base-img" loading="lazy">
+          <img src="../assets/MALPORTE/CHFW/8.jpg" alt="" class="chfw-gallery-img chfw-solarize-layer" aria-hidden="true" loading="lazy">
+        </div>
+        <div class="chfw-gallery-item" data-index="6" role="button" tabindex="0" aria-label="Foto 07 — Look 01 (Pose)" style="--obj-pos-x: 51%; --obj-pos-y: 74%; --obj-zoom: 2.05;">
+          <img src="../assets/MALPORTE/CHFW/7.JPG" alt="Foto 07 — Look 01 (Pose)" class="chfw-gallery-img chfw-base-img" loading="lazy">
+          <img src="../assets/MALPORTE/CHFW/7.JPG" alt="" class="chfw-gallery-img chfw-solarize-layer" aria-hidden="true" loading="lazy">
+        </div>
+        <div class="chfw-gallery-item" data-index="7" role="button" tabindex="0" aria-label="Foto 02 — Look 03 (Frontal)" style="--obj-pos-x: 50%; --obj-pos-y: 50%; --obj-zoom: 1;">
+          <img src="../assets/MALPORTE/CHFW/2.jpg" alt="Foto 02 — Look 03 (Frontal)" class="chfw-gallery-img chfw-base-img" loading="lazy">
+          <img src="../assets/MALPORTE/CHFW/2.jpg" alt="" class="chfw-gallery-img chfw-solarize-layer" aria-hidden="true" loading="lazy">
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">JUAN-PABLO</span>
+      <ul class="footer-nav" aria-label="Enlaces de contacto y redes">
+        <li><a href="mailto:juan-pablo.catalan@uc.cl" class="footer-link">EMAIL</a></li>
+        <li><a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer"
+            class="footer-link">LINKED IN</a></li>
+        <li><a href="https://www.instagram.com/jp.catalan/" target="_blank" rel="noopener noreferrer"
+            class="footer-link">INSTAGRAM</a></li>
+      </ul>
+      <span class="footer-copy">&copy; 2026</span>
+    </div>
+  </footer>
+
+  <!-- Custom Yellow Cursor Element -->
+  <div class="custom-cursor-wrapper" id="custom-cursor-wrapper" aria-hidden="true">
+    <div class="custom-cursor-dot" id="custom-cursor-dot"></div>
+  </div>
+
+  <!-- Photoshop Curve / Solarization SVG Filter Definition -->
+  <svg style="position: absolute; width: 0; height: 0; overflow: hidden; pointer-events: none;" aria-hidden="true">
+    <filter id="photoshop-curve-solarize" color-interpolation-filters="sRGB">
+      <feComponentTransfer>
+        <feFuncR type="table" tableValues="0.0000 0.0014 0.0028 0.0042 0.0057 0.0071 0.0085 0.0099 0.0113 0.0127 0.0142 0.0156 0.0170 0.0184 0.0198 0.0212 0.0227 0.0241 0.0255 0.0269 0.0283 0.0297 0.0312 0.0326 0.0340 0.0354 0.0368 0.0382 0.0397 0.0411 0.0425 0.0439 0.0453 0.0467 0.0482 0.0496 0.0510 0.0524 0.0538 0.0552 0.0567 0.0581 0.0595 0.0609 0.0623 0.0637 0.0652 0.0666 0.0680 0.0694 0.0708 0.0722 0.0737 0.0751 0.0765 0.0779 0.0793 0.0807 0.0822 0.0836 0.0850 0.0864 0.0878 0.0892 0.0907 0.0921 0.0935 0.0949 0.0963 0.0977 0.0992 0.1006 0.1020 0.1070 0.1121 0.1171 0.1221 0.1272 0.1322 0.1373 0.1423 0.1473 0.1524 0.1574 0.1625 0.1675 0.1725 0.1776 0.1826 0.1877 0.1927 0.1977 0.2028 0.2078 0.2129 0.2179 0.2229 0.2280 0.2330 0.2381 0.2431 0.2481 0.2532 0.2582 0.2633 0.2683 0.2733 0.2784 0.2834 0.2885 0.2935 0.2985 0.3036 0.3086 0.3137 0.3505 0.3873 0.4240 0.4608 0.4975 0.5343 0.5711 0.6078 0.6178 0.6278 0.6378 0.6478 0.6578 0.6678 0.6777 0.6877 0.6977 0.7077 0.7176 0.7200 0.7223 0.7246 0.7269 0.7292 0.7315 0.7338 0.7361 0.7385 0.7408 0.7431 0.7454 0.7477 0.7500 0.7523 0.7547 0.7570 0.7593 0.7616 0.7639 0.7662 0.7685 0.7709 0.7732 0.7755 0.7778 0.7801 0.7824 0.7847 0.7871 0.7894 0.7917 0.7940 0.7963 0.7986 0.8009 0.8033 0.8056 0.8079 0.8102 0.8125 0.8148 0.8171 0.8195 0.8218 0.8241 0.8264 0.8287 0.8310 0.8333 0.8357 0.8380 0.8403 0.8426 0.8449 0.8472 0.8495 0.8519 0.8542 0.8565 0.8588 0.8611 0.8634 0.8657 0.8681 0.8704 0.8727 0.8750 0.8773 0.8796 0.8819 0.8843 0.8866 0.8889 0.8912 0.8935 0.8958 0.8981 0.9005 0.9028 0.9051 0.9074 0.9097 0.9120 0.9143 0.9167 0.9190 0.9213 0.9236 0.9259 0.9282 0.9305 0.9329 0.9352 0.9375 0.9398 0.9421 0.9444 0.9467 0.9491 0.9514 0.9537 0.9560 0.9583 0.9606 0.9629 0.9653 0.9676 0.9699 0.9722 0.9745 0.9768 0.9791 0.9815 0.9838 0.9861 0.9884 0.9907 0.9930 0.9953 0.9977 1.0000" />
+        <feFuncG type="table" tableValues="0.0000 0.0014 0.0028 0.0042 0.0057 0.0071 0.0085 0.0099 0.0113 0.0127 0.0142 0.0156 0.0170 0.0184 0.0198 0.0212 0.0227 0.0241 0.0255 0.0269 0.0283 0.0297 0.0312 0.0326 0.0340 0.0354 0.0368 0.0382 0.0397 0.0411 0.0425 0.0439 0.0453 0.0467 0.0482 0.0496 0.0510 0.0524 0.0538 0.0552 0.0567 0.0581 0.0595 0.0609 0.0623 0.0637 0.0652 0.0666 0.0680 0.0694 0.0708 0.0722 0.0737 0.0751 0.0765 0.0779 0.0793 0.0807 0.0822 0.0836 0.0850 0.0864 0.0878 0.0892 0.0907 0.0921 0.0935 0.0949 0.0963 0.0977 0.0992 0.1006 0.1020 0.1070 0.1121 0.1171 0.1221 0.1272 0.1322 0.1373 0.1423 0.1473 0.1524 0.1574 0.1625 0.1675 0.1725 0.1776 0.1826 0.1877 0.1927 0.1977 0.2028 0.2078 0.2129 0.2179 0.2229 0.2280 0.2330 0.2381 0.2431 0.2481 0.2532 0.2582 0.2633 0.2683 0.2733 0.2784 0.2834 0.2885 0.2935 0.2985 0.3036 0.3086 0.3137 0.3505 0.3873 0.4240 0.4608 0.4975 0.5343 0.5711 0.6078 0.6178 0.6278 0.6378 0.6478 0.6578 0.6678 0.6777 0.6877 0.6977 0.7077 0.7176 0.7200 0.7223 0.7246 0.7269 0.7292 0.7315 0.7338 0.7361 0.7385 0.7408 0.7431 0.7454 0.7477 0.7500 0.7523 0.7547 0.7570 0.7593 0.7616 0.7639 0.7662 0.7685 0.7709 0.7732 0.7755 0.7778 0.7801 0.7824 0.7847 0.7871 0.7894 0.7917 0.7940 0.7963 0.7986 0.8009 0.8033 0.8056 0.8079 0.8102 0.8125 0.8148 0.8171 0.8195 0.8218 0.8241 0.8264 0.8287 0.8310 0.8333 0.8357 0.8380 0.8403 0.8426 0.8449 0.8472 0.8495 0.8519 0.8542 0.8565 0.8588 0.8611 0.8634 0.8657 0.8681 0.8704 0.8727 0.8750 0.8773 0.8796 0.8819 0.8843 0.8866 0.8889 0.8912 0.8935 0.8958 0.8981 0.9005 0.9028 0.9051 0.9074 0.9097 0.9120 0.9143 0.9167 0.9190 0.9213 0.9236 0.9259 0.9282 0.9305 0.9329 0.9352 0.9375 0.9398 0.9421 0.9444 0.9467 0.9491 0.9514 0.9537 0.9560 0.9583 0.9606 0.9629 0.9653 0.9676 0.9699 0.9722 0.9745 0.9768 0.9791 0.9815 0.9838 0.9861 0.9884 0.9907 0.9930 0.9953 0.9977 1.0000" />
+        <feFuncB type="table" tableValues="0.0000 0.0014 0.0028 0.0042 0.0057 0.0071 0.0085 0.0099 0.0113 0.0127 0.0142 0.0156 0.0170 0.0184 0.0198 0.0212 0.0227 0.0241 0.0255 0.0269 0.0283 0.0297 0.0312 0.0326 0.0340 0.0354 0.0368 0.0382 0.0397 0.0411 0.0425 0.0439 0.0453 0.0467 0.0482 0.0496 0.0510 0.0524 0.0538 0.0552 0.0567 0.0581 0.0595 0.0609 0.0623 0.0637 0.0652 0.0666 0.0680 0.0694 0.0708 0.0722 0.0737 0.0751 0.0765 0.0779 0.0793 0.0807 0.0822 0.0836 0.0850 0.0864 0.0878 0.0892 0.0907 0.0921 0.0935 0.0949 0.0963 0.0977 0.0992 0.1006 0.1020 0.1070 0.1121 0.1171 0.1221 0.1272 0.1322 0.1373 0.1423 0.1473 0.1524 0.1574 0.1625 0.1675 0.1725 0.1776 0.1826 0.1877 0.1927 0.1977 0.2028 0.2078 0.2129 0.2179 0.2229 0.2280 0.2330 0.2381 0.2431 0.2481 0.2532 0.2582 0.2633 0.2683 0.2733 0.2784 0.2834 0.2885 0.2935 0.2985 0.3036 0.3086 0.3137 0.3505 0.3873 0.4240 0.4608 0.4975 0.5343 0.5711 0.6078 0.6178 0.6278 0.6378 0.6478 0.6578 0.6678 0.6777 0.6877 0.6977 0.7077 0.7176 0.7200 0.7223 0.7246 0.7269 0.7292 0.7315 0.7338 0.7361 0.7385 0.7408 0.7431 0.7454 0.7477 0.7500 0.7523 0.7547 0.7570 0.7593 0.7616 0.7639 0.7662 0.7685 0.7709 0.7732 0.7755 0.7778 0.7801 0.7824 0.7847 0.7871 0.7894 0.7917 0.7940 0.7963 0.7986 0.8009 0.8033 0.8056 0.8079 0.8102 0.8125 0.8148 0.8171 0.8195 0.8218 0.8241 0.8264 0.8287 0.8310 0.8333 0.8357 0.8380 0.8403 0.8426 0.8449 0.8472 0.8495 0.8519 0.8542 0.8565 0.8588 0.8611 0.8634 0.8657 0.8681 0.8704 0.8727 0.8750 0.8773 0.8796 0.8819 0.8843 0.8866 0.8889 0.8912 0.8935 0.8958 0.8981 0.9005 0.9028 0.9051 0.9074 0.9097 0.9120 0.9143 0.9167 0.9190 0.9213 0.9236 0.9259 0.9282 0.9305 0.9329 0.9352 0.9375 0.9398 0.9421 0.9444 0.9467 0.9491 0.9514 0.9537 0.9560 0.9583 0.9606 0.9629 0.9653 0.9676 0.9699 0.9722 0.9745 0.9768 0.9791 0.9815 0.9838 0.9861 0.9884 0.9907 0.9930 0.9953 0.9977 1.0000" />
+      </feComponentTransfer>
+    </filter>
+  </svg>
+
+  <!-- Scripts -->
+  <script src="../js/script.js"></script>
+  <script>
+    (function initMalporteImageLoop() {
+      const items = document.querySelectorAll('.malporte-seq-item');
+      if (!items || items.length === 0) return;
+
+      let currentIndex = 0;
+      const intervalTime = 130; // Cambio ultra-rápido (130ms)
+
+      setInterval(() => {
+        items[currentIndex].classList.remove('is-active');
+        currentIndex = (currentIndex + 1) % items.length;
+        items[currentIndex].classList.add('is-active');
+      }, intervalTime);
+    })();
+
+    (function initChfwImageLoop() {
+      const items = document.querySelectorAll('.chfw-seq-item');
+      if (!items || items.length === 0) return;
+
+      let currentIndex = 0;
+      const intervalTime = 130;
+
+      setInterval(() => {
+        items[currentIndex].classList.remove('is-active');
+        currentIndex = (currentIndex + 1) % items.length;
+        items[currentIndex].classList.add('is-active');
+      }, intervalTime);
+    })();
+
+    function initLookSequenceController(frameSelector, slideSelector, lightboxTitle, intervalTime = 130) {
+      const frame = document.querySelector(frameSelector);
+      const slides = document.querySelectorAll(slideSelector);
+      if (!slides || slides.length === 0 || !frame) return;
+
+      let currentIndex = 0;
+      let topZIndex = 10;
+      let timer = null;
+
+      // Inicializar primera imagen en base
+      slides[0].style.zIndex = topZIndex++;
+      slides[0].style.display = 'block';
+
+      function step() {
+        currentIndex = (currentIndex + 1) % slides.length;
+        const nextSlide = slides[currentIndex];
+
+        // Se monta encima de la imagen anterior con mayor z-index
+        nextSlide.style.zIndex = topZIndex++;
+        nextSlide.style.display = 'block';
+
+        if (topZIndex > 1000) {
+          slides.forEach((s, idx) => {
+            s.style.zIndex = (idx === currentIndex) ? 10 : 1;
+          });
+          topZIndex = 11;
+        }
+      }
+
+      function startLoop() {
+        if (timer) clearInterval(timer);
+        timer = setInterval(step, intervalTime);
+      }
+
+      function pauseLoop() {
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }
+
+      startLoop();
+
+      // Al hacer hover, pausar exactamente en la imagen visible
+      frame.addEventListener('mouseenter', pauseLoop);
+      frame.addEventListener('mouseleave', () => {
+        const modal = document.getElementById('image-lightbox-modal');
+        if (!modal || !modal.classList.contains('is-open')) {
+          startLoop();
+        }
+      });
+
+      // Al presionar, abrir la galería con todas las imágenes de la secuencia
+      frame.addEventListener('click', (e) => {
+        e.preventDefault();
+        pauseLoop();
+        const galleryList = Array.from(slides).map(s => s.src);
+        const currentSrc = slides[currentIndex] ? slides[currentIndex].src : galleryList[0];
+        if (typeof window.openLightbox === 'function') {
+          window.openLightbox(currentSrc, lightboxTitle, galleryList, currentIndex);
+        }
+      });
+
+      // Reanudar cuando se cierre el lightbox si el mouse no está encima
+      document.addEventListener('lightbox:closed', () => {
+        if (!frame.matches(':hover')) {
+          startLoop();
+        }
+      });
+    }
+
+    // Inicializar los 3 looks con idéntico comportamiento y velocidad (130ms)
+    initLookSequenceController('.cristi-frame', '.cristi-slide-img', 'Look 01', 130);
+    initLookSequenceController('.look2-frame', '.look2-slide-img', 'Look 02', 130);
+    initLookSequenceController('.look3-frame', '.look3-slide-img', 'Look 03', 130);
+
+    // Conectar botones CONOCE MÁS → para abrir el fig correspondiente en el visor/lightbox
+    document.querySelectorAll('.look-more-link').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const figSrc = btn.getAttribute('data-fig');
+        const figTitle = btn.getAttribute('data-title') || 'Figura';
+        if (figSrc && typeof window.openLightbox === 'function') {
+          window.openLightbox(figSrc, figTitle, [figSrc], 0);
+        }
+      });
+    });
+
+    // Conectar Galería CHFW con el visor Lightbox y sincronizar encuadres del editor
+    (function initChfwGalleryLightbox() {
+      const items = document.querySelectorAll('.chfw-gallery-item');
+      const grid = document.getElementById('chfw-gallery-grid');
+      if (!items || items.length === 0) return;
+
+      // Sincronizar encuadres personalizados si existen en localStorage
+      try {
+        const saved = localStorage.getItem('chfw_gallery_framing_v2');
+        if (saved) {
+          const config = JSON.parse(saved);
+          if (config.aspectRatio && grid) {
+            grid.style.setProperty('--gallery-aspect', config.aspectRatio);
+          }
+          if (config.items) {
+            items.forEach((item, idx) => {
+              const id = idx + 1;
+              const c = config.items[id];
+              if (c) {
+                item.style.setProperty('--obj-pos-x', `${c.posX}%`);
+                item.style.setProperty('--obj-pos-y', `${c.posY}%`);
+                item.style.setProperty('--obj-zoom', c.zoom || 1);
+              }
+            });
+          }
+        }
+      } catch (e) {
+        console.error('Error syncing CHFW framing:', e);
+      }
+
+      const galleryList = Array.from(items).map(item => {
+        const img = item.querySelector('.chfw-base-img') || item.querySelector('img');
+        return img ? img.src : '';
+      }).filter(Boolean);
+
+      items.forEach((item, idx) => {
+        const openItem = (e) => {
+          e.preventDefault();
+          if (typeof window.openLightbox === 'function') {
+            window.openLightbox(galleryList[idx], 'Chile Fashion Week 2024', galleryList, idx);
+          }
+        };
+
+        item.addEventListener('click', openItem);
+        item.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            openItem(e);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+
+</html>

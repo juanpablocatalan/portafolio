@@ -1,0 +1,2297 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laboratorio de Materiales 3D — Carita Feliz — Juan Pablo Catalán</title>
+  <meta name="description"
+    content="Estudio de calibración y galería interactiva 3D en tiempo real para el modelo de la Carita Feliz. Ajusta metalicidad, rugosidad, clearcoat, iluminación de estudio y presets.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/happy-face.svg">
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Core Styles -->
+  <link rel="stylesheet" href="css/style.css?v=350">
+
+  <style>
+    :root {
+      --lab-bg: #07080a;
+      --lab-bg-stage: #0a0c10;
+      --lab-panel-bg: rgba(13, 15, 20, 0.94);
+      --lab-panel-border: rgba(255, 255, 255, 0.09);
+      --lab-panel-border-focus: rgba(255, 255, 255, 0.22);
+      --lab-accent: #facc15;
+      --lab-accent-glow: rgba(250, 204, 21, 0.35);
+      --lab-card-bg: #11131a;
+      --lab-card-hover: #181b25;
+      --lab-card-active: #1f2333;
+      --lab-text: #f3f4f6;
+      --lab-text-muted: #9ca3af;
+      --lab-text-subtle: #6b7280;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--lab-bg);
+      color: var(--lab-text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Bar Navigation */
+    .lab-navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 2rem;
+      background: rgba(10, 12, 16, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--lab-panel-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .lab-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .lab-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--lab-text);
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: -0.01em;
+    }
+
+    .lab-badge {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: rgba(250, 204, 21, 0.12);
+      color: var(--lab-accent);
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .lab-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .lab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      transition: all 0.18s ease;
+      text-decoration: none;
+      border: 1px solid var(--lab-panel-border);
+      background: var(--lab-card-bg);
+      color: var(--lab-text);
+    }
+
+    .lab-btn:hover {
+      background: var(--lab-card-hover);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .lab-btn-primary {
+      background: var(--lab-accent);
+      color: #000;
+      border-color: var(--lab-accent);
+      font-weight: 700;
+    }
+
+    .lab-btn-primary:hover {
+      background: #fde047;
+      border-color: #fde047;
+      box-shadow: 0 0 16px var(--lab-accent-glow);
+    }
+
+    /* Main App Layout */
+    .lab-container {
+      display: grid;
+      grid-template-columns: 1fr 430px;
+      flex: 1;
+      height: calc(100vh - 57px);
+      overflow: hidden;
+    }
+
+    @media (max-width: 1100px) {
+      .lab-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: 55vh 1fr;
+        height: auto;
+        overflow: visible;
+      }
+    }
+
+    /* Left Stage Viewport */
+    .stage-wrapper {
+      position: relative;
+      background: radial-gradient(circle at center, #141722 0%, #08090d 100%);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+
+    #stage-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+    }
+
+    #stage-canvas:active {
+      cursor: grabbing;
+    }
+
+    .grain-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+      mix-blend-mode: screen;
+      opacity: 0.14;
+    }
+
+    /* Stage Floating Controls Overlay */
+    .stage-top-controls {
+      position: absolute;
+      top: 1.25rem;
+      left: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 10;
+      background: rgba(13, 15, 20, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 0.35rem 0.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--lab-panel-border);
+    }
+
+    .stage-view-btn {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--lab-text-muted);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .stage-view-btn:hover {
+      color: var(--lab-text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .stage-view-btn.active {
+      color: #000;
+      background: var(--lab-accent);
+      font-weight: 700;
+    }
+
+    .stage-bottom-bar {
+      position: absolute;
+      bottom: 1.25rem;
+      left: 1.25rem;
+      right: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .stage-bottom-bar > * {
+      pointer-events: auto;
+    }
+
+    .stage-toggles {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(13, 15, 20, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 0.35rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid var(--lab-panel-border);
+    }
+
+    .stage-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.73rem;
+      font-family: var(--font-mono);
+      color: var(--lab-text-muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0.25rem 0.45rem;
+      border-radius: 5px;
+      transition: all 0.15s ease;
+    }
+
+    .stage-toggle-btn:hover {
+      color: var(--lab-text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .stage-toggle-btn.active {
+      color: var(--lab-accent);
+      background: rgba(250, 204, 21, 0.12);
+    }
+
+    .stage-stats {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--lab-text-subtle);
+      background: rgba(13, 15, 20, 0.75);
+      backdrop-filter: blur(12px);
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--lab-panel-border);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    /* Right Studio Control Panel */
+    .studio-panel {
+      background: var(--lab-panel-bg);
+      border-left: 1px solid var(--lab-panel-border);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Panel Tab Header */
+    .panel-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-bottom: 1px solid var(--lab-panel-border);
+      background: rgba(10, 12, 16, 0.6);
+    }
+
+    .tab-item {
+      padding: 0.85rem 0.4rem;
+      font-size: 0.76rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--lab-text-muted);
+      text-align: center;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .tab-item:hover {
+      color: var(--lab-text);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .tab-item.active {
+      color: var(--lab-accent);
+      border-bottom-color: var(--lab-accent);
+      background: rgba(250, 204, 21, 0.04);
+    }
+
+    .tab-item i {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Scrollable Tab Content */
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .panel-tab-pane {
+      display: none;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .panel-tab-pane.active {
+      display: flex;
+    }
+
+    /* Control Groups & Cards */
+    .control-card {
+      background: var(--lab-card-bg);
+      border: 1px solid var(--lab-panel-border);
+      border-radius: 10px;
+      padding: 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .control-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .control-card-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--lab-text);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .control-card-title i {
+      width: 14px;
+      height: 14px;
+      color: var(--lab-accent);
+    }
+
+    /* Sliders */
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .control-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.76rem;
+      font-family: var(--font-mono);
+      color: var(--lab-text-muted);
+    }
+
+    .control-value {
+      font-weight: 700;
+      color: var(--lab-accent);
+    }
+
+    .range-slider {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .range-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--lab-accent);
+      cursor: pointer;
+      box-shadow: 0 0 6px var(--lab-accent-glow);
+      transition: transform 0.1s ease;
+    }
+
+    .range-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+
+    /* Color Pickers & Swatches */
+    .color-picker-grid {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .color-input-wrapper {
+      position: relative;
+      width: 44px;
+      height: 38px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--lab-panel-border);
+      cursor: pointer;
+    }
+
+    .color-input-native {
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      width: 64px;
+      height: 58px;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    .hex-text-input {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--lab-panel-border);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--lab-text);
+      outline: none;
+      text-transform: uppercase;
+      transition: border-color 0.15s ease;
+    }
+
+    .hex-text-input:focus {
+      border-color: var(--lab-accent);
+    }
+
+    .swatches-row {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .swatch-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .swatch-btn:hover {
+      transform: scale(1.2);
+      border-color: #fff;
+    }
+
+    .swatch-btn.active {
+      border-color: var(--lab-accent);
+      box-shadow: 0 0 8px var(--lab-accent-glow);
+    }
+
+    /* Presets Grid */
+    .presets-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    .preset-card {
+      background: var(--lab-card-bg);
+      border: 1px solid var(--lab-panel-border);
+      border-radius: 8px;
+      padding: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: all 0.18s ease;
+      text-align: left;
+    }
+
+    .preset-card:hover {
+      background: var(--lab-card-hover);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .preset-card.active {
+      border-color: var(--lab-accent);
+      background: var(--lab-card-active);
+      box-shadow: 0 0 14px rgba(250, 204, 21, 0.15);
+    }
+
+    .preset-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .preset-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .preset-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--lab-text);
+    }
+
+    .preset-desc {
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
+      color: var(--lab-text-muted);
+      line-height: 1.35;
+    }
+
+    /* Code Export Modal / Area */
+    .code-box {
+      background: #06070a;
+      border: 1px solid var(--lab-panel-border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #93c5fd;
+      line-height: 1.5;
+      max-height: 280px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* Toast Notification */
+    .lab-toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: rgba(13, 15, 20, 0.95);
+      border: 1px solid var(--lab-accent);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 12px var(--lab-accent-glow);
+      color: var(--lab-text);
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .lab-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="lab-navbar">
+    <div class="lab-nav-left">
+      <a href="index.html" class="lab-brand">
+        <span style="font-size: 1.2rem;">☻</span>
+        <span>Carita Feliz 3D Lab</span>
+      </a>
+      <span class="lab-badge">Estudio de Materiales</span>
+    </div>
+    <div class="lab-nav-right">
+      <button type="button" class="lab-btn" id="btn-reset-defaults">
+        <i data-lucide="rotate-ccw" style="width: 14px; height: 14px;"></i>
+        <span>Reset</span>
+      </button>
+      <button type="button" class="lab-btn" id="btn-snapshot">
+        <i data-lucide="camera" style="width: 14px; height: 14px;"></i>
+        <span>Captura HD</span>
+      </button>
+      <button type="button" class="lab-btn lab-btn-primary" id="btn-copy-code">
+        <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+        <span>Copiar Parámetros</span>
+      </button>
+      <a href="index.html" class="lab-btn">
+        <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i>
+        <span>Volver a Inicio</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Workspace Container -->
+  <div class="lab-container">
+
+    <!-- 3D Stage Viewport (Left) -->
+    <main class="stage-wrapper" id="stage-wrapper">
+      <canvas id="stage-canvas"></canvas>
+      <canvas id="grain-canvas" class="grain-overlay"></canvas>
+
+      <!-- View Angle Floating Pills -->
+      <div class="stage-top-controls">
+        <button type="button" class="stage-view-btn active" data-angle="front">Frontal</button>
+        <button type="button" class="stage-view-btn" data-angle="iso">3/4 Isométrica</button>
+        <button type="button" class="stage-view-btn" data-angle="profile">Perfil</button>
+        <button type="button" class="stage-view-btn" data-angle="bevel">Bisel / Detalle</button>
+        <button type="button" class="stage-view-btn" data-angle="top">Cenital</button>
+      </div>
+
+      <!-- Stage Bottom Toggles & Telemetry -->
+      <div class="stage-bottom-bar">
+        <div class="stage-toggles">
+          <button type="button" class="stage-toggle-btn active" id="toggle-autorotate">
+            <i data-lucide="play" style="width: 13px; height: 13px;"></i>
+            <span>Auto-Giro</span>
+          </button>
+          <button type="button" class="stage-toggle-btn" id="toggle-home-tracking">
+            <i data-lucide="mouse-pointer" style="width: 13px; height: 13px;"></i>
+            <span>Simular Inicio (Cursor)</span>
+          </button>
+          <button type="button" class="stage-toggle-btn active" id="toggle-ground">
+            <i data-lucide="disc" style="width: 13px; height: 13px;"></i>
+            <span>Sombra Suelo</span>
+          </button>
+          <button type="button" class="stage-toggle-btn" id="toggle-wireframe">
+            <i data-lucide="box" style="width: 13px; height: 13px;"></i>
+            <span>Wireframe</span>
+          </button>
+        </div>
+
+        <div class="stage-stats">
+          <span>FPS: <strong id="val-fps" style="color:#fff;">60</strong></span>
+          <span>Modelo: <strong style="color:var(--lab-accent);">GLB Polígonos Exactos</strong></span>
+        </div>
+      </div>
+    </main>
+
+    <!-- Studio Calibration Panel (Right) -->
+    <aside class="studio-panel">
+
+      <!-- Navigation Tabs -->
+      <div class="panel-tabs">
+        <button type="button" class="tab-item active" data-tab="tab-presets">
+          <i data-lucide="sparkles"></i>
+          <span>Galería</span>
+        </button>
+        <button type="button" class="tab-item" data-tab="tab-material">
+          <i data-lucide="sliders"></i>
+          <span>Material</span>
+        </button>
+        <button type="button" class="tab-item" data-tab="tab-lighting">
+          <i data-lucide="sun"></i>
+          <span>Luces</span>
+        </button>
+        <button type="button" class="tab-item" data-tab="tab-export">
+          <i data-lucide="code-2"></i>
+          <span>Exportar</span>
+        </button>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="panel-content">
+
+        <!-- TAB 1: PRESETS GALLERY -->
+        <div class="panel-tab-pane active" id="tab-presets">
+          <div class="control-card">
+            <div class="control-card-header">
+              <span class="control-card-title">
+                <i data-lucide="sparkles"></i>
+                <span>Galería de Acabados</span>
+              </span>
+              <span style="font-size:0.7rem; font-family:var(--font-mono); color:var(--lab-text-muted);">1 Click</span>
+            </div>
+            <p style="font-size:0.75rem; color:var(--lab-text-muted); line-height:1.4;">
+              Haz clic en cualquiera de estos presets para cargar acabados calibrados y luego personaliza cada control en la pestaña <strong>Material</strong> o <strong>Luces</strong>.
+            </p>
+
+            <div class="presets-grid">
+              <!-- Preset 1: Liquid Chrome -->
+              <button type="button" class="preset-card" data-preset="liquidChrome">
+                <div class="preset-card-top">
+                  <span class="preset-title">Liquid Chrome</span>
+                  <span class="preset-dot" style="background: linear-gradient(135deg, #ffffff, #94a3b8);"></span>
+                </div>
+                <span class="preset-desc">100% Metal, espejo puro, reflejos ultra nítidos</span>
+              </button>
+
+              <!-- Preset 2: Ueno Gunmetal (Home Default) -->
+              <button type="button" class="preset-card active" data-preset="uenoGunmetal">
+                <div class="preset-card-top">
+                  <span class="preset-title">Ueno Gunmetal</span>
+                  <span class="preset-dot" style="background: #16181d; border:1px solid #475569;"></span>
+                </div>
+                <span class="preset-desc">Acero oscuro satinado con laca brillante exterior (Actual)</span>
+              </button>
+
+              <!-- Preset 3: 24K Gold -->
+              <button type="button" class="preset-card" data-preset="gold24k">
+                <div class="preset-card-top">
+                  <span class="preset-title">Oro Pulido 24K</span>
+                  <span class="preset-dot" style="background: #ffd700;"></span>
+                </div>
+                <span class="preset-desc">Oro cálido brillante con biseles reflectantes</span>
+              </button>
+
+              <!-- Preset 4: Obsidian Black Glass -->
+              <button type="button" class="preset-card" data-preset="obsidianGlass">
+                <div class="preset-card-top">
+                  <span class="preset-title">Obsidiana Gloss</span>
+                  <span class="preset-dot" style="background: #090a0f;"></span>
+                </div>
+                <span class="preset-desc">Cristal mineral negro profundo no metálico</span>
+              </button>
+
+              <!-- Preset 5: Brushed Bronze / Copper -->
+              <button type="button" class="preset-card" data-preset="brushedBronze">
+                <div class="preset-card-top">
+                  <span class="preset-title">Cobre / Bronce</span>
+                  <span class="preset-dot" style="background: #e07a5f;"></span>
+                </div>
+                <span class="preset-desc">Metálico satinado cobrizo de alta calidez</span>
+              </button>
+
+              <!-- Preset 6: Frosted Ice Glass -->
+              <button type="button" class="preset-card" data-preset="frostedIce">
+                <div class="preset-card-top">
+                  <span class="preset-title">Hielo / Vidrio</span>
+                  <span class="preset-dot" style="background: #93c5fd;"></span>
+                </div>
+                <span class="preset-desc">Transmisión de luz física y refracción IOR</span>
+              </button>
+
+              <!-- Preset 7: Cyberpunk Acid -->
+              <button type="button" class="preset-card" data-preset="cyberAcid">
+                <div class="preset-card-top">
+                  <span class="preset-title">Cyber Yellow</span>
+                  <span class="preset-dot" style="background: #ffff00;"></span>
+                </div>
+                <span class="preset-desc">Amarillo flúor reflectante con destellos neón</span>
+              </button>
+
+              <!-- Preset 8: Candy Gloss Red -->
+              <button type="button" class="preset-card" data-preset="candyRed">
+                <div class="preset-card-top">
+                  <span class="preset-title">Candy Gloss Red</span>
+                  <span class="preset-dot" style="background: #e11d48;"></span>
+                </div>
+                <span class="preset-desc">Rojo caramelo con triple capa de laca automotriz</span>
+              </button>
+
+              <!-- Preset 9: Stealth Matte Rubber -->
+              <button type="button" class="preset-card" data-preset="stealthMatte">
+                <div class="preset-card-top">
+                  <span class="preset-title">Stealth Mate</span>
+                  <span class="preset-dot" style="background: #27272a;"></span>
+                </div>
+                <span class="preset-desc">Negro mate no reflectante con difusión suave</span>
+              </button>
+
+              <!-- Preset 10: White Ceramic -->
+              <button type="button" class="preset-card" data-preset="whiteCeramic">
+                <div class="preset-card-top">
+                  <span class="preset-title">Porcelana Blanca</span>
+                  <span class="preset-dot" style="background: #ffffff;"></span>
+                </div>
+                <span class="preset-desc">Cerámica blanca inmaculada ultra brillante</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: MATERIAL PARAMETERS -->
+        <div class="panel-tab-pane" id="tab-material">
+
+          <!-- Base Color -->
+          <div class="control-card">
+            <div class="control-card-header">
+              <span class="control-card-title">
+                <i data-lucide="palette"></i>
+                <span>Color Base &amp; Albedo</span>
+              </span>
+            </div>
+
+            <div class="color-picker-grid">
+              <div class="color-input-wrapper" id="color-wrapper" style="background-color: #16181d;">
+                <input type="color" class="color-input-native" id="mat-color-picker" value="#16181d">
+              </div>
+              <input type="text" class="hex-text-input" id="mat-color-hex" value="#16181D" maxlength="7">
+            </div>
+
+            <!-- Fast Swatches -->
+            <div class="swatches-row">
+              <button type="button" class="swatch-btn" style="background:#16181d;" data-hex="#16181d" title="Gunmetal"></button>
+              <button type="button" class="swatch-btn" style="background:#090a0f;" data-hex="#090a0f" title="Obsidiana"></button>
+              <button type="button" class="swatch-btn" style="background:#e0e5eb;" data-hex="#e0e5eb" title="Plata"></button>
+              <button type="button" class="swatch-btn" style="background:#ffd700;" data-hex="#ffd700" title="Oro"></button>
+              <button type="button" class="swatch-btn" style="background:#facc15;" data-hex="#facc15" title="Amarillo"></button>
+              <button type="button" class="swatch-btn" style="background:#e07a5f;" data-hex="#e07a5f" title="Cobre"></button>
+              <button type="button" class="swatch-btn" style="background:#e11d48;" data-hex="#e11d48" title="Ruby"></button>
+              <button type="button" class="swatch-btn" style="background:#00f0ff;" data-hex="#00f0ff" title="Cyan"></button>
+              <button type="button" class="swatch-btn" style="background:#10b981;" data-hex="#10b981" title="Esmeralda"></button>
+              <button type="button" class="swatch-btn" style="background:#ffffff;" data-hex="#ffffff" title="Blanco"></button>
+              <button type="button" class="swatch-btn" style="background:#000000;" data-hex="#000000" title="Negro Absoluto"></button>
+            </div>
+          </div>
+
+          <!-- Metallic & Roughness -->
+          <div class="control-card">
+            <div class="control-card-header">
+              <span class="control-card-title">
+                <i data-lucide="shield"></i>
+                <span>Metalicidad &amp; Rugosidad</span>
+              </span>
+            </div>
+
+            <!-- Metalness -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Metalicidad (Metalness)</span>
+                <span class="control-value" id="val-mat-metalness">0.94</span>
+              </div>
+              <input type="range" class="range-slider" id="mat-metalness" min="0" max="1" step="0.01" value="0.94">
+            </div>
+
+            <!-- Roughness -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Rugosidad (Roughness)</span>
+                <span class="control-value" id="val-mat-roughness">0.20</span>
+              </div>
+              <input type="range" class="range-slider" id="mat-roughness" min="0" max="1" step="0.01" value="0.20">
+            </div>
+
+            <!-- EnvMap Intensity -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Intensidad de Reflejo (EnvMap)</span>
+                <span class="control-value" id="val-mat-envintensity">2.60</span>
+              </div>
+              <input type="range" class="range-slider" id="mat-envintensity" min="0" max="6" step="0.05" value="2.60">
+            </div>
+          </div>
+
+          <!-- Clearcoat (Laca / Barniz de espejo) -->
+          <div class="control-card">
+            <div class="control-card-header">
+              <span class="control-card-title">
+                <i data-lucide="sparkle"></i>
+                <span>Capa de Laca (Clearcoat)</span>
+              </span>
+            </div>
+
+            <!-- Clearcoat -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Laca Brillante (Clearcoat)</span>
+                <span class="control-value" id="val-mat-clearcoat">1.00</span>
+              </div>
+              <input type="range" class="range-slider" id="mat-clearcoat" min="0" max="1" step="0.01" value="1.00">
+            </div>
+
+            <!-- Clearcoat Roughness -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Rugosidad de Laca (Gloss)</span>
+                <span class="control-value" id="val-mat-clearcoatrough">0.03</span>
+              </div>
+              <input type="range" class="range-slider" id="mat-clearcoatrough" min="0" max="1" step="0.01" value="0.03">
+            </div>
+
+            <!-- IOR Refraction -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Índice de Refracción (IOR)</span>
+                <span class="control-value" id="val-mat-ior">1.52</span>
+              </div>
+              <input type="range" class="range-slider" id="mat-ior" min="1.0" max="2.4" step="0.02" value="1.52">
+            </div>
+          </div>
+
+          <!-- Micro-Ruido & Grano Analógico (Estilo Esfera UENO) -->
+          <div class="control-card">
+            <div class="control-card-header">
+              <span class="control-card-title">
+                <i data-lucide="activity"></i>
+                <span>Micro-Ruido &amp; Grano Analógico</span>
+              </span>
+            </div>
+
+            <!-- Bump Noise Scale -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Micro-Relieve Metálico (Bump Noise)</span>
+                <span class="control-value" id="val-mat-bumpscale">0.0035</span>
+              </div>
+              <input type="range" class="range-slider" id="mat-bumpscale" min="0" max="0.012" step="0.0005" value="0.0035">
+            </div>
+
+            <!-- Noise Frequency Repeat -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Densidad / Frecuencia de Ruido</span>
+                <span class="control-value" id="val-mat-bumprepeat">16</span>
+              </div>
+              <input type="range" class="range-slider" id="mat-bumprepeat" min="4" max="32" step="1" value="16">
+            </div>
+
+            <!-- Film Grain Overlay -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Grano Cinematográfico de Cámara</span>
+                <span class="control-value" id="val-mat-grainoverlay">14%</span>
+              </div>
+              <input type="range" class="range-slider" id="mat-grainoverlay" min="0" max="0.40" step="0.02" value="0.14">
+            </div>
+          </div>
+
+          <!-- Transmission & Glass (Vidrio Físico) -->
+          <div class="control-card">
+            <div class="control-card-header">
+              <span class="control-card-title">
+                <i data-lucide="droplet"></i>
+                <span>Transmisión &amp; Cristal</span>
+              </span>
+            </div>
+
+            <!-- Transmission -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Transmisión (Glass Factor)</span>
+                <span class="control-value" id="val-mat-transmission">0.00</span>
+              </div>
+              <input type="range" class="range-slider" id="mat-transmission" min="0" max="1" step="0.02" value="0.00">
+            </div>
+
+            <!-- Thickness -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Grosor de Refracción (Thickness)</span>
+                <span class="control-value" id="val-mat-thickness">0.50</span>
+              </div>
+              <input type="range" class="range-slider" id="mat-thickness" min="0" max="4" step="0.1" value="0.50">
+            </div>
+          </div>
+
+        </div>
+
+        <!-- TAB 3: LIGHTING & ENVIRONMENT -->
+        <div class="panel-tab-pane" id="tab-lighting">
+
+          <!-- Studio Environment Preset -->
+          <div class="control-card">
+            <div class="control-card-header">
+              <span class="control-card-title">
+                <i data-lucide="globe"></i>
+                <span>Ambiente de Estudio (HDR)</span>
+              </span>
+            </div>
+
+            <div class="presets-grid" style="grid-template-columns: 1fr 1fr;">
+              <button type="button" class="preset-card active" data-env="darkStudio">
+                <span class="preset-title">Ueno Dark Studio</span>
+                <span class="preset-desc">Contraste alto, softbox cenital y strip lateral</span>
+              </button>
+              <button type="button" class="preset-card" data-env="brightChrome">
+                <span class="preset-title">Liquid Silver HDR</span>
+                <span class="preset-desc">Reflexión multicapa 360° para cromados puros</span>
+              </button>
+              <button type="button" class="preset-card" data-env="cyberNeon">
+                <span class="preset-title">Cyber Neon</span>
+                <span class="preset-desc">Reflejos cyan y magenta intensos</span>
+              </button>
+              <button type="button" class="preset-card" data-env="warmGold">
+                <span class="preset-title">Sunset Gold</span>
+                <span class="preset-desc">Ambiente cálido con luz dorada</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Light Sources Calibration -->
+          <div class="control-card">
+            <div class="control-card-header">
+              <span class="control-card-title">
+                <i data-lucide="sun"></i>
+                <span>Luces Direccionales</span>
+              </span>
+            </div>
+
+            <!-- Key Light Intensity -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Luz Principal (Key Light)</span>
+                <span class="control-value" id="val-light-key">3.20</span>
+              </div>
+              <input type="range" class="range-slider" id="light-key" min="0" max="8" step="0.1" value="3.20">
+            </div>
+
+            <!-- Front Light Intensity -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Luz Frontal (Front Fill)</span>
+                <span class="control-value" id="val-light-front">1.80</span>
+              </div>
+              <input type="range" class="range-slider" id="light-front" min="0" max="6" step="0.1" value="1.80">
+            </div>
+
+            <!-- Rim Light Intensity -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Luz de Contorno (Rim Light)</span>
+                <span class="control-value" id="val-light-rim">2.40</span>
+              </div>
+              <input type="range" class="range-slider" id="light-rim" min="0" max="8" step="0.1" value="2.40">
+            </div>
+
+            <!-- Ambient Light -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Luz Ambiental (Ambient)</span>
+                <span class="control-value" id="val-light-ambient">0.18</span>
+              </div>
+              <input type="range" class="range-slider" id="light-ambient" min="0" max="2" step="0.02" value="0.18">
+            </div>
+
+            <!-- Exposure -->
+            <div class="control-row">
+              <div class="control-label-row">
+                <span>Exposición de Cámara (ACES)</span>
+                <span class="control-value" id="val-light-exposure">1.18</span>
+              </div>
+              <input type="range" class="range-slider" id="light-exposure" min="0.2" max="3" step="0.02" value="1.18">
+            </div>
+          </div>
+
+          <!-- Background Color -->
+          <div class="control-card">
+            <div class="control-card-header">
+              <span class="control-card-title">
+                <i data-lucide="image"></i>
+                <span>Fondo de Estudio</span>
+              </span>
+            </div>
+            <div class="swatches-row">
+              <button type="button" class="stage-view-btn active" data-bg="#0a0c10">Dark Studio</button>
+              <button type="button" class="stage-view-btn" data-bg="#000000">Negro Puro</button>
+              <button type="button" class="stage-view-btn" data-bg="#16181d">Gunmetal</button>
+              <button type="button" class="stage-view-btn" data-bg="#ffffff">Blanco</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- TAB 4: EXPORT & CODE GENERATOR -->
+        <div class="panel-tab-pane" id="tab-export">
+          <div class="control-card">
+            <div class="control-card-header">
+              <span class="control-card-title">
+                <i data-lucide="code"></i>
+                <span>Código Three.js Generado</span>
+              </span>
+              <button type="button" class="lab-btn lab-btn-primary" id="btn-copy-code-tab" style="padding:0.25rem 0.6rem; font-size:0.7rem;">
+                <i data-lucide="copy" style="width:12px; height:12px;"></i>
+                <span>Copiar</span>
+              </button>
+            </div>
+            <p style="font-size:0.75rem; color:var(--lab-text-muted); line-height:1.4;">
+              Este es el código exacto de <code style="color:var(--lab-accent);">MeshPhysicalMaterial</code> correspondiente a tus ajustes actuales:
+            </p>
+            <div class="code-box" id="code-output"></div>
+          </div>
+
+          <div class="control-card">
+            <div class="control-card-header">
+              <span class="control-card-title">
+                <i data-lucide="check-circle-2"></i>
+                <span>Aplicar a Inicio (index.html)</span>
+              </span>
+            </div>
+            <p style="font-size:0.75rem; color:var(--lab-text-muted); line-height:1.4;">
+              Haz clic en el botón para guardar este acabado en tu navegador. Al volver a <strong style="color:#fff;">index.html</strong>, se verá exactamente con los parámetros que calibraste aquí.
+            </p>
+            <button type="button" class="lab-btn lab-btn-primary" id="btn-save-to-local" style="justify-content:center;">
+              <i data-lucide="save" style="width:14px; height:14px;"></i>
+              <span>Guardar como Acabado Predeterminado</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="lab-toast" id="lab-toast">
+    <i data-lucide="check-circle" style="width: 16px; height: 16px; color: var(--lab-accent);"></i>
+    <span id="lab-toast-text">Parámetros copiados al portapapeles</span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/three.min.js"></script>
+  <script src="js/GLTFLoader.js"></script>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // 1. Embedded Exact Base64 Happy Face GLB
+      const HAPPY_FACE_GLB_BASE64 = "Z2xURgIAAACUzAAAcAUAAEpTT057ImFzc2V0Ijp7ImdlbmVyYXRvciI6Iktocm9ub3MgZ2xURiBCbGVuZGVyIEkvTyB2My42LjI4IiwidmVyc2lvbiI6IjIuMCJ9LCJleHRlbnNpb25zVXNlZCI6WyJLSFJfbWF0ZXJpYWxzX3NwZWN1bGFyIiwiS0hSX21hdGVyaWFsc19pb3IiXSwic2NlbmUiOjAsInNjZW5lcyI6W3sibmFtZSI6IlNjZW5lIiwibm9kZXMiOlswXX1dLCJub2RlcyI6W3sibWVzaCI6MCwibmFtZSI6IlNpbiB0XHUwMGVkdHVsbyIsInJvdGF0aW9uIjpbMC43MDcxMDY4Mjg2ODk1NzUyLDAsMCwwLjcwNzEwNjgyODY4OTU3NTJdfV0sIm1hdGVyaWFscyI6W3siZG91YmxlU2lkZWQiOnRydWUsImV4dGVuc2lvbnMiOnsiS0hSX21hdGVyaWFsc19zcGVjdWxhciI6eyJzcGVjdWxhckNvbG9yRmFjdG9yIjpbMCwwLDBdfSwiS0hSX21hdGVyaWFsc19pb3IiOnsiaW9yIjoxLjQ1MDAwMDA0NzY4MzcxNTh9fSwibmFtZSI6IkFjZXJvXy1fU2F0aW5hZG8iLCJwYnJNZXRhbGxpY1JvdWdobmVzcyI6eyJiYXNlQ29sb3JGYWN0b3IiOlswLjYyNzQ1MTAwMjU5NzgwODgsMC42Mjc0NTEwMDI1OTc4MDg4LDAuNjI3NDUxMDAyNTk3ODA4OCwxXSwibWV0YWxsaWNGYWN0b3IiOjB9fV0sIm1lc2hlcyI6W3sibmFtZSI6IlNpbiB0XHUwMGVkdHVsbyIsInByaW1pdGl2ZXMiOlt7ImF0dHJpYnV0ZXMiOnsiUE9TSVRJT04iOjAsIk5PUk1BTCI6MSwiVEVYQ09PUkRfMCI6Mn0sImluZGljZXMiOjMsIm1hdGVyaWFsIjowfV19XSwiYWNjZXNzb3JzIjpbeyJidWZmZXJWaWV3IjowLCJjb21wb25lbnRUeXBlIjo1MTI2LCJjb3VudCI6MTM1NiwibWF4IjpbMy42OTcyODgwMzYzNDY0MzU1LDAuMzAwMDAwMDExOTIwOTI4OTYsMy43MDIzMTM4OTk5OTM4OTY1XSwibWluIjpbMCwwLDBdLCJ0eXBlIjoiVkVD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";
+
+      function base64ToArrayBuffer(base64) {
+        const binaryString = window.atob(base64);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes.buffer;
+      }
+
+      // 2. Curated Presets
+      const PRESETS = {
+        uenoGunmetal: {
+          name: 'Ueno Gunmetal (Esfera Ref)',
+          mat: {
+            color: '#101216',
+            metalness: 0.96,
+            roughness: 0.19,
+            clearcoat: 1.00,
+            clearcoatRoughness: 0.04,
+            ior: 1.52,
+            envMapIntensity: 3.00,
+            transmission: 0.00,
+            thickness: 0.00,
+            bumpScale: 0.0035,
+            bumpRepeat: 16,
+            grainOverlay: 0.14
+          },
+          env: 'darkStudio',
+          lights: { key: 3.60, front: 1.60, rim: 2.80, ambient: 0.16, exposure: 1.20 }
+        },
+        liquidChrome: {
+          name: 'Liquid Chrome',
+          mat: {
+            color: '#FFFFFF',
+            metalness: 1.00,
+            roughness: 0.02,
+            clearcoat: 1.00,
+            clearcoatRoughness: 0.01,
+            ior: 1.80,
+            envMapIntensity: 3.40,
+            transmission: 0.00,
+            thickness: 0.00,
+            bumpScale: 0.0010,
+            bumpRepeat: 16,
+            grainOverlay: 0.08
+          },
+          env: 'brightChrome',
+          lights: { key: 2.80, front: 1.50, rim: 3.20, ambient: 0.35, exposure: 1.10 }
+        },
+        gold24k: {
+          name: 'Oro Pulido 24K',
+          mat: {
+            color: '#FFD700',
+            metalness: 0.98,
+            roughness: 0.08,
+            clearcoat: 1.00,
+            clearcoatRoughness: 0.05,
+            ior: 1.60,
+            envMapIntensity: 2.80,
+            transmission: 0.00,
+            thickness: 0.00,
+            bumpScale: 0.0020,
+            bumpRepeat: 16,
+            grainOverlay: 0.10
+          },
+          env: 'warmGold',
+          lights: { key: 3.50, front: 1.60, rim: 2.80, ambient: 0.25, exposure: 1.15 }
+        },
+        obsidianGlass: {
+          name: 'Obsidiana Gloss',
+          mat: {
+            color: '#090A0F',
+            metalness: 0.00,
+            roughness: 0.04,
+            clearcoat: 1.00,
+            clearcoatRoughness: 0.02,
+            ior: 1.95,
+            envMapIntensity: 3.00,
+            transmission: 0.05,
+            thickness: 1.20,
+            bumpScale: 0.0015,
+            bumpRepeat: 16,
+            grainOverlay: 0.12
+          },
+          env: 'darkStudio',
+          lights: { key: 4.00, front: 1.20, rim: 3.80, ambient: 0.15, exposure: 1.25 }
+        },
+        brushedBronze: {
+          name: 'Cobre / Bronce',
+          mat: {
+            color: '#E07A5F',
+            metalness: 0.92,
+            roughness: 0.26,
+            clearcoat: 0.80,
+            clearcoatRoughness: 0.12,
+            ior: 1.55,
+            envMapIntensity: 2.20,
+            transmission: 0.00,
+            thickness: 0.00,
+            bumpScale: 0.0040,
+            bumpRepeat: 20,
+            grainOverlay: 0.15
+          },
+          env: 'warmGold',
+          lights: { key: 3.20, front: 1.80, rim: 2.50, ambient: 0.30, exposure: 1.15 }
+        },
+        frostedIce: {
+          name: 'Hielo / Vidrio Traslúcido',
+          mat: {
+            color: '#C7E4FA',
+            metalness: 0.00,
+            roughness: 0.22,
+            clearcoat: 1.00,
+            clearcoatRoughness: 0.10,
+            ior: 1.52,
+            envMapIntensity: 2.50,
+            transmission: 0.92,
+            thickness: 2.40,
+            bumpScale: 0.0030,
+            bumpRepeat: 16,
+            grainOverlay: 0.10
+          },
+          env: 'brightChrome',
+          lights: { key: 4.50, front: 2.00, rim: 4.20, ambient: 0.40, exposure: 1.20 }
+        },
+        cyberAcid: {
+          name: 'Cyber Acid Yellow',
+          mat: {
+            color: '#FFFF00',
+            metalness: 0.45,
+            roughness: 0.14,
+            clearcoat: 1.00,
+            clearcoatRoughness: 0.04,
+            ior: 1.65,
+            envMapIntensity: 3.20,
+            transmission: 0.00,
+            thickness: 0.00,
+            bumpScale: 0.0025,
+            bumpRepeat: 16,
+            grainOverlay: 0.14
+          },
+          env: 'cyberNeon',
+          lights: { key: 3.60, front: 1.80, rim: 3.50, ambient: 0.30, exposure: 1.20 }
+        },
+        candyRed: {
+          name: 'Candy Gloss Red',
+          mat: {
+            color: '#E11D48',
+            metalness: 0.30,
+            roughness: 0.08,
+            clearcoat: 1.00,
+            clearcoatRoughness: 0.02,
+            ior: 1.70,
+            envMapIntensity: 2.80,
+            transmission: 0.00,
+            thickness: 0.00,
+            bumpScale: 0.0010,
+            bumpRepeat: 16,
+            grainOverlay: 0.10
+          },
+          env: 'darkStudio',
+          lights: { key: 3.50, front: 1.80, rim: 3.00, ambient: 0.25, exposure: 1.15 }
+        },
+        stealthMatte: {
+          name: 'Stealth Matte',
+          mat: {
+            color: '#202228',
+            metalness: 0.05,
+            roughness: 0.85,
+            clearcoat: 0.00,
+            clearcoatRoughness: 0.50,
+            ior: 1.40,
+            envMapIntensity: 0.60,
+            transmission: 0.00,
+            thickness: 0.00,
+            bumpScale: 0.0050,
+            bumpRepeat: 24,
+            grainOverlay: 0.18
+          },
+          env: 'darkStudio',
+          lights: { key: 2.80, front: 1.60, rim: 1.80, ambient: 0.35, exposure: 1.10 }
+        },
+        whiteCeramic: {
+          name: 'Porcelana Blanca',
+          mat: {
+            color: '#FFFFFF',
+            metalness: 0.00,
+            roughness: 0.06,
+            clearcoat: 1.00,
+            clearcoatRoughness: 0.02,
+            ior: 1.55,
+            envMapIntensity: 2.40,
+            transmission: 0.00,
+            thickness: 0.00,
+            bumpScale: 0.0005,
+            bumpRepeat: 16,
+            grainOverlay: 0.08
+          },
+          env: 'brightChrome',
+          lights: { key: 3.00, front: 1.80, rim: 2.20, ambient: 0.40, exposure: 1.12 }
+        }
+      };
+
+      // 3. State Management
+      const state = JSON.parse(JSON.stringify(PRESETS.uenoGunmetal));
+      state.activePresetKey = 'uenoGunmetal';
+      state.autoRotate = true;
+      state.autoRotateSpeed = 0.008;
+      state.homeTracking = false;
+      state.groundVisible = true;
+      state.wireframe = false;
+      state.bgColor = '#0a0c10';
+
+      let scene, camera, renderer, modelMesh, modelGroup, innerGroup, groundMesh;
+      let keyLight, frontLight, rimLight, topRim, fillLight, ambientLight;
+      let pmremGenerator;
+      let envMaps = {};
+      let currentNoiseTex = null;
+
+      const targetRotation = { x: 0, y: 0 };
+      const currentRotation = { x: 0, y: 0 };
+      let targetDistance = 4.2;
+      let currentDistance = 4.2;
+
+      let isDragging = false;
+      let prevPointer = { x: 0, y: 0 };
+
+      // Procedural Micro-Noise Texture
+      function getOrCreateNoiseTexture(repeat = 16) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+        const imgData = ctx.createImageData(512, 512);
+        const data = imgData.data;
+
+        for (let i = 0; i < data.length; i += 4) {
+          const n = (Math.random() + Math.random() + Math.random() + Math.random()) / 4;
+          const v = Math.floor(n * 255);
+          data[i] = v;
+          data[i + 1] = v;
+          data[i + 2] = v;
+          data[i + 3] = 255;
+        }
+        ctx.putImageData(imgData, 0, 0);
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(repeat, repeat);
+        return tex;
+      }
+
+      // Film Grain Overlay on Canvas
+      function updateFilmGrainOverlay() {
+        const canvas = document.getElementById('grain-canvas');
+        if (!canvas) return;
+        canvas.style.opacity = state.mat.grainOverlay !== undefined ? state.mat.grainOverlay : 0.14;
+
+        if (!canvas._initialized) {
+          canvas._initialized = true;
+          const gctx = canvas.getContext('2d');
+          const gw = 256;
+          const gh = 256;
+          canvas.width = gw;
+          canvas.height = gh;
+          const gData = gctx.createImageData(gw, gh);
+          const gd = gData.data;
+
+          for (let i = 0; i < gd.length; i += 4) {
+            const val = Math.floor(Math.random() * 255);
+            gd[i] = val;
+            gd[i + 1] = val;
+            gd[i + 2] = val;
+            gd[i + 3] = 255;
+          }
+          gctx.putImageData(gData, 0, 0);
+        }
+      }
+
+      // 4. Environment Map Generators (HDR-equivalent reflections on Canvas)
+      function buildStudioEnvMap(type) {
+        if (envMaps[type]) return envMaps[type];
+        if (!renderer || typeof THREE.PMREMGenerator === 'undefined') return null;
+
+        if (!pmremGenerator) {
+          pmremGenerator = new THREE.PMREMGenerator(renderer);
+          pmremGenerator.compileEquirectangularShader();
+        }
+
+        const c = document.createElement('canvas');
+        c.width = 1024;
+        c.height = 512;
+        const ctx = c.getContext('2d');
+
+        if (type === 'darkStudio') {
+          ctx.fillStyle = '#020305';
+          ctx.fillRect(0, 0, 1024, 512);
+
+          // Top-Left Softbox (Matches the bright specular dome hotspot in Ueno reference)
+          const g1 = ctx.createRadialGradient(290, 130, 5, 290, 130, 280);
+          g1.addColorStop(0, '#ffffff');
+          g1.addColorStop(0.25, '#ffffff');
+          g1.addColorStop(0.55, 'rgba(235, 240, 252, 0.75)');
+          g1.addColorStop(0.85, 'rgba(120, 140, 175, 0.25)');
+          g1.addColorStop(1, 'rgba(2, 3, 5, 0)');
+          ctx.fillStyle = g1;
+          ctx.fillRect(0, 0, 620, 380);
+
+          // High Overhead Softbox Dome
+          const topDome = ctx.createRadialGradient(512, 60, 10, 512, 60, 350);
+          topDome.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+          topDome.addColorStop(0.4, 'rgba(220, 230, 250, 0.4)');
+          topDome.addColorStop(1, 'rgba(2, 3, 5, 0)');
+          ctx.fillStyle = topDome;
+          ctx.fillRect(0, 0, 1024, 280);
+
+          // Sharp Rim Accent Strips (Right & Left)
+          const g2 = ctx.createLinearGradient(780, 0, 880, 0);
+          g2.addColorStop(0, 'rgba(255, 255, 255, 0)');
+          g2.addColorStop(0.5, '#ffffff');
+          g2.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          ctx.fillStyle = g2;
+          ctx.fillRect(780, 30, 100, 420);
+
+          const leftRim = ctx.createLinearGradient(60, 0, 140, 0);
+          leftRim.addColorStop(0, 'rgba(255, 255, 255, 0)');
+          leftRim.addColorStop(0.5, 'rgba(210, 225, 255, 0.6)');
+          leftRim.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          ctx.fillStyle = leftRim;
+          ctx.fillRect(60, 50, 80, 380);
+
+          // Bottom Bounce
+          const g3 = ctx.createRadialGradient(512, 450, 20, 512, 450, 240);
+          g3.addColorStop(0, 'rgba(160, 180, 210, 0.35)');
+          g3.addColorStop(1, 'rgba(2, 3, 5, 0)');
+          ctx.fillStyle = g3;
+          ctx.fillRect(200, 310, 624, 202);
+
+        } else if (type === 'brightChrome') {
+          ctx.fillStyle = '#1e2330';
+          ctx.fillRect(0, 0, 1024, 512);
+
+          const strips = [
+            { x: 120, w: 140, col: '#ffffff' },
+            { x: 380, w: 200, col: '#f0f5ff' },
+            { x: 680, w: 120, col: '#e2e8f0' },
+            { x: 880, w: 90,  col: '#ffffff' }
+          ];
+          strips.forEach(s => {
+            const grad = ctx.createLinearGradient(s.x, 0, s.x + s.w, 0);
+            grad.addColorStop(0, 'rgba(255,255,255,0)');
+            grad.addColorStop(0.5, s.col);
+            grad.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(s.x, 20, s.w, 472);
+          });
+
+          const dome = ctx.createRadialGradient(512, 100, 20, 512, 100, 400);
+          dome.addColorStop(0, 'rgba(255,255,255,0.85)');
+          dome.addColorStop(1, 'rgba(20,25,35,0)');
+          ctx.fillStyle = dome;
+          ctx.fillRect(0, 0, 1024, 300);
+
+        } else if (type === 'cyberNeon') {
+          ctx.fillStyle = '#05070d';
+          ctx.fillRect(0, 0, 1024, 512);
+
+          const cyan = ctx.createRadialGradient(250, 160, 20, 250, 160, 300);
+          cyan.addColorStop(0, '#00f0ff');
+          cyan.addColorStop(0.5, 'rgba(0, 240, 255, 0.7)');
+          cyan.addColorStop(1, 'rgba(5, 7, 13, 0)');
+          ctx.fillStyle = cyan;
+          ctx.fillRect(0, 0, 500, 400);
+
+          const magenta = ctx.createLinearGradient(750, 0, 880, 0);
+          magenta.addColorStop(0, 'rgba(255, 0, 128, 0)');
+          magenta.addColorStop(0.5, '#ff007f');
+          magenta.addColorStop(1, 'rgba(255, 0, 128, 0)');
+          ctx.fillStyle = magenta;
+          ctx.fillRect(750, 30, 130, 440);
+
+          const neonYellow = ctx.createRadialGradient(512, 450, 10, 512, 450, 200);
+          neonYellow.addColorStop(0, '#facc15');
+          neonYellow.addColorStop(1, 'rgba(5, 7, 13, 0)');
+          ctx.fillStyle = neonYellow;
+          ctx.fillRect(250, 320, 524, 192);
+
+        } else if (type === 'warmGold') {
+          ctx.fillStyle = '#140c06';
+          ctx.fillRect(0, 0, 1024, 512);
+
+          const gold = ctx.createRadialGradient(300, 150, 20, 300, 150, 320);
+          gold.addColorStop(0, '#fff4cc');
+          gold.addColorStop(0.4, '#ffd700');
+          gold.addColorStop(0.75, 'rgba(217, 119, 6, 0.6)');
+          gold.addColorStop(1, 'rgba(20, 12, 6, 0)');
+          ctx.fillStyle = gold;
+          ctx.fillRect(0, 0, 650, 400);
+
+          const warmRim = ctx.createLinearGradient(780, 0, 880, 0);
+          warmRim.addColorStop(0, 'rgba(251, 191, 36, 0)');
+          warmRim.addColorStop(0.5, '#fbbf24');
+          warmRim.addColorStop(1, 'rgba(251, 191, 36, 0)');
+          ctx.fillStyle = warmRim;
+          ctx.fillRect(780, 40, 100, 400);
+        }
+
+        const tex = new THREE.CanvasTexture(c);
+        tex.mapping = THREE.EquirectangularReflectionMapping;
+        const generated = pmremGenerator.fromEquirectangular(tex).texture;
+        tex.dispose();
+        envMaps[type] = generated;
+        return generated;
+      }
+
+      // 5. Initialize Three.js Engine
+      function initThree() {
+        const stage = document.getElementById('stage-wrapper');
+        const canvas = document.getElementById('stage-canvas');
+        if (!stage || !canvas || typeof THREE === 'undefined') return;
+
+        scene = new THREE.Scene();
+
+        const w = stage.clientWidth || 800;
+        const h = stage.clientHeight || 600;
+
+        camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 100);
+        camera.position.set(0, 0, currentDistance);
+
+        renderer = new THREE.WebGLRenderer({
+          canvas: canvas,
+          alpha: true,
+          antialias: true,
+          powerPreference: 'high-performance',
+          preserveDrawingBuffer: true
+        });
+        renderer.setSize(w, h);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setClearColor(0x000000, 0);
+
+        if (renderer.outputColorSpace) {
+          renderer.outputColorSpace = THREE.SRGBColorSpace;
+        } else if (renderer.outputEncoding) {
+          renderer.outputEncoding = THREE.sRGBEncoding;
+        }
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = state.lights.exposure;
+
+        // Apply Studio Environment
+        updateEnvironmentMap();
+
+        // Model Hierarchies
+        modelGroup = new THREE.Group();
+        scene.add(modelGroup);
+
+        innerGroup = new THREE.Group();
+        modelGroup.add(innerGroup);
+
+        // Studio Lighting Rig
+        ambientLight = new THREE.AmbientLight(0xffffff, state.lights.ambient);
+        scene.add(ambientLight);
+
+        keyLight = new THREE.DirectionalLight(0xffffff, state.lights.key);
+        keyLight.position.set(-3.8, 4.8, 4.2);
+        scene.add(keyLight);
+
+        frontLight = new THREE.DirectionalLight(0xffffff, state.lights.front);
+        frontLight.position.set(-1.5, 2.5, 5.0);
+        scene.add(frontLight);
+
+        rimLight = new THREE.DirectionalLight(0xffffff, state.lights.rim);
+        rimLight.position.set(4.5, -1.0, -2.5);
+        scene.add(rimLight);
+
+        topRim = new THREE.DirectionalLight(0xffffff, 1.6);
+        topRim.position.set(1.0, 5.0, -3.5);
+        scene.add(topRim);
+
+        fillLight = new THREE.DirectionalLight(0xccdcf5, 0.65);
+        fillLight.position.set(3.5, -4.0, 2.5);
+        scene.add(fillLight);
+
+        // Soft Shadow Ground Disc
+        const groundGeo = new THREE.PlaneGeometry(8, 8);
+        const groundCanvas = document.createElement('canvas');
+        groundCanvas.width = 256;
+        groundCanvas.height = 256;
+        const gctx = groundCanvas.getContext('2d');
+        const grad = gctx.createRadialGradient(128, 128, 10, 128, 128, 120);
+        grad.addColorStop(0, 'rgba(0,0,0,0.65)');
+        grad.addColorStop(0.5, 'rgba(0,0,0,0.25)');
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        gctx.fillStyle = grad;
+        gctx.fillRect(0, 0, 256, 256);
+
+        const groundTex = new THREE.CanvasTexture(groundCanvas);
+        const groundMat = new THREE.MeshBasicMaterial({
+          map: groundTex,
+          transparent: true,
+          depthWrite: false,
+          opacity: 0.8
+        });
+        groundMesh = new THREE.Mesh(groundGeo, groundMat);
+        groundMesh.rotation.x = -Math.PI / 2;
+        groundMesh.position.y = -1.65;
+        scene.add(groundMesh);
+
+        // Load 3D Happy Face GLB
+        loadHappyFaceModel();
+
+        // Bind User Interaction (Orbit, Zoom, Hover)
+        setupInteraction();
+
+        // Start Rendering
+        animate();
+      }
+
+      // 6. Model Loading & Material Binding
+      function loadHappyFaceModel() {
+        if (typeof THREE.GLTFLoader === 'undefined') return;
+        const loader = new THREE.GLTFLoader();
+
+        function onLoaded(gltfScene) {
+          const box = new THREE.Box3().setFromObject(gltfScene);
+          const center = box.getCenter(new THREE.Vector3());
+          const size = box.getSize(new THREE.Vector3());
+
+          gltfScene.position.x = -center.x;
+          gltfScene.position.y = -center.y;
+          gltfScene.position.z = -center.z;
+
+          const targetDim = 2.84;
+          const maxDim = Math.max(size.x, size.y, size.z) || 1;
+          const scale = targetDim / maxDim;
+          innerGroup.scale.set(scale, scale, scale);
+          innerGroup.add(gltfScene);
+
+          // Create PBR Physical Material
+          const mat = new THREE.MeshPhysicalMaterial({
+            color: new THREE.Color(state.mat.color),
+            metalness: state.mat.metalness,
+            roughness: state.mat.roughness,
+            clearcoat: state.mat.clearcoat,
+            clearcoatRoughness: state.mat.clearcoatRoughness,
+            ior: state.mat.ior,
+            envMapIntensity: state.mat.envMapIntensity,
+            transmission: state.mat.transmission,
+            thickness: state.mat.thickness,
+            wireframe: state.wireframe,
+            side: THREE.DoubleSide
+          });
+
+          gltfScene.traverse((child) => {
+            if (child.isMesh) {
+              modelMesh = child;
+              child.material = mat;
+              child.material.needsUpdate = true;
+            }
+          });
+
+          updateMaterialFromState();
+          updateCodeOutput();
+        }
+
+        try {
+          const buffer = base64ToArrayBuffer(HAPPY_FACE_GLB_BASE64);
+          loader.parse(buffer, '', (gltf) => onLoaded(gltf.scene), () => {
+            loader.load('assets/models/happy-face.glb', (gltf) => onLoaded(gltf.scene));
+          });
+        } catch (e) {
+          loader.load('assets/models/happy-face.glb', (gltf) => onLoaded(gltf.scene));
+        }
+      }
+
+      // 7. Update Helpers
+      function updateEnvironmentMap() {
+        const env = buildStudioEnvMap(state.env);
+        if (env && scene) {
+          scene.environment = env;
+        }
+      }
+
+      function updateMaterialFromState() {
+        if (!modelMesh || !modelMesh.material) return;
+        const m = modelMesh.material;
+
+        m.color.set(state.mat.color);
+        m.metalness = parseFloat(state.mat.metalness);
+        m.roughness = parseFloat(state.mat.roughness);
+        m.clearcoat = parseFloat(state.mat.clearcoat);
+        m.clearcoatRoughness = parseFloat(state.mat.clearcoatRoughness);
+        m.ior = parseFloat(state.mat.ior);
+        m.envMapIntensity = parseFloat(state.mat.envMapIntensity);
+        m.transmission = parseFloat(state.mat.transmission);
+        m.thickness = parseFloat(state.mat.thickness);
+        m.wireframe = state.wireframe;
+
+        const repeat = parseInt(state.mat.bumpRepeat, 10) || 16;
+        if (!currentNoiseTex || currentNoiseTex._repeat !== repeat) {
+          if (currentNoiseTex) currentNoiseTex.dispose();
+          currentNoiseTex = getOrCreateNoiseTexture(repeat);
+          currentNoiseTex._repeat = repeat;
+        }
+        m.bumpMap = currentNoiseTex;
+        m.bumpScale = state.mat.bumpScale !== undefined ? parseFloat(state.mat.bumpScale) : 0.0035;
+
+        m.needsUpdate = true;
+
+        updateFilmGrainOverlay();
+        updateCodeOutput();
+      }
+
+      function updateLightsFromState() {
+        if (ambientLight) ambientLight.intensity = parseFloat(state.lights.ambient);
+        if (keyLight) keyLight.intensity = parseFloat(state.lights.key);
+        if (frontLight) frontLight.intensity = parseFloat(state.lights.front);
+        if (rimLight) rimLight.intensity = parseFloat(state.lights.rim);
+        if (renderer) renderer.toneMappingExposure = parseFloat(state.lights.exposure);
+      }
+
+      function updateCodeOutput() {
+        const codeEl = document.getElementById('code-output');
+        if (!codeEl) return;
+
+        const hexUpper = state.mat.color.toUpperCase();
+        const hexNum = '0x' + hexUpper.replace('#', '');
+
+        const code = `// Configuración de Material para js/smiley3d.js
+function createCustomHappyFaceMaterial() {
+  const noiseTexture = createNoiseTexture(512, ${parseInt(state.mat.bumpRepeat, 10) || 16});
+
+  return new THREE.MeshPhysicalMaterial({
+    color: ${hexNum},             // ${hexUpper}
+    metalness: ${Number(state.mat.metalness).toFixed(2)},
+    roughness: ${Number(state.mat.roughness).toFixed(2)},
+    clearcoat: ${Number(state.mat.clearcoat).toFixed(2)},
+    clearcoatRoughness: ${Number(state.mat.clearcoatRoughness).toFixed(2)},
+    ior: ${Number(state.mat.ior).toFixed(2)},
+    reflectivity: 1.0,
+    envMapIntensity: ${Number(state.mat.envMapIntensity).toFixed(2)},
+    transmission: ${Number(state.mat.transmission).toFixed(2)},
+    thickness: ${Number(state.mat.thickness).toFixed(2)},
+    bumpMap: noiseTexture,
+    bumpScale: ${Number(state.mat.bumpScale || 0.0035).toFixed(4)},
+    side: THREE.DoubleSide
+  });
+}`;
+
+        codeEl.textContent = code;
+      }
+
+      // 8. Interaction Setup (360° Orbit, Zoom, Tracking)
+      function setupInteraction() {
+        const stage = document.getElementById('stage-wrapper');
+
+        stage.addEventListener('pointerdown', (e) => {
+          isDragging = true;
+          prevPointer = { x: e.clientX, y: e.clientY };
+          try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+
+        stage.addEventListener('pointermove', (e) => {
+          if (state.homeTracking) {
+            const rect = stage.getBoundingClientRect();
+            const progress = Math.min(Math.max((e.clientY - rect.top) / rect.height, 0), 1);
+            targetRotation.y = progress * (Math.PI * 2);
+            return;
+          }
+
+          if (!isDragging) return;
+          const dx = e.clientX - prevPointer.x;
+          const dy = e.clientY - prevPointer.y;
+          prevPointer = { x: e.clientX, y: e.clientY };
+
+          targetRotation.y += dx * 0.0085;
+          targetRotation.x += dy * 0.0085;
+          targetRotation.x = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, targetRotation.x));
+        });
+
+        function endDrag(e) {
+          if (isDragging) {
+            isDragging = false;
+            try { stage.releasePointerCapture(e.pointerId); } catch (err) {}
+          }
+        }
+
+        stage.addEventListener('pointerup', endDrag);
+        stage.addEventListener('pointercancel', endDrag);
+
+        stage.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const zoom = e.deltaY * 0.003;
+          targetDistance = Math.max(2.0, Math.min(8.0, targetDistance + zoom));
+        }, { passive: false });
+
+        window.addEventListener('resize', () => {
+          if (!stage || !renderer || !camera) return;
+          const w = stage.clientWidth;
+          const h = stage.clientHeight;
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          renderer.setSize(w, h);
+        });
+      }
+
+      // 9. Render Loop
+      let lastTime = performance.now();
+      let frameCount = 0;
+      const fpsEl = document.getElementById('val-fps');
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        const now = performance.now();
+        frameCount++;
+        if (now - lastTime >= 1000) {
+          if (fpsEl) fpsEl.textContent = frameCount;
+          frameCount = 0;
+          lastTime = now;
+        }
+
+        if (state.autoRotate && !isDragging && !state.homeTracking) {
+          targetRotation.y += state.autoRotateSpeed;
+        }
+
+        currentRotation.x += (targetRotation.x - currentRotation.x) * 0.085;
+        currentRotation.y += (targetRotation.y - currentRotation.y) * 0.085;
+        currentDistance += (targetDistance - currentDistance) * 0.085;
+
+        camera.position.z = currentDistance;
+        if (modelGroup) {
+          modelGroup.rotation.x = currentRotation.x;
+          modelGroup.rotation.y = currentRotation.y;
+        }
+
+        if (groundMesh) {
+          groundMesh.visible = state.groundVisible;
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      // 10. UI Sync & Event Listeners
+      function syncUIFromState() {
+        // Colors
+        document.getElementById('mat-color-picker').value = state.mat.color;
+        document.getElementById('mat-color-hex').value = state.mat.color.toUpperCase();
+        document.getElementById('color-wrapper').style.backgroundColor = state.mat.color;
+
+        // Sliders
+        document.getElementById('mat-metalness').value = state.mat.metalness;
+        document.getElementById('val-mat-metalness').textContent = Number(state.mat.metalness).toFixed(2);
+
+        document.getElementById('mat-roughness').value = state.mat.roughness;
+        document.getElementById('val-mat-roughness').textContent = Number(state.mat.roughness).toFixed(2);
+
+        document.getElementById('mat-envintensity').value = state.mat.envMapIntensity;
+        document.getElementById('val-mat-envintensity').textContent = Number(state.mat.envMapIntensity).toFixed(2);
+
+        document.getElementById('mat-clearcoat').value = state.mat.clearcoat;
+        document.getElementById('val-mat-clearcoat').textContent = Number(state.mat.clearcoat).toFixed(2);
+
+        document.getElementById('mat-clearcoatrough').value = state.mat.clearcoatRoughness;
+        document.getElementById('val-mat-clearcoatrough').textContent = Number(state.mat.clearcoatRoughness).toFixed(2);
+
+        document.getElementById('mat-ior').value = state.mat.ior;
+        document.getElementById('val-mat-ior').textContent = Number(state.mat.ior).toFixed(2);
+
+        document.getElementById('mat-transmission').value = state.mat.transmission;
+        document.getElementById('val-mat-transmission').textContent = Number(state.mat.transmission).toFixed(2);
+
+        document.getElementById('mat-thickness').value = state.mat.thickness;
+        document.getElementById('val-mat-thickness').textContent = Number(state.mat.thickness).toFixed(2);
+
+        // Noise & Grain Sliders
+        const bScale = state.mat.bumpScale !== undefined ? state.mat.bumpScale : 0.0035;
+        document.getElementById('mat-bumpscale').value = bScale;
+        document.getElementById('val-mat-bumpscale').textContent = Number(bScale).toFixed(4);
+
+        const bRepeat = state.mat.bumpRepeat !== undefined ? state.mat.bumpRepeat : 16;
+        document.getElementById('mat-bumprepeat').value = bRepeat;
+        document.getElementById('val-mat-bumprepeat').textContent = bRepeat;
+
+        const gOverlay = state.mat.grainOverlay !== undefined ? state.mat.grainOverlay : 0.14;
+        document.getElementById('mat-grainoverlay').value = gOverlay;
+        document.getElementById('val-mat-grainoverlay').textContent = Math.round(gOverlay * 100) + '%';
+
+        // Lights
+        document.getElementById('light-key').value = state.lights.key;
+        document.getElementById('val-light-key').textContent = Number(state.lights.key).toFixed(2);
+
+        document.getElementById('light-front').value = state.lights.front;
+        document.getElementById('val-light-front').textContent = Number(state.lights.front).toFixed(2);
+
+        document.getElementById('light-rim').value = state.lights.rim;
+        document.getElementById('val-light-rim').textContent = Number(state.lights.rim).toFixed(2);
+
+        document.getElementById('light-ambient').value = state.lights.ambient;
+        document.getElementById('val-light-ambient').textContent = Number(state.lights.ambient).toFixed(2);
+
+        document.getElementById('light-exposure').value = state.lights.exposure;
+        document.getElementById('val-light-exposure').textContent = Number(state.lights.exposure).toFixed(2);
+
+        // Preset cards highlight
+        document.querySelectorAll('[data-preset]').forEach((card) => {
+          card.classList.toggle('active', card.getAttribute('data-preset') === state.activePresetKey);
+        });
+
+        // Env cards highlight
+        document.querySelectorAll('[data-env]').forEach((card) => {
+          card.classList.toggle('active', card.getAttribute('data-env') === state.env);
+        });
+      }
+
+      function applyPreset(key) {
+        if (!PRESETS[key]) return;
+        const p = PRESETS[key];
+        state.activePresetKey = key;
+        state.mat = JSON.parse(JSON.stringify(p.mat));
+        state.env = p.env;
+        state.lights = JSON.parse(JSON.stringify(p.lights));
+
+        updateEnvironmentMap();
+        updateMaterialFromState();
+        updateLightsFromState();
+        syncUIFromState();
+        showToast(`Preset aplicado: ${p.name}`);
+      }
+
+      function bindUIEvents() {
+        // Tabs
+        document.querySelectorAll('.tab-item').forEach((tab) => {
+          tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab-item').forEach((t) => t.classList.remove('active'));
+            document.querySelectorAll('.panel-tab-pane').forEach((p) => p.classList.remove('active'));
+            tab.classList.add('active');
+            const targetId = tab.getAttribute('data-tab');
+            const pane = document.getElementById(targetId);
+            if (pane) pane.classList.add('active');
+          });
+        });
+
+        // Preset Clicks
+        document.querySelectorAll('[data-preset]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const key = btn.getAttribute('data-preset');
+            applyPreset(key);
+          });
+        });
+
+        // Environment Presets
+        document.querySelectorAll('[data-env]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            state.env = btn.getAttribute('data-env');
+            updateEnvironmentMap();
+            syncUIFromState();
+            showToast('Ambiente HDR actualizado');
+          });
+        });
+
+        // Color Pickers
+        const colorPicker = document.getElementById('mat-color-picker');
+        const colorHex = document.getElementById('mat-color-hex');
+        const colorWrap = document.getElementById('color-wrapper');
+
+        colorPicker.addEventListener('input', (e) => {
+          state.mat.color = e.target.value;
+          colorHex.value = e.target.value.toUpperCase();
+          colorWrap.style.backgroundColor = e.target.value;
+          updateMaterialFromState();
+        });
+
+        colorHex.addEventListener('change', (e) => {
+          let val = e.target.value.trim();
+          if (!val.startsWith('#')) val = '#' + val;
+          if (/^#[0-9A-F]{6}$/i.test(val)) {
+            state.mat.color = val;
+            colorPicker.value = val;
+            colorWrap.style.backgroundColor = val;
+            updateMaterialFromState();
+          }
+        });
+
+        // Swatches
+        document.querySelectorAll('[data-hex]').forEach((swatch) => {
+          swatch.addEventListener('click', () => {
+            const hex = swatch.getAttribute('data-hex');
+            state.mat.color = hex;
+            colorPicker.value = hex;
+            colorHex.value = hex.toUpperCase();
+            colorWrap.style.backgroundColor = hex;
+            updateMaterialFromState();
+          });
+        });
+
+        // Material Sliders
+        function bindSlider(id, targetObj, key, valId, decimals = 2) {
+          const slider = document.getElementById(id);
+          const valEl = document.getElementById(valId);
+          if (!slider) return;
+
+          slider.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            targetObj[key] = val;
+            if (valEl) valEl.textContent = decimals === 0 ? val : val.toFixed(decimals);
+            updateMaterialFromState();
+          });
+        }
+
+        bindSlider('mat-metalness', state.mat, 'metalness', 'val-mat-metalness', 2);
+        bindSlider('mat-roughness', state.mat, 'roughness', 'val-mat-roughness', 2);
+        bindSlider('mat-envintensity', state.mat, 'envMapIntensity', 'val-mat-envintensity', 2);
+        bindSlider('mat-clearcoat', state.mat, 'clearcoat', 'val-mat-clearcoat', 2);
+        bindSlider('mat-clearcoatrough', state.mat, 'clearcoatRoughness', 'val-mat-clearcoatrough', 2);
+        bindSlider('mat-ior', state.mat, 'ior', 'val-mat-ior', 2);
+        bindSlider('mat-transmission', state.mat, 'transmission', 'val-mat-transmission', 2);
+        bindSlider('mat-thickness', state.mat, 'thickness', 'val-mat-thickness', 2);
+        bindSlider('mat-bumpscale', state.mat, 'bumpScale', 'val-mat-bumpscale', 4);
+        bindSlider('mat-bumprepeat', state.mat, 'bumpRepeat', 'val-mat-bumprepeat', 0);
+
+        const grainSlider = document.getElementById('mat-grainoverlay');
+        if (grainSlider) {
+          grainSlider.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            state.mat.grainOverlay = val;
+            const valEl = document.getElementById('val-mat-grainoverlay');
+            if (valEl) valEl.textContent = Math.round(val * 100) + '%';
+            updateFilmGrainOverlay();
+          });
+        }
+
+        // Lighting Sliders
+        function bindLightSlider(id, key, valId) {
+          const slider = document.getElementById(id);
+          const valEl = document.getElementById(valId);
+          if (!slider) return;
+
+          slider.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            state.lights[key] = val;
+            if (valEl) valEl.textContent = val.toFixed(2);
+            updateLightsFromState();
+          });
+        }
+
+        bindLightSlider('light-key', 'key', 'val-light-key');
+        bindLightSlider('light-front', 'front', 'val-light-front');
+        bindLightSlider('light-rim', 'rim', 'val-light-rim');
+        bindLightSlider('light-ambient', 'ambient', 'val-light-ambient');
+        bindLightSlider('light-exposure', 'exposure', 'val-light-exposure');
+
+        // Background buttons
+        document.querySelectorAll('[data-bg]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-bg]').forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            const bg = btn.getAttribute('data-bg');
+            document.getElementById('stage-wrapper').style.background = bg;
+          });
+        });
+
+        // View Angle Buttons
+        document.querySelectorAll('[data-angle]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-angle]').forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            const angle = btn.getAttribute('data-angle');
+            state.autoRotate = false;
+            document.getElementById('toggle-autorotate').classList.remove('active');
+
+            if (angle === 'front') {
+              targetRotation.x = 0; targetRotation.y = 0; targetDistance = 4.2;
+            } else if (angle === 'iso') {
+              targetRotation.x = 0.35; targetRotation.y = 0.65; targetDistance = 4.2;
+            } else if (angle === 'profile') {
+              targetRotation.x = 0; targetRotation.y = Math.PI / 2; targetDistance = 4.2;
+            } else if (angle === 'bevel') {
+              targetRotation.x = 0.55; targetRotation.y = 0.45; targetDistance = 2.4;
+            } else if (angle === 'top') {
+              targetRotation.x = Math.PI / 2.2; targetRotation.y = 0; targetDistance = 4.2;
+            }
+          });
+        });
+
+        // Stage Toggles
+        const autoRotateBtn = document.getElementById('toggle-autorotate');
+        autoRotateBtn.addEventListener('click', () => {
+          state.autoRotate = !state.autoRotate;
+          autoRotateBtn.classList.toggle('active', state.autoRotate);
+        });
+
+        const homeTrackBtn = document.getElementById('toggle-home-tracking');
+        homeTrackBtn.addEventListener('click', () => {
+          state.homeTracking = !state.homeTracking;
+          homeTrackBtn.classList.toggle('active', state.homeTracking);
+          if (state.homeTracking) {
+            state.autoRotate = false;
+            autoRotateBtn.classList.remove('active');
+            targetRotation.x = 0;
+            showToast('Modo simulador de cursor de Inicio activado');
+          }
+        });
+
+        const groundBtn = document.getElementById('toggle-ground');
+        groundBtn.addEventListener('click', () => {
+          state.groundVisible = !state.groundVisible;
+          groundBtn.classList.toggle('active', state.groundVisible);
+        });
+
+        const wireframeBtn = document.getElementById('toggle-wireframe');
+        wireframeBtn.addEventListener('click', () => {
+          state.wireframe = !state.wireframe;
+          wireframeBtn.classList.toggle('active', state.wireframe);
+          updateMaterialFromState();
+        });
+
+        // Reset Defaults Button
+        document.getElementById('btn-reset-defaults').addEventListener('click', () => {
+          applyPreset('uenoGunmetal');
+          targetRotation.x = 0;
+          targetRotation.y = 0;
+          targetDistance = 4.2;
+          state.autoRotate = true;
+          state.homeTracking = false;
+          document.getElementById('toggle-autorotate').classList.add('active');
+          document.getElementById('toggle-home-tracking').classList.remove('active');
+          showToast('Restablecido a Ueno Gunmetal');
+        });
+
+        // HD Snapshot Download
+        document.getElementById('btn-snapshot').addEventListener('click', () => {
+          if (!renderer || !scene || !camera) return;
+          renderer.render(scene, camera);
+          const url = renderer.domElement.toDataURL('image/png');
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `happyface-render-${Date.now()}.png`;
+          a.click();
+          showToast('Captura HD descargada en PNG');
+        });
+
+        // Copy Code Buttons
+        function copyCode() {
+          const code = document.getElementById('code-output').textContent;
+          navigator.clipboard.writeText(code).then(() => {
+            showToast('Código copiado al portapapeles');
+          });
+        }
+
+        document.getElementById('btn-copy-code').addEventListener('click', copyCode);
+        document.getElementById('btn-copy-code-tab').addEventListener('click', copyCode);
+
+        // Save to Local / Portfolio
+        document.getElementById('btn-save-to-local').addEventListener('click', () => {
+          localStorage.setItem('jp_happyface_material_override', JSON.stringify({
+            mat: {
+              color: state.mat.color,
+              metalness: state.mat.metalness,
+              roughness: state.mat.roughness,
+              clearcoat: state.mat.clearcoat,
+              clearcoatRoughness: state.mat.clearcoatRoughness,
+              ior: state.mat.ior,
+              envMapIntensity: state.mat.envMapIntensity,
+              transmission: state.mat.transmission,
+              thickness: state.mat.thickness,
+              bumpScale: state.mat.bumpScale,
+              bumpRepeat: state.mat.bumpRepeat,
+              grainOverlay: state.mat.grainOverlay
+            },
+            env: state.env,
+            lights: state.lights
+          }));
+          showToast('Guardado en el navegador para index.html');
+        });
+      }
+
+      function showToast(msg) {
+        const toast = document.getElementById('lab-toast');
+        const txt = document.getElementById('lab-toast-text');
+        if (!toast || !txt) return;
+        txt.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => {
+          toast.classList.remove('show');
+        }, 2800);
+      }
+
+      // 11. Initialization
+      function start() {
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons();
+        }
+        initThree();
+        syncUIFromState();
+        bindUIEvents();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start);
+      } else {
+        start();
+      }
+    })();
+  </script>
+</body>
+
+</html>

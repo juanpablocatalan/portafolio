@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor Visual — Encuadre Galería CHFW</title>
+  <link rel="icon" type="image/svg+xml" href="assets/happy-face.svg">
+  <link rel="stylesheet" href="css/style.css?v=350">
+
+  <style>
+    :root {
+      --bg-dark: #0a0a0c;
+      --panel-bg: #141418;
+      --panel-border: rgba(255, 255, 255, 0.1);
+      --accent-yellow: #f5ee38;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: #f0f0f4;
+      font-family: var(--font-mono, monospace);
+      padding: 0;
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .editor-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(20, 20, 24, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .editor-title-group h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .editor-badge {
+      background: var(--accent-yellow);
+      color: #000;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+    }
+
+    .editor-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .editor-btn {
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.55rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: #202026;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .editor-btn:hover {
+      background: #2c2c34;
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .editor-btn-primary {
+      background: var(--accent-yellow);
+      color: #000;
+      border-color: var(--accent-yellow);
+      font-weight: 700;
+    }
+
+    .editor-btn-primary:hover {
+      background: #fff850;
+      border-color: #fff850;
+    }
+
+    .editor-instruction-banner {
+      background: #111116;
+      border-bottom: 1px solid var(--panel-border);
+      padding: 0.75rem 2rem;
+      font-size: 0.78rem;
+      color: #a0a0b0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .editor-container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem 5rem 2rem;
+    }
+
+    .global-controls-bar {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .control-label {
+      font-size: 0.78rem;
+      color: #88889a;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    select, input[type="range"] {
+      font-family: inherit;
+      background: #22222a;
+      color: #fff;
+      border: 1px solid var(--panel-border);
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    /* Grid layout */
+    .editor-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 1100px) {
+      .editor-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .editor-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Card */
+    .editor-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s ease;
+    }
+
+    .editor-card.is-active {
+      border-color: var(--accent-yellow);
+    }
+
+    .editor-card-header {
+      padding: 0.6rem 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--panel-border);
+      font-size: 0.75rem;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .editor-card-title {
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .editor-preview-viewport {
+      position: relative;
+      width: 100%;
+      aspect-ratio: var(--current-aspect, 2 / 3);
+      background: #000;
+      overflow: hidden;
+      cursor: crosshair;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .editor-preview-img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: var(--pos-x, 50%) var(--pos-y, 50%);
+      transform: scale(var(--scale, 1));
+      transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
+      pointer-events: none;
+    }
+
+    .editor-solarize-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: var(--pos-x, 50%) var(--pos-y, 50%);
+      transform: scale(var(--scale, 1));
+      transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
+      filter: url(#photoshop-curve-solarize);
+      opacity: 1;
+      pointer-events: none;
+    }
+
+    /* En modo edición: el encuadre y zoom permanecen fijos y visibles para calibrar */
+    .editor-grid:not(.is-preview-mode) .editor-preview-viewport .editor-preview-img {
+      object-fit: cover;
+      object-position: var(--pos-x, 50%) var(--pos-y, 50%);
+      transform: scale(var(--scale, 1));
+      transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
+    }
+
+    /* En modo prueba (preview): se simula el hover de malporte.html */
+    .editor-grid.is-preview-mode .editor-preview-viewport:hover .editor-preview-img {
+      object-fit: cover;
+      object-position: center center;
+      transform: scale(1);
+      transform-origin: center center;
+    }
+
+    .editor-grid.is-preview-mode .editor-preview-viewport:hover .editor-solarize-overlay {
+      opacity: 0;
+    }
+
+    .hide-solarize .editor-solarize-overlay {
+      display: none !important;
+    }
+
+    /* Drag guide hint */
+    .drag-hint-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      color: #fff;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.45rem;
+      border-radius: 3px;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    /* Controls inside card */
+    .editor-card-controls {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      font-size: 0.72rem;
+    }
+
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .slider-label-row {
+      display: flex;
+      justify-content: space-between;
+      color: #9999aa;
+    }
+
+    .slider-val {
+      color: var(--accent-yellow);
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      cursor: pointer;
+      accent-color: var(--accent-yellow);
+    }
+
+    .quick-preset-btns {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.4rem;
+      margin-top: 0.3rem;
+    }
+
+    .preset-btn {
+      background: #1c1c24;
+      border: 1px solid var(--panel-border);
+      color: #b0b0c0;
+      font-family: inherit;
+      font-size: 0.68rem;
+      padding: 0.35rem 0.2rem;
+      border-radius: 3px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .preset-btn:hover {
+      background: #282834;
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Code modal */
+    .code-modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      box-sizing: border-box;
+    }
+
+    .code-modal-backdrop.is-open {
+      display: flex;
+    }
+
+    .code-modal-box {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      width: 100%;
+      max-width: 800px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .code-modal-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .code-modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    textarea.code-output {
+      width: 100%;
+      height: 320px;
+      background: #09090b;
+      color: #a3e635;
+      font-family: monospace;
+      font-size: 0.78rem;
+      border: 1px solid var(--panel-border);
+      border-radius: 4px;
+      padding: 1rem;
+      box-sizing: border-box;
+      resize: none;
+    }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--accent-yellow);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 0.6rem 1.4rem;
+      border-radius: 4px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+    }
+
+    .toast-msg.is-visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Bar -->
+  <header class="editor-topbar">
+    <div class="editor-title-group">
+      <h1>
+        <span>AJUSTADOR DE ENCUADRES</span>
+        <span class="editor-badge">CHILE FASHION WEEK</span>
+      </h1>
+    </div>
+
+    <div class="editor-actions">
+      <button type="button" class="editor-btn" id="btn-reset-all">Restablecer Todo</button>
+      <button type="button" class="editor-btn" id="btn-export-code">&lt;/&gt; Ver Código CSS/HTML</button>
+      <button type="button" class="editor-btn editor-btn-primary" id="btn-save-live">💾 Guardar y Aplicar a MALPORTE</button>
+      <a href="projects/malporte.html" target="_blank" class="editor-btn">Ver MALPORTE &rarr;</a>
+    </div>
+  </header>
+
+  <!-- Instructions -->
+  <div class="editor-instruction-banner">
+    <span>💡 <strong>Cómo usar:</strong> Haz clic y <strong>arrastra el mouse directamente sobre cualquier foto</strong> para mover su encuadre, o usa los controles deslizables inferiores. Pasa el cursor encima para probar el efecto de solarización.</span>
+    <span id="save-status-indicator" style="color: var(--accent-yellow);">● Sincronizado</span>
+  </div>
+
+  <main class="editor-container">
+
+    <!-- Global Settings -->
+    <div class="global-controls-bar">
+      <div class="control-group">
+        <label class="control-label" for="global-aspect-select">Proporción (Aspect Ratio):</label>
+        <select id="global-aspect-select">
+          <option value="2 / 3" selected>2:3 (Vertical clásico de pasarela)</option>
+          <option value="3 / 4">3:4 (Proporción estándar)</option>
+          <option value="4 / 5">4:5 (Vertical Instagram)</option>
+          <option value="1 / 1">1:1 (Cuadrado)</option>
+          <option value="9 / 16">9:16 (Story / Reel alargado)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Modo:</label>
+        <button type="button" class="editor-btn editor-btn-primary" id="toggle-mode-btn" style="padding: 0.4rem 0.85rem; font-size: 0.74rem;">
+          🛠️ Modo Edición (Encuadre visible)
+        </button>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label">Visualizar Capa:</label>
+        <button type="button" class="editor-btn" id="toggle-solarize-btn" style="padding: 0.4rem 0.85rem; font-size: 0.74rem;">
+          ☀️ Con Solarización
+        </button>
+      </div>
+    </div>
+
+    <!-- 8 Photos Grid -->
+    <div class="editor-grid" id="editor-grid">
+      <!-- Generado dinámicamente -->
+    </div>
+  </main>
+
+  <!-- Code Export Modal -->
+  <div class="code-modal-backdrop" id="code-modal">
+    <div class="code-modal-box">
+      <div class="code-modal-header">
+        <strong style="font-size: 0.88rem;">CÓDIGO GENERADO PARA MALPORTE.HTML</strong>
+        <button type="button" class="editor-btn" id="code-modal-close" style="padding: 0.2rem 0.5rem;">&times;</button>
+      </div>
+      <div class="code-modal-body">
+        <p style="font-size: 0.75rem; color: #999; margin-top: 0; margin-bottom: 0.75rem;">
+          Copia y pega este código en tu archivo <code>projects/malporte.html</code> en la sección de la galería:
+        </p>
+        <textarea class="code-output" id="code-output" readonly></textarea>
+        <div style="margin-top: 1rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" class="editor-btn editor-btn-primary" id="btn-copy-clipboard">Copiar al Portapapeles</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-msg" id="toast-msg">Cambios guardados correctamente</div>
+
+  <!-- Photoshop Curve / Solarization SVG Filter Definition -->
+  <svg style="position: absolute; width: 0; height: 0; overflow: hidden; pointer-events: none;" aria-hidden="true">
+    <filter id="photoshop-curve-solarize" color-interpolation-filters="sRGB">
+      <feComponentTransfer>
+        <feFuncR type="table" tableValues="0.0000 0.0014 0.0028 0.0042 0.0057 0.0071 0.0085 0.0099 0.0113 0.0127 0.0142 0.0156 0.0170 0.0184 0.0198 0.0212 0.0227 0.0241 0.0255 0.0269 0.0283 0.0297 0.0312 0.0326 0.0340 0.0354 0.0368 0.0382 0.0397 0.0411 0.0425 0.0439 0.0453 0.0467 0.0482 0.0496 0.0510 0.0524 0.0538 0.0552 0.0567 0.0581 0.0595 0.0609 0.0623 0.0637 0.0652 0.0666 0.0680 0.0694 0.0708 0.0722 0.0737 0.0751 0.0765 0.0779 0.0793 0.0807 0.0822 0.0836 0.0850 0.0864 0.0878 0.0892 0.0907 0.0921 0.0935 0.0949 0.0963 0.0977 0.0992 0.1006 0.1020 0.1070 0.1121 0.1171 0.1221 0.1272 0.1322 0.1373 0.1423 0.1473 0.1524 0.1574 0.1625 0.1675 0.1725 0.1776 0.1826 0.1877 0.1927 0.1977 0.2028 0.2078 0.2129 0.2179 0.2229 0.2280 0.2330 0.2381 0.2431 0.2481 0.2532 0.2582 0.2633 0.2683 0.2733 0.2784 0.2834 0.2885 0.2935 0.2985 0.3036 0.3086 0.3137 0.3505 0.3873 0.4240 0.4608 0.4975 0.5343 0.5711 0.6078 0.6178 0.6278 0.6378 0.6478 0.6578 0.6678 0.6777 0.6877 0.6977 0.7077 0.7176 0.7200 0.7223 0.7246 0.7269 0.7292 0.7315 0.7338 0.7361 0.7385 0.7408 0.7431 0.7454 0.7477 0.7500 0.7523 0.7547 0.7570 0.7593 0.7616 0.7639 0.7662 0.7685 0.7709 0.7732 0.7755 0.7778 0.7801 0.7824 0.7847 0.7871 0.7894 0.7917 0.7940 0.7963 0.7986 0.8009 0.8033 0.8056 0.8079 0.8102 0.8125 0.8148 0.8171 0.8195 0.8218 0.8241 0.8264 0.8287 0.8310 0.8333 0.8357 0.8380 0.8403 0.8426 0.8449 0.8472 0.8495 0.8519 0.8542 0.8565 0.8588 0.8611 0.8634 0.8657 0.8681 0.8704 0.8727 0.8750 0.8773 0.8796 0.8819 0.8843 0.8866 0.8889 0.8912 0.8935 0.8958 0.8981 0.9005 0.9028 0.9051 0.9074 0.9097 0.9120 0.9143 0.9167 0.9190 0.9213 0.9236 0.9259 0.9282 0.9305 0.9329 0.9352 0.9375 0.9398 0.9421 0.9444 0.9467 0.9491 0.9514 0.9537 0.9560 0.9583 0.9606 0.9629 0.9653 0.9676 0.9699 0.9722 0.9745 0.9768 0.9791 0.9815 0.9838 0.9861 0.9884 0.9907 0.9930 0.9953 0.9977 1.0000" />
+        <feFuncG type="table" tableValues="0.0000 0.0014 0.0028 0.0042 0.0057 0.0071 0.0085 0.0099 0.0113 0.0127 0.0142 0.0156 0.0170 0.0184 0.0198 0.0212 0.0227 0.0241 0.0255 0.0269 0.0283 0.0297 0.0312 0.0326 0.0340 0.0354 0.0368 0.0382 0.0397 0.0411 0.0425 0.0439 0.0453 0.0467 0.0482 0.0496 0.0510 0.0524 0.0538 0.0552 0.0567 0.0581 0.0595 0.0609 0.0623 0.0637 0.0652 0.0666 0.0680 0.0694 0.0708 0.0722 0.0737 0.0751 0.0765 0.0779 0.0793 0.0807 0.0822 0.0836 0.0850 0.0864 0.0878 0.0892 0.0907 0.0921 0.0935 0.0949 0.0963 0.0977 0.0992 0.1006 0.1020 0.1070 0.1121 0.1171 0.1221 0.1272 0.1322 0.1373 0.1423 0.1473 0.1524 0.1574 0.1625 0.1675 0.1725 0.1776 0.1826 0.1877 0.1927 0.1977 0.2028 0.2078 0.2129 0.2179 0.2229 0.2280 0.2330 0.2381 0.2431 0.2481 0.2532 0.2582 0.2633 0.2683 0.2733 0.2784 0.2834 0.2885 0.2935 0.2985 0.3036 0.3086 0.3137 0.3505 0.3873 0.4240 0.4608 0.4975 0.5343 0.5711 0.6078 0.6178 0.6278 0.6378 0.6478 0.6578 0.6678 0.6777 0.6877 0.6977 0.7077 0.7176 0.7200 0.7223 0.7246 0.7269 0.7292 0.7315 0.7338 0.7361 0.7385 0.7408 0.7431 0.7454 0.7477 0.7500 0.7523 0.7547 0.7570 0.7593 0.7616 0.7639 0.7662 0.7685 0.7709 0.7732 0.7755 0.7778 0.7801 0.7824 0.7847 0.7871 0.7894 0.7917 0.7940 0.7963 0.7986 0.8009 0.8033 0.8056 0.8079 0.8102 0.8125 0.8148 0.8171 0.8195 0.8218 0.8241 0.8264 0.8287 0.8310 0.8333 0.8357 0.8380 0.8403 0.8426 0.8449 0.8472 0.8495 0.8519 0.8542 0.8565 0.8588 0.8611 0.8634 0.8657 0.8681 0.8704 0.8727 0.8750 0.8773 0.8796 0.8819 0.8843 0.8866 0.8889 0.8912 0.8935 0.8958 0.8981 0.9005 0.9028 0.9051 0.9074 0.9097 0.9120 0.9143 0.9167 0.9190 0.9213 0.9236 0.9259 0.9282 0.9305 0.9329 0.9352 0.9375 0.9398 0.9421 0.9444 0.9467 0.9491 0.9514 0.9537 0.9560 0.9583 0.9606 0.9629 0.9653 0.9676 0.9699 0.9722 0.9745 0.9768 0.9791 0.9815 0.9838 0.9861 0.9884 0.9907 0.9930 0.9953 0.9977 1.0000" />
+        <feFuncB type="table" tableValues="0.0000 0.0014 0.0028 0.0042 0.0057 0.0071 0.0085 0.0099 0.0113 0.0127 0.0142 0.0156 0.0170 0.0184 0.0198 0.0212 0.0227 0.0241 0.0255 0.0269 0.0283 0.0297 0.0312 0.0326 0.0340 0.0354 0.0368 0.0382 0.0397 0.0411 0.0425 0.0439 0.0453 0.0467 0.0482 0.0496 0.0510 0.0524 0.0538 0.0552 0.0567 0.0581 0.0595 0.0609 0.0623 0.0637 0.0652 0.0666 0.0680 0.0694 0.0708 0.0722 0.0737 0.0751 0.0765 0.0779 0.0793 0.0807 0.0822 0.0836 0.0850 0.0864 0.0878 0.0892 0.0907 0.0921 0.0935 0.0949 0.0963 0.0977 0.0992 0.1006 0.1020 0.1070 0.1121 0.1171 0.1221 0.1272 0.1322 0.1373 0.1423 0.1473 0.1524 0.1574 0.1625 0.1675 0.1725 0.1776 0.1826 0.1877 0.1927 0.1977 0.2028 0.2078 0.2129 0.2179 0.2229 0.2280 0.2330 0.2381 0.2431 0.2481 0.2532 0.2582 0.2633 0.2683 0.2733 0.2784 0.2834 0.2885 0.2935 0.2985 0.3036 0.3086 0.3137 0.3505 0.3873 0.4240 0.4608 0.4975 0.5343 0.5711 0.6078 0.6178 0.6278 0.6378 0.6478 0.6578 0.6678 0.6777 0.6877 0.6977 0.7077 0.7176 0.7200 0.7223 0.7246 0.7269 0.7292 0.7315 0.7338 0.7361 0.7385 0.7408 0.7431 0.7454 0.7477 0.7500 0.7523 0.7547 0.7570 0.7593 0.7616 0.7639 0.7662 0.7685 0.7709 0.7732 0.7755 0.7778 0.7801 0.7824 0.7847 0.7871 0.7894 0.7917 0.7940 0.7963 0.7986 0.8009 0.8033 0.8056 0.8079 0.8102 0.8125 0.8148 0.8171 0.8195 0.8218 0.8241 0.8264 0.8287 0.8310 0.8333 0.8357 0.8380 0.8403 0.8426 0.8449 0.8472 0.8495 0.8519 0.8542 0.8565 0.8588 0.8611 0.8634 0.8657 0.8681 0.8704 0.8727 0.8750 0.8773 0.8796 0.8819 0.8843 0.8866 0.8889 0.8912 0.8935 0.8958 0.8981 0.9005 0.9028 0.9051 0.9074 0.9097 0.9120 0.9143 0.9167 0.9190 0.9213 0.9236 0.9259 0.9282 0.9305 0.9329 0.9352 0.9375 0.9398 0.9421 0.9444 0.9467 0.9491 0.9514 0.9537 0.9560 0.9583 0.9606 0.9629 0.9653 0.9676 0.9699 0.9722 0.9745 0.9768 0.9791 0.9815 0.9838 0.9861 0.9884 0.9907 0.9930 0.9953 0.9977 1.0000" />
+      </feComponentTransfer>
+    </filter>
+  </svg>
+
+  <script>
+    const IMAGES_DATA = [
+      { id: 1, src: 'assets/MALPORTE/CHFW/3.JPG', title: 'Foto 03 — Look 01 (Pasarela)' },
+      { id: 2, src: 'assets/MALPORTE/CHFW/1.JPG', title: 'Foto 01 — Look 02 (Pasarela)' },
+      { id: 3, src: 'assets/MALPORTE/CHFW/5.JPG', title: 'Foto 05 — Look 03 (Frontal Completo)' },
+      { id: 4, src: 'assets/MALPORTE/CHFW/4.jpg', title: 'Foto 04 — Look 02 (Detalle Alfiler)' },
+      { id: 5, src: 'assets/MALPORTE/CHFW/6.jpg', title: 'Foto 06 — Look 02 (Torso)' },
+      { id: 6, src: 'assets/MALPORTE/CHFW/8.jpg', title: 'Foto 08 — Look 03 (Pasarela)' },
+      { id: 7, src: 'assets/MALPORTE/CHFW/7.JPG', title: 'Foto 07 — Look 01 (Pose)' },
+      { id: 8, src: 'assets/MALPORTE/CHFW/2.jpg', title: 'Foto 02 — Look 03 (Frontal)' }
+    ];
+
+    const STORAGE_KEY = 'chfw_gallery_framing_v2';
+
+    // Default configuration
+    let galleryConfig = {
+      aspectRatio: '2 / 3',
+      items: {
+        1: { posX: 68, posY: 67, zoom: 1.55 },
+        2: { posX: 53, posY: 14, zoom: 4.60 },
+        3: { posX: 50, posY: 56, zoom: 2.20 },
+        4: { posX: 50, posY: 25, zoom: 1.00 },
+        5: { posX: 52, posY: 44, zoom: 1.95 },
+        6: { posX: 50, posY: 20, zoom: 1.00 },
+        7: { posX: 56, posY: 72, zoom: 2.05 },
+        8: { posX: 47, posY: 24, zoom: 1.00 }
+      }
+    };
+
+    // Load from localStorage if exists
+    function loadSavedConfig() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.items) {
+            galleryConfig = Object.assign(galleryConfig, parsed);
+          }
+        } catch(e) {
+          console.error(e);
+        }
+      }
+    }
+
+    // Save to localStorage
+    function saveConfig() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(galleryConfig));
+      showToast('¡Configuración guardada y sincronizada con MALPORTE!');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      if (toast) {
+        toast.textContent = msg;
+        toast.classList.add('is-visible');
+        setTimeout(() => toast.classList.remove('is-visible'), 2500);
+      }
+    }
+
+    // Render cards
+    function renderGrid() {
+      const grid = document.getElementById('editor-grid');
+      if (!grid) return;
+
+      document.documentElement.style.setProperty('--current-aspect', galleryConfig.aspectRatio);
+
+      grid.innerHTML = IMAGES_DATA.map(img => {
+        const conf = galleryConfig.items[img.id] || { posX: 50, posY: 50, zoom: 1.0 };
+        return `
+          <div class="editor-card" id="card-${img.id}" data-id="${img.id}">
+            <div class="editor-card-header">
+              <span class="editor-card-title">${img.title}</span>
+              <span style="color: #666;">#0${img.id}</span>
+            </div>
+
+            <!-- Viewport with Interactive Drag -->
+            <div class="editor-preview-viewport" id="viewport-${img.id}" data-id="${img.id}"
+                 style="--pos-x: ${conf.posX}%; --pos-y: ${conf.posY}%; --scale: ${conf.zoom};">
+              <img src="${img.src}" alt="${img.title}" class="editor-preview-img" id="img-base-${img.id}">
+              <img src="${img.src}" alt="" class="editor-solarize-overlay" id="img-over-${img.id}" aria-hidden="true">
+              <div class="drag-hint-badge">Arrastra para encuadrar</div>
+            </div>
+
+            <!-- Sliders -->
+            <div class="editor-card-controls">
+              <div class="slider-row">
+                <div class="slider-label-row">
+                  <span>Posición Vertical (Y)</span>
+                  <span class="slider-val" id="val-pos-y-${img.id}">${conf.posY}%</span>
+                </div>
+                <input type="range" min="0" max="100" value="${conf.posY}" data-id="${img.id}" data-type="posY" class="range-slider">
+              </div>
+
+              <div class="slider-row">
+                <div class="slider-label-row">
+                  <span>Posición Horizontal (X)</span>
+                  <span class="slider-val" id="val-pos-x-${img.id}">${conf.posX}%</span>
+                </div>
+                <input type="range" min="0" max="100" value="${conf.posX}" data-id="${img.id}" data-type="posX" class="range-slider">
+              </div>
+
+              <div class="slider-row">
+                <div class="slider-label-row">
+                  <span>Zoom / Escala</span>
+                  <span class="slider-val" id="val-zoom-${img.id}">${Number(conf.zoom).toFixed(2)}x</span>
+                </div>
+                <input type="range" min="1.0" max="6.0" step="0.05" value="${conf.zoom}" data-id="${img.id}" data-type="zoom" class="range-slider">
+              </div>
+
+              <!-- Quick Presets -->
+              <div class="quick-preset-btns">
+                <button type="button" class="preset-btn" data-id="${img.id}" data-preset="top">Rostro (Top)</button>
+                <button type="button" class="preset-btn" data-id="${img.id}" data-preset="center">Centro</button>
+                <button type="button" class="preset-btn" data-id="${img.id}" data-preset="bottom">Pies (Bottom)</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      initInteractiveDrag();
+      initSliderEvents();
+    }
+
+    // Interactive Drag on Viewport
+    function initInteractiveDrag() {
+      document.querySelectorAll('.editor-preview-viewport').forEach(vp => {
+        const id = vp.getAttribute('data-id');
+        let isDragging = false;
+        let startX, startY;
+        let startPosX, startPosY;
+
+        vp.addEventListener('mousedown', (e) => {
+          isDragging = true;
+          startX = e.clientX;
+          startY = e.clientY;
+          const conf = galleryConfig.items[id] || { posX: 50, posY: 50 };
+          startPosX = conf.posX;
+          startPosY = conf.posY;
+          vp.style.cursor = 'grabbing';
+          e.preventDefault();
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          const rect = vp.getBoundingClientRect();
+          const deltaX = (e.clientX - startX) / rect.width * 100;
+          const deltaY = (e.clientY - startY) / rect.height * 100;
+
+          let newX = Math.round(Math.max(0, Math.min(100, startPosX - deltaX)));
+          let newY = Math.round(Math.max(0, Math.min(100, startPosY - deltaY)));
+
+          updateItem(id, { posX: newX, posY: newY });
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (isDragging) {
+            isDragging = false;
+            vp.style.cursor = 'crosshair';
+            saveConfig();
+          }
+        });
+      });
+    }
+
+    // Slider inputs
+    function initSliderEvents() {
+      document.querySelectorAll('.range-slider').forEach(slider => {
+        slider.addEventListener('input', (e) => {
+          const id = e.target.getAttribute('data-id');
+          const type = e.target.getAttribute('data-type');
+          const val = parseFloat(e.target.value);
+          updateItem(id, { [type]: val });
+        });
+
+        slider.addEventListener('change', () => {
+          saveConfig();
+        });
+      });
+
+      // Quick preset buttons
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = btn.getAttribute('data-id');
+          const preset = btn.getAttribute('data-preset');
+          if (preset === 'top') {
+            updateItem(id, { posX: 50, posY: 10 });
+          } else if (preset === 'center') {
+            updateItem(id, { posX: 50, posY: 50 });
+          } else if (preset === 'bottom') {
+            updateItem(id, { posX: 50, posY: 90 });
+          }
+          saveConfig();
+        });
+      });
+    }
+
+    // Update single item values & CSS
+    function updateItem(id, partial) {
+      if (!galleryConfig.items[id]) galleryConfig.items[id] = { posX: 50, posY: 50, zoom: 1.0 };
+      Object.assign(galleryConfig.items[id], partial);
+
+      const conf = galleryConfig.items[id];
+      const vp = document.getElementById(`viewport-${id}`);
+      if (vp) {
+        vp.style.setProperty('--pos-x', `${conf.posX}%`);
+        vp.style.setProperty('--pos-y', `${conf.posY}%`);
+        vp.style.setProperty('--scale', `${conf.zoom}`);
+      }
+
+      const valY = document.getElementById(`val-pos-y-${id}`);
+      if (valY) valY.textContent = `${conf.posY}%`;
+      const sliderY = document.querySelector(`.range-slider[data-id="${id}"][data-type="posY"]`);
+      if (sliderY) sliderY.value = conf.posY;
+
+      const valX = document.getElementById(`val-pos-x-${id}`);
+      if (valX) valX.textContent = `${conf.posX}%`;
+      const sliderX = document.querySelector(`.range-slider[data-id="${id}"][data-type="posX"]`);
+      if (sliderX) sliderX.value = conf.posX;
+
+      const valZ = document.getElementById(`val-zoom-${id}`);
+      if (valZ) valZ.textContent = `${Number(conf.zoom).toFixed(2)}x`;
+      const sliderZ = document.querySelector(`.range-slider[data-id="${id}"][data-type="zoom"]`);
+      if (sliderZ) sliderZ.value = conf.zoom;
+    }
+
+    // Global Aspect ratio change
+    document.getElementById('global-aspect-select').addEventListener('change', (e) => {
+      galleryConfig.aspectRatio = e.target.value;
+      document.documentElement.style.setProperty('--current-aspect', galleryConfig.aspectRatio);
+      saveConfig();
+    });
+
+    // Toggle Mode (Edición vs Prueba)
+    let isPreviewMode = false;
+    const modeBtn = document.getElementById('toggle-mode-btn');
+    const editorGridEl = document.getElementById('editor-grid');
+
+    if (modeBtn && editorGridEl) {
+      modeBtn.addEventListener('click', () => {
+        isPreviewMode = !isPreviewMode;
+        if (isPreviewMode) {
+          editorGridEl.classList.add('is-preview-mode');
+          modeBtn.textContent = '👁️ Modo Prueba Hover (Simulando web)';
+          modeBtn.classList.remove('editor-btn-primary');
+        } else {
+          editorGridEl.classList.remove('is-preview-mode');
+          modeBtn.textContent = '🛠️ Modo Edición (Encuadre visible)';
+          modeBtn.classList.add('editor-btn-primary');
+        }
+      });
+    }
+
+    // Toggle Solarize Filter View
+    let showSolarize = true;
+    const solarizeBtn = document.getElementById('toggle-solarize-btn');
+    if (solarizeBtn && editorGridEl) {
+      solarizeBtn.addEventListener('click', () => {
+        showSolarize = !showSolarize;
+        if (showSolarize) {
+          editorGridEl.classList.remove('hide-solarize');
+          solarizeBtn.textContent = '☀️ Con Solarización';
+        } else {
+          editorGridEl.classList.add('hide-solarize');
+          solarizeBtn.textContent = '🌿 Original a Color';
+        }
+      });
+    }
+
+    // Reset All
+    document.getElementById('btn-reset-all').addEventListener('click', () => {
+      if (confirm('¿Restablecer todos los encuadres al valor por defecto (50% 50%)?')) {
+        IMAGES_DATA.forEach(img => {
+          galleryConfig.items[img.id] = { posX: 50, posY: 50, zoom: 1.0 };
+        });
+        galleryConfig.aspectRatio = '2 / 3';
+        document.getElementById('global-aspect-select').value = '2 / 3';
+        renderGrid();
+        saveConfig();
+      }
+    });
+
+    // Save button
+    document.getElementById('btn-save-live').addEventListener('click', () => {
+      saveConfig();
+    });
+
+    // Export HTML/CSS Code generator
+    document.getElementById('btn-export-code').addEventListener('click', () => {
+      const codeOutput = document.getElementById('code-output');
+      const htmlBlock = `
+<!-- Runway Photo Gallery: Chile Fashion Week 2024 -->
+<section class="chfw-gallery-section reveal is-visible" aria-label="Galería Chile Fashion Week 2024">
+  <div class="chfw-gallery-header">
+    <span class="meta-label" style="display: block; margin-bottom: 4px; text-align: left;">PASARELA / RUNWAY</span>
+    <h2 class="project-intro-statement" style="text-align: left; font-size: min(1.35rem, calc((100vw - 2 * var(--page-margin)) / 22)); font-weight: 700; line-height: 1.25; margin: 0;">
+      Chile Fashion Week 2024
+    </h2>
+  </div>
+
+  <div class="chfw-gallery-grid" id="chfw-gallery-grid" style="--gallery-aspect: ${galleryConfig.aspectRatio};">
+${IMAGES_DATA.map(img => {
+  const c = galleryConfig.items[img.id] || { posX: 50, posY: 50, zoom: 1.0 };
+  return `    <div class="chfw-gallery-item" data-index="${img.id - 1}" role="button" tabindex="0" aria-label="${img.title}" style="--obj-pos-x: ${c.posX}%; --obj-pos-y: ${c.posY}%; --obj-zoom: ${c.zoom};">
+      <img src="../${img.src}" alt="${img.title}" class="chfw-gallery-img chfw-base-img" loading="lazy">
+      <img src="../${img.src}" alt="" class="chfw-gallery-img chfw-solarize-layer" aria-hidden="true" loading="lazy">
+    </div>`;
+}).join('\n')}
+  </div>
+</section>`.trim();
+
+      codeOutput.value = htmlBlock;
+      document.getElementById('code-modal').classList.add('is-open');
+    });
+
+    document.getElementById('code-modal-close').addEventListener('click', () => {
+      document.getElementById('code-modal').classList.remove('is-open');
+    });
+
+    document.getElementById('btn-copy-clipboard').addEventListener('click', () => {
+      const ta = document.getElementById('code-output');
+      ta.select();
+      document.execCommand('copy');
+      showToast('¡Código copiado al portapapeles!');
+    });
+
+    // Initialize
+    loadSavedConfig();
+    document.getElementById('global-aspect-select').value = galleryConfig.aspectRatio;
+    renderGrid();
+  </script>
+</body>
+</html>

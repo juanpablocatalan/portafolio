@@ -33,32 +33,48 @@
     const ctx = canvas.getContext('2d');
 
     // 1. Deep black studio void
-    ctx.fillStyle = '#060709';
+    ctx.fillStyle = '#020305';
     ctx.fillRect(0, 0, 1024, 512);
 
-    // 2. Large high-intensity Top-Left Key Softbox (Matches the bright specular dome hotspot)
-    const keySoftbox = ctx.createRadialGradient(280, 120, 10, 280, 120, 260);
+    // 2. Large high-intensity Top-Left Key Softbox (Matches the bright specular dome hotspot in Ueno reference)
+    const keySoftbox = ctx.createRadialGradient(290, 130, 5, 290, 130, 280);
     keySoftbox.addColorStop(0, '#ffffff');
-    keySoftbox.addColorStop(0.3, '#ffffff');
-    keySoftbox.addColorStop(0.65, 'rgba(230, 235, 245, 0.6)');
-    keySoftbox.addColorStop(1, 'rgba(200, 210, 225, 0)');
+    keySoftbox.addColorStop(0.25, '#ffffff');
+    keySoftbox.addColorStop(0.55, 'rgba(235, 240, 252, 0.75)');
+    keySoftbox.addColorStop(0.85, 'rgba(120, 140, 175, 0.25)');
+    keySoftbox.addColorStop(1, 'rgba(2, 3, 5, 0)');
     ctx.fillStyle = keySoftbox;
-    ctx.fillRect(0, 0, 600, 360);
+    ctx.fillRect(0, 0, 620, 380);
 
-    // 3. Sharp Rim Accent Strip (Upper Right)
+    // 3. High Overhead Softbox Dome
+    const topDome = ctx.createRadialGradient(512, 60, 10, 512, 60, 350);
+    topDome.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+    topDome.addColorStop(0.4, 'rgba(220, 230, 250, 0.4)');
+    topDome.addColorStop(1, 'rgba(2, 3, 5, 0)');
+    ctx.fillStyle = topDome;
+    ctx.fillRect(0, 0, 1024, 280);
+
+    // 4. Sharp Rim Accent Strips (Right & Left)
     const rightRim = ctx.createLinearGradient(780, 0, 880, 0);
     rightRim.addColorStop(0, 'rgba(255, 255, 255, 0)');
     rightRim.addColorStop(0.5, '#ffffff');
     rightRim.addColorStop(1, 'rgba(255, 255, 255, 0)');
     ctx.fillStyle = rightRim;
-    ctx.fillRect(780, 40, 100, 380);
+    ctx.fillRect(780, 30, 100, 420);
 
-    // 4. Subtle bottom reflective bounce
-    const bottomBounce = ctx.createRadialGradient(512, 440, 20, 512, 440, 220);
-    bottomBounce.addColorStop(0, 'rgba(180, 195, 215, 0.45)');
-    bottomBounce.addColorStop(1, 'rgba(10, 12, 16, 0)');
+    const leftRim = ctx.createLinearGradient(60, 0, 140, 0);
+    leftRim.addColorStop(0, 'rgba(255, 255, 255, 0)');
+    leftRim.addColorStop(0.5, 'rgba(210, 225, 255, 0.6)');
+    leftRim.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = leftRim;
+    ctx.fillRect(60, 50, 80, 380);
+
+    // 5. Subtle bottom reflective bounce
+    const bottomBounce = ctx.createRadialGradient(512, 450, 20, 512, 450, 240);
+    bottomBounce.addColorStop(0, 'rgba(160, 180, 210, 0.35)');
+    bottomBounce.addColorStop(1, 'rgba(2, 3, 5, 0)');
     ctx.fillStyle = bottomBounce;
-    ctx.fillRect(200, 300, 624, 212);
+    ctx.fillRect(200, 310, 624, 202);
 
     const texture = new THREE.CanvasTexture(canvas);
     texture.mapping = THREE.EquirectangularReflectionMapping;
@@ -69,17 +85,56 @@
     return envMap;
   }
 
-  // Ueno Signature Gunmetal Dark-Chrome Material
+  // Procedural Micro-Noise Texture Generator for authentic 3D specular grain
+  function createNoiseTexture(size = 512, repeat = 16) {
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    const imgData = ctx.createImageData(size, size);
+    const data = imgData.data;
+
+    for (let i = 0; i < data.length; i += 4) {
+      // Gaussian distributed micro noise
+      const n = (Math.random() + Math.random() + Math.random() + Math.random()) / 4;
+      const v = Math.floor(n * 255);
+      data[i] = v;
+      data[i + 1] = v;
+      data[i + 2] = v;
+      data[i + 3] = 255;
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(repeat, repeat);
+    return tex;
+  }
+
+  // Ueno Signature Gunmetal Dark-Chrome Material with Micro-Noise Speculars
   function createUenoChromeMaterial() {
+    let saved = null;
+    try {
+      const stored = localStorage.getItem('jp_happyface_material_override');
+      if (stored) saved = JSON.parse(stored);
+    } catch (e) {}
+
+    const noiseTexture = createNoiseTexture(512, saved?.mat?.bumpRepeat || 16);
+    const bumpScale = saved?.mat?.bumpScale !== undefined ? parseFloat(saved.mat.bumpScale) : 0.0035;
+
     return new THREE.MeshPhysicalMaterial({
-      color: 0x16181d,          // Deep dark gunmetal / obsidian steel base
-      metalness: 0.94,         // High metallic conduction
-      roughness: 0.20,         // Satin metallic surface diffusion for glowing hot spot
-      clearcoat: 1.0,          // Razor-sharp outer lacquer for bevel and edge glints
-      clearcoatRoughness: 0.03,// Mirror-like clearcoat speculars
+      color: saved?.mat?.color ? new THREE.Color(saved.mat.color) : new THREE.Color(0x101216),
+      metalness: saved?.mat?.metalness !== undefined ? parseFloat(saved.mat.metalness) : 0.96,
+      roughness: saved?.mat?.roughness !== undefined ? parseFloat(saved.mat.roughness) : 0.19,
+      clearcoat: saved?.mat?.clearcoat !== undefined ? parseFloat(saved.mat.clearcoat) : 1.0,
+      clearcoatRoughness: saved?.mat?.clearcoatRoughness !== undefined ? parseFloat(saved.mat.clearcoatRoughness) : 0.04,
       reflectivity: 1.0,
-      envMapIntensity: 2.6,    // High contrast reflection response
-      side: THREE.DoubleSided
+      ior: saved?.mat?.ior !== undefined ? parseFloat(saved.mat.ior) : 1.52,
+      envMapIntensity: saved?.mat?.envMapIntensity !== undefined ? parseFloat(saved.mat.envMapIntensity) : 3.0,
+      bumpMap: noiseTexture,
+      bumpScale: bumpScale,
+      side: THREE.DoubleSide
     });
   }
 
@@ -130,7 +185,7 @@
     if (currentRenderer) {
       try {
         currentRenderer.dispose();
-      } catch (e) {}
+      } catch (e) { }
       currentRenderer = null;
     }
 

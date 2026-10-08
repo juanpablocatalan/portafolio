@@ -133,11 +133,8 @@ function setActiveProject(projectId) {
   const previewCards = document.querySelectorAll('.preview-card');
   if (!projectItems.length || !previewCards.length) return;
 
-  if (String(projectId) !== '5') {
-    document.body.classList.add('has-active-project');
-  } else {
-    document.body.classList.remove('has-active-project');
-  }
+  // Ocultar siempre la carita feliz 3D cuando el cursor pasa por cualquiera de los proyectos
+  document.body.classList.add('has-active-project');
 
   // Update right list items
   projectItems.forEach(item => {
@@ -1179,6 +1176,9 @@ function initImageLightbox() {
     document.body.style.overflow = 'hidden';
     document.dispatchEvent(new CustomEvent('lightbox:opened'));
   }
+
+  window.openLightbox = openLightbox;
+  window.closeLightbox = closeLightbox;
 
   function closeLightbox() {
     modal.classList.remove('is-open');
