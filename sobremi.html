@@ -12,7 +12,7 @@
   <link rel="icon" type="image/svg+xml" href="assets/happy-face.svg">
 
   <!-- Core Stylesheet -->
-  <link rel="stylesheet" href="css/style.css?v=350">
+  <link rel="stylesheet" href="css/style.css?v=371">
 </head>
 
 <body class="about-page">
@@ -35,7 +35,9 @@
       <a href="index.html" class="header-logo-link header-mobile-only" aria-label="Inicio">
         <img src="assets/happy-face-bw.svg" alt="Happy Face" class="header-logo-icon">
       </a>
-      <button type="button" class="menu-toggle-btn header-mobile-only" id="menu-toggle-btn" aria-label="Abrir menú" aria-expanded="false" aria-controls="site-menu-drawer" onclick="event.stopPropagation(); window.toggleSiteMenuDrawer && window.toggleSiteMenuDrawer(event);">
+      <button type="button" class="menu-toggle-btn header-mobile-only" id="menu-toggle-btn" aria-label="Abrir menú"
+        aria-expanded="false" aria-controls="site-menu-drawer"
+        onclick="event.stopPropagation(); window.toggleSiteMenuDrawer && window.toggleSiteMenuDrawer(event);">
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
@@ -45,11 +47,13 @@
 
   <!-- Mobile Navigation Drawer -->
   <div class="site-menu-drawer" id="site-menu-drawer" aria-hidden="true">
-    <div class="menu-drawer-backdrop" id="menu-drawer-backdrop" onclick="window.closeSiteMenuDrawer && window.closeSiteMenuDrawer()"></div>
+    <div class="menu-drawer-backdrop" id="menu-drawer-backdrop"
+      onclick="window.closeSiteMenuDrawer && window.closeSiteMenuDrawer()"></div>
     <div class="menu-drawer-panel">
       <div class="menu-drawer-top">
         <span class="menu-drawer-badge">MENÚ</span>
-        <button type="button" class="menu-drawer-close" id="menu-drawer-close" aria-label="Cerrar menú" onclick="window.closeSiteMenuDrawer && window.closeSiteMenuDrawer()">
+        <button type="button" class="menu-drawer-close" id="menu-drawer-close" aria-label="Cerrar menú"
+          onclick="window.closeSiteMenuDrawer && window.closeSiteMenuDrawer()">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -58,13 +62,17 @@
           <li><a href="index.html" class="menu-drawer-link">INICIO</a></li>
           <li><a href="sobremi.html" class="menu-drawer-link">SOBRE MÍ</a></li>
           <li class="menu-drawer-item-contact">
-            <button type="button" class="menu-drawer-link menu-drawer-contact-toggle" id="menu-drawer-contact-toggle" aria-expanded="false" onclick="event.stopPropagation(); window.toggleMenuContactSub && window.toggleMenuContactSub(event);">
+            <button type="button" class="menu-drawer-link menu-drawer-contact-toggle" id="menu-drawer-contact-toggle"
+              aria-expanded="false"
+              onclick="event.stopPropagation(); window.toggleMenuContactSub && window.toggleMenuContactSub(event);">
               CONTACTO <span class="contact-chevron">&darr;</span>
             </button>
             <div class="menu-drawer-contact-sub" id="menu-drawer-contact-sub">
               <a href="mailto:juan-pablo.catalan@uc.cl" class="menu-contact-item">EMAIL</a>
-              <a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer" class="menu-contact-item">LINKEDIN</a>
-              <a href="https://www.instagram.com/jp.catalan/" target="_blank" rel="noopener noreferrer" class="menu-contact-item">INSTAGRAM</a>
+              <a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer"
+                class="menu-contact-item">LINKEDIN</a>
+              <a href="https://www.instagram.com/jp.catalan/" target="_blank" rel="noopener noreferrer"
+                class="menu-contact-item">INSTAGRAM</a>
             </div>
           </li>
         </ul>
@@ -102,123 +110,108 @@
         </div>
       </div>
 
-      <!-- Section: Formación -->
-      <section class="about-cv-section reveal" aria-labelledby="heading-formacion">
-        <h2 class="about-section-heading" id="heading-formacion">Formación</h2>
-        <div class="about-cv-grid-2">
-
-          <!-- Item 1: USM -->
-          <div class="about-cv-item">
-            <div class="about-cv-header">
-              Universidad Técnica<br>
-              Federico Santa María<br>
-              <span class="about-cv-dates">2019 - 2021</span>
-            </div>
-            <div class="about-cv-body">
-              Bachiller en Ingeniería Civil
-            </div>
-          </div>
-
-          <!-- Item 2: PUC -->
-          <div class="about-cv-item">
-            <div class="about-cv-header">
-              Pontificia Universidad<br>
-              Católica de Chile<br>
-              <span class="about-cv-dates">2021 - 2026</span>
-            </div>
-            <div class="about-cv-body">
-              Diseñador Integral
-            </div>
-          </div>
-
-        </div>
-      </section>
-
       <!-- Section: Experiencia -->
-      <section class="about-cv-section reveal reveal-delay-1" aria-labelledby="heading-experiencia">
+      <section class="about-cv-section reveal" aria-labelledby="heading-experiencia">
         <h2 class="about-section-heading" id="heading-experiencia">Experiencia</h2>
         <div class="about-cv-grid-2">
 
           <!-- Row 1: Col 1 -->
           <div class="about-cv-item">
             <div class="about-cv-header">
-              FEUC<br>
-              <span class="about-cv-dates">2023</span>
+              Ayudante cátedra curso<br>
+              Desafíos de la Ingeniería
             </div>
             <div class="about-cv-body">
-              Diagramación y creación<br>
-              publicaciones Instagram
+              Ingeniería UC<br>
+              <span class="about-cv-dates">2024 - 2026</span>
             </div>
           </div>
 
           <!-- Row 1: Col 2 -->
           <div class="about-cv-item">
             <div class="about-cv-header">
-              Top Wine Group S.A.<br>
-              <span class="about-cv-dates">2024</span>
+              Diseñador gráfico<br>
+              Diagramación de revista
             </div>
             <div class="about-cv-body">
-              Practica profesional<br>
-              Sutil Wines<br>
-              Diseñador Junior
+              Asociación de Truficultores<br>
+              <span class="about-cv-dates">2025</span>
             </div>
           </div>
 
           <!-- Row 2: Col 1 -->
           <div class="about-cv-item">
             <div class="about-cv-header">
-              Chile Fashion Week<br>
-              <span class="about-cv-dates">2024</span>
+              Diseñador
             </div>
             <div class="about-cv-body">
-              Diseñador de moda
+              Fundación Respuestas<br>
+              <span class="about-cv-dates">2025</span>
             </div>
           </div>
 
           <!-- Row 2: Col 2 -->
           <div class="about-cv-item">
             <div class="about-cv-header">
-              Fundación Respuestas<br>
-              <span class="about-cv-dates">2025</span>
+              Diseñador de moda
             </div>
             <div class="about-cv-body">
-              Practica profesional<br>
-              Creador de Identidad
+              Chile Fashion Week<br>
+              <span class="about-cv-dates">2024</span>
             </div>
           </div>
 
           <!-- Row 3: Col 1 -->
           <div class="about-cv-item">
             <div class="about-cv-header">
-              Asociación de Truficultores<br>
-              <span class="about-cv-dates">2025</span>
+              Diseñador Junior
             </div>
             <div class="about-cv-body">
-              Diseñador gráfico<br>
-              Diagramación de revista
+              Sutil Wines<br>
+              <span class="about-cv-dates">2024</span>
             </div>
           </div>
 
           <!-- Row 3: Col 2 -->
           <div class="about-cv-item">
             <div class="about-cv-header">
-              Ingeniería UC<br>
-              <span class="about-cv-dates">2024 - 2026</span>
+              Diseñador de comunicación
             </div>
             <div class="about-cv-body">
-              Ayudante cátedra curso<br>
-              Desafíos de la Ingeniería
+              Federación Estudiantes UC<br>
+              <span class="about-cv-dates">2023</span>
             </div>
           </div>
 
-          <!-- Row 4: Col 1 -->
+        </div>
+      </section>
+
+      <!-- Section: Formación -->
+      <section class="about-cv-section reveal reveal-delay-1" aria-labelledby="heading-formacion">
+        <h2 class="about-section-heading" id="heading-formacion">Formación</h2>
+        <div class="about-cv-grid-2">
+
+          <!-- Item 1: PUC -->
           <div class="about-cv-item">
             <div class="about-cv-header">
-              London Coffee<br>
-              <span class="about-cv-dates">2026</span>
+              Diseñador Integral
             </div>
             <div class="about-cv-body">
-              Diseñador gráfico
+              Pontificia Universidad<br>
+              Católica de Chile<br>
+              <span class="about-cv-dates">2021 - 2026</span>
+            </div>
+          </div>
+
+          <!-- Item 2: USM -->
+          <div class="about-cv-item">
+            <div class="about-cv-header">
+              Bachiller en Ingeniería Civil
+            </div>
+            <div class="about-cv-body">
+              Universidad Técnica<br>
+              Federico Santa María<br>
+              <span class="about-cv-dates">2019 - 2021</span>
             </div>
           </div>
 
@@ -236,7 +229,9 @@
             <div class="about-cv-header software-header">
               <img src="assets/yop/illustrator.svg" alt="Illustrator" class="software-icon">
               <div class="software-circles">
-                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle"></span>
+                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span
+                  class="circle circle--filled"></span><span class="circle circle--filled"></span><span
+                  class="circle"></span>
               </div>
             </div>
           </div>
@@ -246,7 +241,9 @@
             <div class="about-cv-header software-header">
               <img src="assets/yop/fusion360.svg" alt="Fusion 360" class="software-icon">
               <div class="software-circles">
-                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle"></span>
+                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span
+                  class="circle circle--filled"></span><span class="circle circle--filled"></span><span
+                  class="circle"></span>
               </div>
             </div>
           </div>
@@ -257,7 +254,9 @@
             <div class="about-cv-header software-header">
               <img src="assets/yop/indesign.svg" alt="InDesign" class="software-icon">
               <div class="software-circles">
-                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle"></span>
+                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span
+                  class="circle circle--filled"></span><span class="circle circle--filled"></span><span
+                  class="circle"></span>
               </div>
             </div>
           </div>
@@ -267,7 +266,9 @@
             <div class="about-cv-header software-header">
               <img src="assets/yop/rhino.svg" alt="Rhino" class="software-icon">
               <div class="software-circles">
-                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle"></span>
+                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span
+                  class="circle circle--filled"></span><span class="circle circle--filled"></span><span
+                  class="circle"></span>
               </div>
             </div>
           </div>
@@ -278,7 +279,8 @@
             <div class="about-cv-header software-header">
               <img src="assets/yop/photoshop.svg" alt="Photoshop" class="software-icon">
               <div class="software-circles">
-                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle"></span><span class="circle"></span>
+                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span
+                  class="circle circle--filled"></span><span class="circle"></span><span class="circle"></span>
               </div>
             </div>
           </div>
@@ -288,7 +290,9 @@
             <div class="about-cv-header software-header">
               <img src="assets/yop/figma.svg" alt="Figma" class="software-icon">
               <div class="software-circles">
-                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle"></span>
+                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span
+                  class="circle circle--filled"></span><span class="circle circle--filled"></span><span
+                  class="circle"></span>
               </div>
             </div>
           </div>
@@ -299,7 +303,8 @@
             <div class="about-cv-header software-header">
               <img src="assets/yop/aftereffects.svg" alt="After Effects" class="software-icon">
               <div class="software-circles">
-                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle"></span><span class="circle"></span>
+                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span
+                  class="circle circle--filled"></span><span class="circle"></span><span class="circle"></span>
               </div>
             </div>
           </div>
@@ -309,7 +314,8 @@
             <div class="about-cv-header software-header">
               <img src="assets/yop/capcut.svg" alt="Capcut" class="software-icon">
               <div class="software-circles">
-                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle circle--filled"></span><span class="circle"></span><span class="circle"></span>
+                <span class="circle circle--filled"></span><span class="circle circle--filled"></span><span
+                  class="circle circle--filled"></span><span class="circle"></span><span class="circle"></span>
               </div>
             </div>
           </div>
@@ -317,27 +323,162 @@
         </div>
       </section>
 
-      <!-- Section: Contacto -->
-      <section class="about-contact-section reveal reveal-delay-2" aria-labelledby="heading-contacto">
-        <h2 class="about-section-heading" id="heading-contacto">Contacto</h2>
-        <div class="contact-links">
-          <a href="mailto:juan-pablo.catalan@uc.cl" class="contact-link-item">
-            <span>Email</span>
-            <span aria-hidden="true">&nearr;</span>
-          </a>
-          <a href="https://www.instagram.com/jp.catalan/" target="_blank" rel="noopener noreferrer"
-            class="contact-link-item">
-            <span>Instagram</span>
-            <span aria-hidden="true">&nearr;</span>
-          </a>
-          <a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer"
-            class="contact-link-item">
-            <span>LinkedIn</span>
-            <span aria-hidden="true">&nearr;</span>
-          </a>
-        </div>
-      </section>
+    </section>
 
+    <!-- Section: Huinchas ¡HABLEMOS! (Layered Diagonal Stack) -->
+    <section class="about-warning-tape-wrap reveal reveal-delay-1" aria-label="¡HABLEMOS!">
+
+      <!-- Cinta 0: Fondo profundo (Rellena el espacio negro entremedio) -->
+      <div class="about-warning-tape about-warning-tape--bg0" aria-hidden="true">
+        <div class="warning-tape-track">
+          <div class="warning-tape-content warning-tape-content--slow">
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+          </div>
+          <div class="warning-tape-content warning-tape-content--slow" aria-hidden="true">
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cinta 1: Superior (Inclinada -7°) -->
+      <div class="about-warning-tape about-warning-tape--bg1" aria-hidden="true">
+        <div class="warning-tape-track">
+          <div class="warning-tape-content warning-tape-content--fast">
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+          </div>
+          <div class="warning-tape-content warning-tape-content--fast" aria-hidden="true">
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cinta 2: Inferior (Inclinada +6°) -->
+      <div class="about-warning-tape about-warning-tape--bg2" aria-hidden="true">
+        <div class="warning-tape-track">
+          <div class="warning-tape-content warning-tape-content--reverse">
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+          </div>
+          <div class="warning-tape-content warning-tape-content--reverse" aria-hidden="true">
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cinta 3: Centro-Superior (Inclinada -3°) -->
+      <div class="about-warning-tape about-warning-tape--bg3" aria-hidden="true">
+        <div class="warning-tape-track">
+          <div class="warning-tape-content warning-tape-content--slow">
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+          </div>
+          <div class="warning-tape-content warning-tape-content--slow" aria-hidden="true">
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cinta 4: Centro-Inferior Frontal (Inclinada +2.2°) -->
+      <div class="about-warning-tape about-warning-tape--front">
+        <div class="warning-tape-track">
+          <div class="warning-tape-content">
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+          </div>
+          <div class="warning-tape-content" aria-hidden="true">
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+            <span class="warning-tape-text">¡HABLEMOS!</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Section: Contacto -->
+    <section class="about-contact-section container reveal reveal-delay-2" aria-labelledby="heading-contacto">
+      <h2 class="about-section-heading" id="heading-contacto">Contacto</h2>
+      <div class="contact-links">
+        <a href="mailto:juan-pablo.catalan@uc.cl" class="contact-link-item">
+          <span>Email</span>
+          <span aria-hidden="true">&nearr;</span>
+        </a>
+        <a href="https://www.instagram.com/jp.catalan/" target="_blank" rel="noopener noreferrer"
+          class="contact-link-item">
+          <span>Instagram</span>
+          <span aria-hidden="true">&nearr;</span>
+        </a>
+        <a href="https://www.linkedin.com/in/jp-catalan/" target="_blank" rel="noopener noreferrer"
+          class="contact-link-item">
+          <span>LinkedIn</span>
+          <span aria-hidden="true">&nearr;</span>
+        </a>
+      </div>
     </section>
 
   </main>

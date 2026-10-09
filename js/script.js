@@ -57,7 +57,7 @@ window.addEventListener('load', () => {
  * Si hay proyectos configurados o con visibilidad modificada, sincroniza la vista.
  */
 function syncProjectsWithAdminState() {
-  const STORAGE_KEY = 'jp_portfolio_projects_data_v3';
+  const STORAGE_KEY = 'jp_portfolio_projects_data_v4';
   const stored = localStorage.getItem(STORAGE_KEY);
   if (!stored) return;
 
